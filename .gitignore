@@ -29,7 +29,10 @@ gradle-app.setting
 .idea/gradle.xml
 .idea/libraries
 
-## Plugin-specific files:
+## Package-specific files:
+# RocksDB
+LOCK
+LOG
 
 # IntelliJ
 /out/
