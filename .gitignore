@@ -31,6 +31,7 @@ gradle-app.setting
 
 ## Package-specific files:
 # RocksDB
+rocksdb/*
 LOCK
 LOG
 
