@@ -1,5 +1,6 @@
 package crawler;
 
+import indexer.Indexer;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,10 +13,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Crawler {
-    static final int VALUE_CRAWL_ALL = Integer.MAX_VALUE;
+    static final int VALUE_CRAWL_ALL = 30;
     String rootURL = "http://www.cse.ust.hk";
+    static int currentDocCount = 0;
     ArrayList<String> urlList = new ArrayList<>();
     static ArrayList<String> stopWords;
+    Indexer indexer = new Indexer();
 
     static{
         // retrieve stopwords from text file
@@ -34,18 +37,19 @@ public class Crawler {
         String url = "http://www.cse.ust.hk";
 
         Crawler crawler = new Crawler(url);
-        try {
-            var res = Jsoup.connect(url).execute();
-            var doc = res.parse();
-            List<String> words = crawler.extractWords(doc);
-            crawler.consolidateFrequencies(words);
+//        try {
+//            var res = Jsoup.connect(url).execute();
+//            var doc = res.parse();
+//            List<String> words = crawler.extractWords(doc);
+//            crawler.consolidateFrequencies(words);
+//
+//        } catch (IOException e) {
+//        }
 
-        } catch (IOException e) {
-        }
-
-//        crawler.crawlFromRoot();
-//        System.out.println(crawler.getUrlList().size());
-//        System.out.println(crawler.getUrlList());
+        crawler.crawlFromRoot();
+        System.out.println(crawler.getUrlList().size());
+        System.out.println(crawler.getUrlList());
+        crawler.indexer.printIndex();
     }
 
     public Crawler(String rootURL) {
@@ -77,6 +81,10 @@ public class Crawler {
 
         if (res == null) return new ArrayList<>();
 
+        // index the current page
+        var rootFrequencies = consolidateFrequencies(extractWords(doc));
+        indexer.updateIndex(currentDocCount++, rootFrequencies);
+
         Elements links = doc.select("a[href]"); // get all anchors with href attr
 
         List<String> urlList = links.stream()
@@ -104,6 +112,10 @@ public class Crawler {
 
         List<String> crawlList = List.of(this.rootURL);
         boolean isCrawlAll = numPages == VALUE_CRAWL_ALL;
+
+        // index the root
+        var rootFrequencies = consolidateFrequencies(extractWords(res.parse()));
+        indexer.updateIndex(currentDocCount++, rootFrequencies);
 
         while (!crawlList.isEmpty()) {
             for (String currentURL : crawlList) {
@@ -135,13 +147,15 @@ public class Crawler {
         return list;
     }
 
-    private void consolidateFrequencies(List<String> extracted){
-        Map<String, Integer> frequencies = new HashMap<>();
+    private HashMap consolidateFrequencies(List<String> extracted){
+        var frequencies = new HashMap<String, Integer>();
         extracted.stream().forEach(s -> {
             var currentFreqOfS =  frequencies.getOrDefault(s, 0);
             frequencies.put(s, currentFreqOfS + 1);
         });
-        frequencies.forEach((s, i) -> System.out.println(s + ": " + i));
+//        frequencies.forEach((s, i) -> System.out.println(s + ": " + i));
+        return frequencies;
     }
+
 }
 
