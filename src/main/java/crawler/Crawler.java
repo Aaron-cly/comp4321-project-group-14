@@ -1,12 +1,14 @@
 package crawler;
 
 import indexer.Indexer;
+import model.MetaData;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -49,7 +51,8 @@ public class Crawler {
         crawler.crawlFromRoot();
         System.out.println(crawler.getUrlList().size());
         System.out.println(crawler.getUrlList());
-        crawler.indexer.printIndex();
+        crawler.indexer.printInvertedIndex();
+        crawler.indexer.printMetaInfo();
     }
 
     public Crawler(String rootURL) {
@@ -65,12 +68,12 @@ public class Crawler {
         return conn.execute();
     }
 
-    private List<String> getPagesFromURL(String url) {
-        return getPagesFromURL(url, Integer.MAX_VALUE);
-    }
+//    private List<String> getPagesFromURL(String url) {
+//        return getPagesFromURL(url, Integer.MAX_VALUE);
+//    }
 
     // obtain all pages embedded in html of a URL
-    private List<String> getPagesFromURL(String url, int numPages) {
+    private List<String> getPagesFromURL(String url, int numPages) throws IOException {
         Document doc = null;
         Connection.Response res = null;
         try {
@@ -81,10 +84,6 @@ public class Crawler {
 
         if (res == null) return new ArrayList<>();
 
-        // index the current page
-        var rootFrequencies = consolidateFrequencies(extractWords(doc));
-        indexer.updateIndex(currentDocCount++, rootFrequencies);
-
         Elements links = doc.select("a[href]"); // get all anchors with href attr
 
         List<String> urlList = links.stream()
@@ -94,7 +93,23 @@ public class Crawler {
                 .limit(numPages)
                 .collect(Collectors.toList());
 
+        // index the current page
+        var rootFrequencies = consolidateFrequencies(extractWords(doc));
+        indexer.updateIndex(currentDocCount, rootFrequencies);
+        var connection = new URL(url).openConnection();
+        var metaData = new MetaData(
+                doc.title(),
+                new Date(connection.getLastModified()),
+                connection.getContentLength(),
+                urlList
+        );
+        indexer.addMetaInformation(currentDocCount++, metaData);
+
         return urlList;
+    }
+
+    public void indexPage(Document doc){
+
     }
 
     public void crawlFromRoot() throws IOException {
@@ -147,15 +162,17 @@ public class Crawler {
         return list;
     }
 
-    private HashMap consolidateFrequencies(List<String> extracted){
+    private HashMap<String, Integer> consolidateFrequencies(List<String> extracted) {
         var frequencies = new HashMap<String, Integer>();
-        extracted.stream().forEach(s -> {
-            var currentFreqOfS =  frequencies.getOrDefault(s, 0);
+        extracted.forEach(s -> {
+            var currentFreqOfS = frequencies.getOrDefault(s, 0);
             frequencies.put(s, currentFreqOfS + 1);
         });
 //        frequencies.forEach((s, i) -> System.out.println(s + ": " + i));
         return frequencies;
     }
+
+
 
 }
 
