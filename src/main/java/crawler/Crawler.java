@@ -6,22 +6,46 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Crawler {
     static final int VALUE_CRAWL_ALL = Integer.MAX_VALUE;
     String rootURL = "http://www.cse.ust.hk";
     ArrayList<String> urlList = new ArrayList<>();
+    static ArrayList<String> stopWords;
+
+    static{
+        // retrieve stopwords from text file
+        try {
+            var list = Files.readAllLines(Paths.get("./stopwords.txt"));
+//            list.forEach(System.out::println);
+            stopWords = new ArrayList<>(list);
+        }
+        catch (Exception e) {
+            System.out.println("Something went wrong while reading the file");
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) throws IOException {
         String url = "http://www.cse.ust.hk";
 
         Crawler crawler = new Crawler(url);
-        crawler.crawlFromRoot();
-        System.out.println(crawler.getUrlList().size());
-        System.out.println(crawler.getUrlList());
+        try {
+            var res = Jsoup.connect(url).execute();
+            var doc = res.parse();
+            List<String> words = crawler.extractWords(doc);
+            crawler.consolidateFrequencies(words);
+
+        } catch (IOException e) {
+        }
+
+//        crawler.crawlFromRoot();
+//        System.out.println(crawler.getUrlList().size());
+//        System.out.println(crawler.getUrlList());
     }
 
     public Crawler(String rootURL) {
@@ -90,6 +114,34 @@ public class Crawler {
                 } else return;
             }
         }
+    }
+
+    // extract all words from a page
+    public List<String> extractWords(Document d) {
+        var list = new ArrayList<String>();
+        var elements = d.body().select("*");
+        for(var e : elements){
+            // skip the elements with empty content
+            if(e.ownText().equals("")) continue;
+            String[] words = e.ownText().split("\\W+");
+
+            // filter out strings containing numbers and stopwords
+            list.addAll(
+                    Arrays.stream(words)
+                    .filter(s -> !s.matches(".*\\d.*") && !stopWords.contains(s.toLowerCase()))
+                    .collect(Collectors.toList())
+            );
+        }
+        return list;
+    }
+
+    private void consolidateFrequencies(List<String> extracted){
+        Map<String, Integer> frequencies = new HashMap<>();
+        extracted.stream().forEach(s -> {
+            var currentFreqOfS =  frequencies.getOrDefault(s, 0);
+            frequencies.put(s, currentFreqOfS + 1);
+        });
+        frequencies.forEach((s, i) -> System.out.println(s + ": " + i));
     }
 }
 
