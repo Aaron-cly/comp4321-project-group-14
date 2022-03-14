@@ -1,19 +1,23 @@
 package model;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class MetaData implements Serializable {
-    String pgTitle;
-    Date lastModifiedData;
-    long pgSize;
-    List<String> childLinks;
+    public String pgTitle;
+    public String url;
+    public HashMap<String, Integer> frequencies = new HashMap<>();
+    public Date lastModifiedDate;
+    public long pgSize;
+    public List<String> childLinks;
 
-    public MetaData(String pgTitle, Date lastModifiedData, long pgSize, List<String> childLinks) {
+    public MetaData(String pgTitle, String url, HashMap<String, Integer> frequencies, Date lastModifiedData, long pgSize, List<String> childLinks) {
+        this.frequencies = frequencies;
         this.pgTitle = pgTitle;
-        this.lastModifiedData = lastModifiedData;
+        this.url = url;
+        this.lastModifiedDate = lastModifiedData;
         this.pgSize = pgSize;
         this.childLinks = childLinks;
     }
@@ -45,8 +49,9 @@ public class MetaData implements Serializable {
     @Override
     public String toString() {
         return "MetaData{" +
-                "pgTitle='" + pgTitle + '\'' +
-                ", lastModifiedData=" + lastModifiedData +
+                "frequencies=" + frequencies +
+                ", pgTitle='" + pgTitle + '\'' +
+                ", lastModifiedData=" + lastModifiedDate +
                 ", pgSize=" + pgSize +
                 ", childLinks=" + childLinks +
                 '}';

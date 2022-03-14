@@ -99,6 +99,8 @@ public class Crawler {
         var connection = new URL(url).openConnection();
         var metaData = new MetaData(
                 doc.title(),
+                url,
+                rootFrequencies,
                 new Date(connection.getLastModified()),
                 connection.getContentLength(),
                 urlList
@@ -170,6 +172,10 @@ public class Crawler {
         });
 //        frequencies.forEach((s, i) -> System.out.println(s + ": " + i));
         return frequencies;
+    }
+
+    private void outputTxtFile(){
+
     }
 
 
