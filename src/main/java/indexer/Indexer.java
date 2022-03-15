@@ -27,6 +27,9 @@ public class Indexer {
         options.setCreateIfMissing(true);
 
         try {
+            // drop all data database first to ensure fresh run
+            RocksDB.destroyDB(INVERTED_INDEX_PATH, options);
+            RocksDB.destroyDB(META_INTO_PATH, options);
             invertedIndexDb = RocksDB.open(options, INVERTED_INDEX_PATH);
             metaInfoDb = RocksDB.open(options, META_INTO_PATH);
         } catch (RocksDBException e) {
@@ -67,7 +70,7 @@ public class Indexer {
     public void printMetaInfo(){
         String directory = Paths.get("").toAbsolutePath().toString();
         try {
-            var writer = new BufferedWriter(new FileWriter("output.txt"));
+            var writer = new BufferedWriter(new FileWriter("spider_result.txt"));
             writer.write("");
             var iter = metaInfoDb.newIterator();
             for(iter.seekToFirst(); iter.isValid(); iter.next() ){

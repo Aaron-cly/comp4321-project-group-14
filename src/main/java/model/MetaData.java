@@ -3,6 +3,7 @@ package model;
 import java.io.*;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class MetaData implements Serializable {
@@ -11,9 +12,9 @@ public class MetaData implements Serializable {
     public HashMap<String, Integer> frequencies = new HashMap<>();
     public Date lastModifiedDate;
     public long pgSize;
-    public List<String> childLinks;
+    public HashSet<String> childLinks;
 
-    public MetaData(String pgTitle, String url, HashMap<String, Integer> frequencies, Date lastModifiedData, long pgSize, List<String> childLinks) {
+    public MetaData(String pgTitle, String url, HashMap<String, Integer> frequencies, Date lastModifiedData, long pgSize, HashSet<String> childLinks) {
         this.frequencies = frequencies;
         this.pgTitle = pgTitle;
         this.url = url;

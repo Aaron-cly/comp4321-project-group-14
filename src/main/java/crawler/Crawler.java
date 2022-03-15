@@ -86,12 +86,15 @@ public class Crawler {
 
         Elements links = doc.select("a[href]"); // get all anchors with href attr
 
-        List<String> urlList = links.stream()
-                .map(link -> link.attr("href")) // get the attribute of the element
+        var urlList = links.stream()
+                .map(link -> link.attr("href"))
                 .filter(link -> link.startsWith("/") && !link.equals("/"))  // only needs relative urls since they are on the root link
                 .map(link -> url + link)  // map to complete url
-                .limit(numPages)
                 .collect(Collectors.toList());
+
+        var uniqueChildLinks = new HashSet<String>(urlList);
+
+        urlList = urlList.stream().limit(numPages).collect(Collectors.toList());
 
         // index the current page
         var rootFrequencies = consolidateFrequencies(extractWords(doc));
@@ -103,15 +106,11 @@ public class Crawler {
                 rootFrequencies,
                 new Date(connection.getLastModified()),
                 connection.getContentLength(),
-                urlList
+                uniqueChildLinks
         );
         indexer.addMetaInformation(currentDocCount++, metaData);
 
         return urlList;
-    }
-
-    public void indexPage(Document doc){
-
     }
 
     public void crawlFromRoot() throws IOException {
@@ -151,13 +150,12 @@ public class Crawler {
         var elements = d.body().select("*");
         for(var e : elements){
             // skip the elements with empty content
-            if(e.ownText().equals("")) continue;
             String[] words = e.ownText().split("\\W+");
 
             // filter out strings containing numbers and stopwords
             list.addAll(
                     Arrays.stream(words)
-                    .filter(s -> !s.matches(".*\\d.*") && !stopWords.contains(s.toLowerCase()))
+                    .filter(s -> !s.equals("") && !s.matches(".*\\d.*") && !stopWords.contains(s.toLowerCase()))
                     .collect(Collectors.toList())
             );
         }
