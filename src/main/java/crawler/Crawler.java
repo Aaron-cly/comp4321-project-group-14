@@ -6,6 +6,11 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.rocksdb.Options;
+import org.rocksdb.RocksDB;
+import org.rocksdb.RocksDBException;
+import org.rocksdb.RocksIterator;
+import repository.Repository;
 
 import java.io.IOException;
 import java.net.URL;
@@ -35,22 +40,16 @@ public class Crawler {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, RocksDBException {
         String url = "http://www.cse.ust.hk";
 
         Crawler crawler = new Crawler(url);
-//        try {
-//            var res = Jsoup.connect(url).execute();
-//            var doc = res.parse();
-//            List<String> words = crawler.extractWords(doc);
-//            crawler.consolidateFrequencies(words);
-//
-//        } catch (IOException e) {
-//        }
-
         crawler.crawlFromRoot(30);
-         crawler.indexer.printInvertedIndex();
-        crawler.indexer.printMetaInfo();
+
+        System.out.println(crawler.getUrlList());
+
+        System.out.println(Repository.Page.getPageUrl("71588285"));
+        Repository.ForwardFrequency.print();
     }
 
     public Crawler(String rootURL) {
@@ -66,12 +65,12 @@ public class Crawler {
         return conn.execute();
     }
 
-//    private List<String> getPagesFromURL(String url) {
-//        return getPagesFromURL(url, Integer.MAX_VALUE);
-//    }
+    private HashSet<String> getPagesFromURL(String url) throws IOException {
+        return getPagesFromURL(url, Integer.MAX_VALUE);
+    }
 
     // obtain all pages embedded in html of a URL
-    private List<String> getPagesFromURL(String url, int numPages) throws IOException {
+    private HashSet<String> getPagesFromURL(String url, int numPages) throws IOException {
         Document doc = null;
         Connection.Response res = null;
         try {
@@ -80,45 +79,18 @@ public class Crawler {
         } catch (IOException e) {
         }
 
-        if (res == null) return new ArrayList<>();
+        if (res == null) return new HashSet<>();
 
         Elements links = doc.select("a[href]"); // get all anchors with href attr
 
         final String strippedUrl = url.charAt(url.length() - 1) == '/' ? url.substring(0, url.length() - 1) : url;
-        var urlList = links.stream()
+        var urlSet = links.stream()
                 .map(link -> link.attr("href"))
                 .filter(link -> link.startsWith("/") && !link.equals("/"))  // only needs relative urls since they are on the root link
                 .map(link -> strippedUrl + link)  // map to complete url
-                .collect(Collectors.toList());
-        var uniqueChildLinks = new HashSet<String>(urlList);
-        urlList = urlList.stream().limit(numPages).collect(Collectors.toList());
+                .collect(Collectors.toCollection(HashSet::new));
 
-        // get last modified date
-//        var elements = doc.body().select("*");
-//        for(var e : elements){
-//            if(e.ownText().toLowerCase(Locale.ROOT).contains("last updated on ")){
-//                String lastModifiedDate = e.ownText().substring(e.ownText().length() - 10);
-//            }
-//            System.out.println(lastModified);
-//        }
-
-        String lastModifiedDate = getLastModifiedDate(res, doc);
-
-        // index the current page
-        var rootFrequencies = consolidateFrequencies(extractWords(doc));
-        indexer.updateIndex(currentDocCount, rootFrequencies);
-        var connection = new URL(strippedUrl).openConnection();
-        var metaData = new MetaData(
-                doc.title(),
-                strippedUrl,
-                rootFrequencies,
-                lastModifiedDate,
-                connection.getContentLength(),
-                uniqueChildLinks
-        );
-        indexer.addMetaInformation(currentDocCount++, metaData);
-
-        return urlList;
+        return urlSet.stream().limit(numPages).collect(Collectors.toCollection(HashSet::new));
     }
 
     public void crawlFromRoot() throws IOException {
@@ -136,20 +108,45 @@ public class Crawler {
 
         List<String> crawlList = List.of(this.rootURL);
         boolean isCrawlAll = numPages == VALUE_CRAWL_ALL;
+        this.urlList.add(this.rootURL);
 
-        // index the root
-        var rootFrequencies = consolidateFrequencies(extractWords(res.parse()));
-        indexer.updateIndex(currentDocCount++, rootFrequencies);
+        // index the root and get page info from root
+        crawlPage(rootURL);
 
-        while (!crawlList.isEmpty()) {
-            for (String currentURL : crawlList) {
-                if (isCrawlAll || this.urlList.size() < numPages) {
-                    List<String> pagesOnURL = getPagesFromURL(currentURL, numPages - this.urlList.size());
-                    this.urlList.addAll(pagesOnURL);
-                    crawlList = new ArrayList<>(pagesOnURL);
-                } else return;
-            }
+        int currentIndex = 0;
+        int crawledNum = 0;
+        while (crawledNum < numPages) {
+            String currentURL = this.urlList.get(currentIndex);
+            var pagesOnURL = getPagesFromURL(currentURL, numPages - this.urlList.size());
+            this.urlList.addAll(pagesOnURL);
+
+            crawlPage(currentURL);
+            currentIndex++;
+            crawledNum++;
         }
+    }
+
+    private void crawlPage(String url) throws IOException {
+
+        Document doc = null;
+        Connection.Response res = null;
+        try {
+            res = getResponse(url);
+            doc = res.parse();
+        } catch (IOException e) {
+        }
+
+        String lastModifiedDate = getLastModifiedDate(res, doc);
+        var pagesOnURL = getPagesFromURL(url);
+
+        // index the current page
+        var rootFrequencies = consolidateFrequencies(extractWords(doc));
+
+        // for page size
+        var connection = new URL(url).openConnection();
+
+        indexer.insert_page(url);
+        indexer.update_ForwardFrequency(url, rootFrequencies);
     }
 
     // extract all words from a page
@@ -184,10 +181,10 @@ public class Crawler {
 
     }
 
-    private String getLastModifiedDate(Connection.Response res, Document doc){
+    private String getLastModifiedDate(Connection.Response res, Document doc) {
         var lastModifiedSpans = doc.select("span:contains(Last updated)");
-        if(lastModifiedSpans.size() == 0){
-            if(!res.hasHeader("last-modified")) return "N/A";
+        if (lastModifiedSpans.size() == 0) {
+            if (!res.hasHeader("last-modified")) return "N/A";
             return res.header("last-modified");
         }
         return lastModifiedSpans.get(0).ownText().substring(

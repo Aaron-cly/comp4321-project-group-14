@@ -4,11 +4,13 @@ import model.MetaData;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
+import repository.Repository;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,28 +38,51 @@ public class Indexer {
         }
     }
 
-    public void updateIndex(int docId, HashMap<String, Integer> frequencies) {
+    public void insert_page(String url) {
         try {
-            for (Map.Entry<String, Integer> entry : frequencies.entrySet()) {
-                byte[] value = invertedIndexDb.get(entry.getKey().getBytes());
-                String newPosting = String.valueOf(docId) + SEPARATOR + entry.getValue() + DELIMITER;
-                // case where term has not been indexed before
-                if (value == null) {
-                    invertedIndexDb.put(entry.getKey().getBytes(), newPosting.getBytes());
-                    continue;
-                }
-                // term has already been indexed
-                // append to the posting list
-                var currentPostList = new String(value);
-                currentPostList += newPosting;
+            Repository.Page.insertPage(url);
+        } catch(RocksDBException e){
+            e.printStackTrace();
+        }
+    }
 
-                invertedIndexDb.put(entry.getKey().getBytes(), currentPostList.getBytes());
+    public void update_ForwardFrequency(String url, HashMap<String, Integer> frequencies) {
+        System.out.println("Updating Forward_frequency for : " + url);
+        HashMap<String, Integer> map_wordId_freq = new HashMap<>();
+        try {
+            for (String word : frequencies.keySet()) {
+                String wordId = Repository.Word.insertWord(word);
+                map_wordId_freq.put(wordId, frequencies.get(word));
             }
-
+            Repository.ForwardFrequency.updateUrl_wordFreq(url, map_wordId_freq);
         } catch (RocksDBException e) {
             e.printStackTrace();
         }
     }
+
+//
+//    public void updateIndex(int docId, HashMap<String, Integer> frequencies) {
+//        try {
+//            for (Map.Entry<String, Integer> entry : frequencies.entrySet()) {
+//                byte[] value = invertedIndexDb.get(entry.getKey().getBytes());
+//                String newPosting = String.valueOf(docId) + SEPARATOR + entry.getValue() + DELIMITER;
+//                // case where term has not been indexed before
+//                if (value == null) {
+//                    invertedIndexDb.put(entry.getKey().getBytes(), newPosting.getBytes());
+//                    continue;
+//                }
+//                // term has already been indexed
+//                // append to the posting list
+//                var currentPostList = new String(value);
+//                currentPostList += newPosting;
+//
+//                invertedIndexDb.put(entry.getKey().getBytes(), currentPostList.getBytes());
+//            }
+//
+//        } catch (RocksDBException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void printInvertedIndex() {
         var iter = invertedIndexDb.newIterator();
@@ -100,6 +125,7 @@ public class Indexer {
             e.printStackTrace();
         }
     }
+
 
 //    public void retrieveKeywords(int docId){
 //        var iter = invertedIndexDb.newIterator();
