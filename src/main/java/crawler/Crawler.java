@@ -38,22 +38,22 @@ public class Crawler {
     }
 
     public static void main(String[] args) throws IOException, RocksDBException {
-        String url = "http://www.cse.ust.hk";
-
-        Crawler crawler = new Crawler(url);
-        crawler.crawlFromRoot(30);
-
-        System.out.println(crawler.getUrlList());
-
-        System.out.println(Repository.Page.getPageUrl("71588285"));
-        for (String turl: crawler.urlList.subList(0, 30)) {
-            System.out.println(Repository.PageInfo.getPageInfo(Repository.Page.getPageId(turl)));
-        }
-
-        ResultWriter.write_spider_result();
-
-
-//        Repository.ForwardFrequency.print();
+//        String url = "http://www.cse.ust.hk";
+//
+//        Crawler crawler = new Crawler(url);
+//        crawler.crawlFromRoot(30);
+//
+////        System.out.println(crawler.getUrlList());
+////
+////        System.out.println(Repository.Page.getPageUrl("71588285"));
+////        for (String turl: crawler.urlList.subList(0, 30)) {
+//////            System.out.println(Repository.PageInfo.getPageInfo(Repository.Page.getPageId(turl)));
+////        }
+//
+//        ResultWriter.write_spider_result();
+//
+//
+////        Repository.ForwardFrequency.print();
     }
 
     public Crawler(String rootURL) {

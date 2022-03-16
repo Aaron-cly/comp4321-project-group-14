@@ -43,7 +43,7 @@ public class Indexer {
     }
 
     public void update_ForwardFrequency(String url, HashMap<String, Integer> frequencies) {
-        System.out.println("Updating Forward_frequency for : " + url);
+//        System.out.println("Updating Forward_frequency for : " + url);
         HashMap<String, Integer> map_wordId_freq = new HashMap<>();
         try {
             for (String word : frequencies.keySet()) {

@@ -55,10 +55,10 @@ public class ResultWriter {
                 var wordPosting = Repository.ForwardFrequency
                         .getMap_WordId_Freq(entry.getKey());
 
-                System.out.println(wordPosting);
+//                System.out.println(wordPosting);
 
                 for(var e : wordPosting.entrySet()){
-                    System.out.println(e);
+//                    System.out.println(e);
                     String termId = e.getKey();
                     writer.append(Repository.Word.getWord(termId) + " " + e.getValue() + ";");
                 }
