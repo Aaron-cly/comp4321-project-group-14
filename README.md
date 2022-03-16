@@ -25,12 +25,9 @@ Verify installation of gradle by
 
     gradle -v
 
-Unzip the project, and change the permission of the root folder,
-    
-    chmod 777 ./project_folder_name
-
 After successfully installing gradle, the project can be run by
 
+    gradle wrapper
     ./gradlew run
 
 ## Database Schema
