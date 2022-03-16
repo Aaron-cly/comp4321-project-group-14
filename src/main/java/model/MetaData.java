@@ -9,12 +9,12 @@ import java.util.List;
 public class MetaData implements Serializable {
     public String pgTitle;
     public String url;
-    public HashMap<String, Integer> frequencies = new HashMap<>();
-    public Date lastModifiedDate;
+    public HashMap<String, Integer> frequencies;
+    public String lastModifiedDate;
     public long pgSize;
     public HashSet<String> childLinks;
 
-    public MetaData(String pgTitle, String url, HashMap<String, Integer> frequencies, Date lastModifiedData, long pgSize, HashSet<String> childLinks) {
+    public MetaData(String pgTitle, String url, HashMap<String, Integer> frequencies, String lastModifiedData, long pgSize, HashSet<String> childLinks) {
         this.frequencies = frequencies;
         this.pgTitle = pgTitle;
         this.url = url;
