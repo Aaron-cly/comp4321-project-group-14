@@ -15,21 +15,20 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Crawler {
-    static final int VALUE_CRAWL_ALL = 30;
+    static final int VALUE_CRAWL_ALL = Integer.MAX_VALUE;
     String rootURL = "http://www.cse.ust.hk";
     static int currentDocCount = 0;
     ArrayList<String> urlList = new ArrayList<>();
     static ArrayList<String> stopWords;
     Indexer indexer = new Indexer();
 
-    static{
+    static {
         // retrieve stopwords from text file
         try {
             var list = Files.readAllLines(Paths.get("./stopwords.txt"));
 //            list.forEach(System.out::println);
             stopWords = new ArrayList<>(list);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Something went wrong while reading the file");
             e.printStackTrace();
         }
@@ -48,10 +47,8 @@ public class Crawler {
 //        } catch (IOException e) {
 //        }
 
-        crawler.crawlFromRoot();
-        System.out.println(crawler.getUrlList().size());
-        System.out.println(crawler.getUrlList());
-        crawler.indexer.printInvertedIndex();
+        crawler.crawlFromRoot(VALUE_CRAWL_ALL);
+        // crawler.indexer.printInvertedIndex();
         crawler.indexer.printMetaInfo();
     }
 
@@ -86,12 +83,13 @@ public class Crawler {
 
         Elements links = doc.select("a[href]"); // get all anchors with href attr
 
+        final String strippedUrl = url.charAt(url.length() - 1) == '/' ? url.substring(0, url.length() - 1) : url;
+
         var urlList = links.stream()
                 .map(link -> link.attr("href"))
                 .filter(link -> link.startsWith("/") && !link.equals("/"))  // only needs relative urls since they are on the root link
-                .map(link -> url + link)  // map to complete url
+                .map(link -> strippedUrl + link)  // map to complete url
                 .collect(Collectors.toList());
-
         var uniqueChildLinks = new HashSet<String>(urlList);
 
         urlList = urlList.stream().limit(numPages).collect(Collectors.toList());
@@ -99,10 +97,10 @@ public class Crawler {
         // index the current page
         var rootFrequencies = consolidateFrequencies(extractWords(doc));
         indexer.updateIndex(currentDocCount, rootFrequencies);
-        var connection = new URL(url).openConnection();
+        var connection = new URL(strippedUrl).openConnection();
         var metaData = new MetaData(
                 doc.title(),
-                url,
+                strippedUrl,
                 rootFrequencies,
                 new Date(connection.getLastModified()),
                 connection.getContentLength(),
@@ -148,15 +146,15 @@ public class Crawler {
     public List<String> extractWords(Document d) {
         var list = new ArrayList<String>();
         var elements = d.body().select("*");
-        for(var e : elements){
+        for (var e : elements) {
             // skip the elements with empty content
             String[] words = e.ownText().split("\\W+");
 
             // filter out strings containing numbers and stopwords
             list.addAll(
                     Arrays.stream(words)
-                    .filter(s -> !s.equals("") && !s.matches(".*\\d.*") && !stopWords.contains(s.toLowerCase()))
-                    .collect(Collectors.toList())
+                            .filter(s -> !s.equals("") && !s.matches(".*\\d.*") && !stopWords.contains(s.toLowerCase()))
+                            .collect(Collectors.toList())
             );
         }
         return list;
@@ -172,11 +170,9 @@ public class Crawler {
         return frequencies;
     }
 
-    private void outputTxtFile(){
+    private void outputTxtFile() {
 
     }
-
-
 
 }
 
