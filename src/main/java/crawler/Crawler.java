@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Crawler {
-    static final int VALUE_CRAWL_ALL = 30;
+    static final int VALUE_CRAWL_ALL = Integer.MAX_VALUE;
     String rootURL = "http://www.cse.ust.hk";
     static int currentDocCount = 0;
     ArrayList<String> urlList = new ArrayList<>();
