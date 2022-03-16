@@ -27,7 +27,7 @@ Verify installation of gradle by
 
 After successfully installing gradle, the project can be run by
 
-    ./gradlew build
+    gradle wrapper
     ./gradlew run
 
 ## Database Schema
