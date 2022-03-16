@@ -83,48 +83,48 @@ public class Indexer {
 //            e.printStackTrace();
 //        }
 //    }
-
-    public void printInvertedIndex() {
-        var iter = invertedIndexDb.newIterator();
-        for (iter.seekToFirst(); iter.isValid(); iter.next()) {
-            System.out.println(new String(iter.key()) + ": " + new String(iter.value()));
-        }
-    }
-
-    public void printMetaInfo() {
-        String directory = Paths.get("").toAbsolutePath().toString();
-        try (var writer = new BufferedWriter(new FileWriter("spider_result.txt"))) {
-            writer.write("");
-            var iter = metaInfoDb.newIterator();
-            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
-                var currentMetaData = MetaData.deserialize(iter.value());
-                System.out.println(new String(iter.key()) + ": \n" + currentMetaData);
-                writer.append(currentMetaData.pgTitle + "\n");
-                writer.append(currentMetaData.url + "\n");
-                writer.append(currentMetaData.lastModifiedDate.toString() + "\n");
-                for (Map.Entry<String, Integer> e : currentMetaData.frequencies.entrySet()) {
-                    writer.append(e.getKey() + " " + e.getValue() + ";");
-                }
-                writer.append("\n");
-                for (String s : currentMetaData.childLinks) {
-                    writer.append(s + "\n");
-                }
-                writer.append("=====================================================\n\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void addMetaInformation(int docId, MetaData data) {
-        try {
-            metaInfoDb.put(String.valueOf(docId).getBytes(), MetaData.convertToByteArray(data));
-        } catch (RocksDBException e) {
-            System.out.println("Could not save meta information of page");
-            e.printStackTrace();
-        }
-    }
+//
+//    public void printInvertedIndex() {
+//        var iter = invertedIndexDb.newIterator();
+//        for (iter.seekToFirst(); iter.isValid(); iter.next()) {
+//            System.out.println(new String(iter.key()) + ": " + new String(iter.value()));
+//        }
+//    }
+//
+//    public void printMetaInfo() {
+//        String directory = Paths.get("").toAbsolutePath().toString();
+//        try (var writer = new BufferedWriter(new FileWriter("spider_result.txt"))) {
+//            writer.write("");
+//            var iter = metaInfoDb.newIterator();
+//            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
+//                var currentMetaData = MetaData.deserialize(iter.value());
+//                System.out.println(new String(iter.key()) + ": \n" + currentMetaData);
+//                writer.append(currentMetaData.pgTitle + "\n");
+//                writer.append(currentMetaData.url + "\n");
+//                writer.append(currentMetaData.lastModifiedDate.toString() + "\n");
+//                for (Map.Entry<String, Integer> e : currentMetaData.frequencies.entrySet()) {
+//                    writer.append(e.getKey() + " " + e.getValue() + ";");
+//                }
+//                writer.append("\n");
+//                for (String s : currentMetaData.childLinks) {
+//                    writer.append(s + "\n");
+//                }
+//                writer.append("=====================================================\n\n");
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+//
+//    public void addMetaInformation(int docId, MetaData data) {
+//        try {
+//            metaInfoDb.put(String.valueOf(docId).getBytes(), MetaData.convertToByteArray(data));
+//        } catch (RocksDBException e) {
+//            System.out.println("Could not save meta information of page");
+//            e.printStackTrace();
+//        }
+//    }
 
 
 //    public void retrieveKeywords(int docId){

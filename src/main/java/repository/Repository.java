@@ -196,7 +196,7 @@ public class Repository {
             String raw_postings = null;
             try {
                 raw_postings = new String(forward_frequency_table.get(pageId.getBytes()));
-            } catch (RocksDBException e) {
+            } catch (Exception e) {
             }
 
             if (raw_postings == null) return new HashMap<>();
@@ -213,6 +213,13 @@ public class Repository {
 
             // return the freq map of a page
             return map_wordId_freq;
+        }
+
+        public static void print() {
+            RocksIterator iter = forward_frequency_table.newIterator();
+            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
+                System.out.println(new String(iter.key()) + ": " + new String(iter.value()));
+            }
         }
     }
 
