@@ -111,6 +111,16 @@ public class Repository {
             return null;
         }
 
+        public static HashMap<String, String> getMap_PageId_Url() {
+            var map = new HashMap<String, String>();
+
+            RocksIterator iter = page_table.newIterator();
+            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
+                map.put(new String(iter.key()), new String(iter.value()));
+            }
+            return map;
+        }
+
     }
 
     public static class ForwardFrequency {

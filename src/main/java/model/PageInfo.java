@@ -7,11 +7,13 @@ public class PageInfo implements Serializable {
     public String pgTitle;
     public String lastModifiedDate;
     public HashSet<String> childLinks;
+    public String pageSize;
 
-    public PageInfo(String pgTitle, String lastModifiedData, HashSet<String> childLinks) {
+    public PageInfo(String pgTitle, String lastModifiedData, HashSet<String> childLinks, String pageSize) {
         this.pgTitle = pgTitle;
         this.lastModifiedDate = lastModifiedData;
         this.childLinks = childLinks;
+        this.pageSize = pageSize;
     }
 
     public static byte[] convertToByteArray(PageInfo data) {

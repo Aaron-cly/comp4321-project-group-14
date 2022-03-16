@@ -9,6 +9,7 @@ import org.jsoup.select.Elements;
 import org.rocksdb.RocksDBException;
 import repository.Repository;
 
+import javax.xml.transform.Result;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -48,6 +49,10 @@ public class Crawler {
         for (String turl: crawler.urlList.subList(0, 30)) {
             System.out.println(Repository.PageInfo.getPageInfo(Repository.Page.getPageId(turl)));
         }
+
+        ResultWriter.write_spider_result();
+
+
 //        Repository.ForwardFrequency.print();
     }
 
@@ -143,8 +148,12 @@ public class Crawler {
 
         // for page size
         var connection = new URL(url).openConnection();
+        connection.getContentLength();
 
-        PageInfo pageInfo = new PageInfo(doc.title(), lastModifiedDate, pagesOnURL);
+        PageInfo pageInfo = new PageInfo(doc.title(), lastModifiedDate,
+                pagesOnURL,
+                String.valueOf(connection.getContentLength())
+        );
 
         indexer.insert_page(url);
         indexer.update_ForwardFrequency(url, rootFrequencies);
