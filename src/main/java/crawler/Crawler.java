@@ -12,6 +12,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Crawler {
@@ -84,15 +85,24 @@ public class Crawler {
         Elements links = doc.select("a[href]"); // get all anchors with href attr
 
         final String strippedUrl = url.charAt(url.length() - 1) == '/' ? url.substring(0, url.length() - 1) : url;
-
         var urlList = links.stream()
                 .map(link -> link.attr("href"))
                 .filter(link -> link.startsWith("/") && !link.equals("/"))  // only needs relative urls since they are on the root link
                 .map(link -> strippedUrl + link)  // map to complete url
                 .collect(Collectors.toList());
         var uniqueChildLinks = new HashSet<String>(urlList);
-
         urlList = urlList.stream().limit(numPages).collect(Collectors.toList());
+
+        // get last modified date
+//        var elements = doc.body().select("*");
+//        for(var e : elements){
+//            if(e.ownText().toLowerCase(Locale.ROOT).contains("last updated on ")){
+//                String lastModifiedDate = e.ownText().substring(e.ownText().length() - 10);
+//            }
+//            System.out.println(lastModified);
+//        }
+
+        String lastModifiedDate = getLastModifiedDate(res, doc);
 
         // index the current page
         var rootFrequencies = consolidateFrequencies(extractWords(doc));
@@ -102,7 +112,7 @@ public class Crawler {
                 doc.title(),
                 strippedUrl,
                 rootFrequencies,
-                new Date(connection.getLastModified()),
+                lastModifiedDate,
                 connection.getContentLength(),
                 uniqueChildLinks
         );
@@ -172,6 +182,17 @@ public class Crawler {
 
     private void outputTxtFile() {
 
+    }
+
+    private String getLastModifiedDate(Connection.Response res, Document doc){
+        var lastModifiedSpans = doc.select("span:contains(Last updated)");
+        if(lastModifiedSpans.size() == 0){
+            if(!res.hasHeader("last-modified")) return "N/A";
+            return res.header("last-modified");
+        }
+        return lastModifiedSpans.get(0).ownText().substring(
+                lastModifiedSpans.get(0).ownText().length() - 10
+        );
     }
 
 }
