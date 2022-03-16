@@ -37,13 +37,13 @@ public class Indexer {
         }
     }
 
-    public void updateIndex(int docId, HashMap<String, Integer> frequencies){
+    public void updateIndex(int docId, HashMap<String, Integer> frequencies) {
         try {
-            for(Map.Entry<String, Integer> entry : frequencies.entrySet()){
+            for (Map.Entry<String, Integer> entry : frequencies.entrySet()) {
                 byte[] value = invertedIndexDb.get(entry.getKey().getBytes());
                 String newPosting = String.valueOf(docId) + SEPARATOR + entry.getValue() + DELIMITER;
                 // case where term has not been indexed before
-                if(value == null){
+                if (value == null) {
                     invertedIndexDb.put(entry.getKey().getBytes(), newPosting.getBytes());
                     continue;
                 }
@@ -60,30 +60,29 @@ public class Indexer {
         }
     }
 
-    public void printInvertedIndex(){
+    public void printInvertedIndex() {
         var iter = invertedIndexDb.newIterator();
-        for(iter.seekToFirst(); iter.isValid(); iter.next() ){
+        for (iter.seekToFirst(); iter.isValid(); iter.next()) {
             System.out.println(new String(iter.key()) + ": " + new String(iter.value()));
         }
     }
 
-    public void printMetaInfo(){
+    public void printMetaInfo() {
         String directory = Paths.get("").toAbsolutePath().toString();
-        try {
-            var writer = new BufferedWriter(new FileWriter("spider_result.txt"));
+        try (var writer = new BufferedWriter(new FileWriter("spider_result.txt"))) {
             writer.write("");
             var iter = metaInfoDb.newIterator();
-            for(iter.seekToFirst(); iter.isValid(); iter.next() ){
+            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
                 var currentMetaData = MetaData.deserialize(iter.value());
-                System.out.println(new String(iter.key()) + ": \n" + currentMetaData );
+                System.out.println(new String(iter.key()) + ": \n" + currentMetaData);
                 writer.append(currentMetaData.pgTitle + "\n");
                 writer.append(currentMetaData.url + "\n");
                 writer.append(currentMetaData.lastModifiedDate.toString() + "\n");
-                for(Map.Entry<String, Integer> e : currentMetaData.frequencies.entrySet()){
+                for (Map.Entry<String, Integer> e : currentMetaData.frequencies.entrySet()) {
                     writer.append(e.getKey() + " " + e.getValue() + ";");
                 }
                 writer.append("\n");
-                for(String s: currentMetaData.childLinks){
+                for (String s : currentMetaData.childLinks) {
                     writer.append(s + "\n");
                 }
                 writer.append("=====================================================\n\n");
@@ -92,11 +91,9 @@ public class Indexer {
             e.printStackTrace();
         }
 
-
-
     }
 
-    public void addMetaInformation(int docId, MetaData data){
+    public void addMetaInformation(int docId, MetaData data) {
         try {
             metaInfoDb.put(String.valueOf(docId).getBytes(), MetaData.convertToByteArray(data));
         } catch (RocksDBException e) {
@@ -118,8 +115,6 @@ public class Indexer {
 //
 //        }
 //    }
-
-
 
 
 }
