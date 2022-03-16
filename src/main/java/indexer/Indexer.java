@@ -6,7 +6,6 @@ import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -17,7 +16,7 @@ public class Indexer {
     public static RocksDB invertedIndexDb;
     public static RocksDB metaInfoDb;
     private static String INVERTED_INDEX_PATH = "InvertedIndexDb";
-    private static String META_INTO_PATH = "MetaInfoDb";
+    private static String META_INFO_PATH = "MetaInfoDb";
     private static String DELIMITER = ";";
     private static String SEPARATOR = "::";
 
@@ -29,9 +28,9 @@ public class Indexer {
         try {
             // drop all data database first to ensure fresh run
             RocksDB.destroyDB(INVERTED_INDEX_PATH, options);
-            RocksDB.destroyDB(META_INTO_PATH, options);
+            RocksDB.destroyDB(META_INFO_PATH, options);
             invertedIndexDb = RocksDB.open(options, INVERTED_INDEX_PATH);
-            metaInfoDb = RocksDB.open(options, META_INTO_PATH);
+            metaInfoDb = RocksDB.open(options, META_INFO_PATH);
         } catch (RocksDBException e) {
             e.printStackTrace();
         }

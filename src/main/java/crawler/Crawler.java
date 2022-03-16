@@ -47,8 +47,8 @@ public class Crawler {
 //        } catch (IOException e) {
 //        }
 
-        crawler.crawlFromRoot(VALUE_CRAWL_ALL);
-        // crawler.indexer.printInvertedIndex();
+        crawler.crawlFromRoot(30);
+         crawler.indexer.printInvertedIndex();
         crawler.indexer.printMetaInfo();
     }
 
