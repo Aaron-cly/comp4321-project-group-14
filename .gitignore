@@ -32,6 +32,8 @@ gradle-app.setting
 ## Package-specific files:
 # RocksDB
 rocksdb/*
+InvertedIndexDb/*
+MetaInfoDb/*
 LOCK
 LOG
 
@@ -47,3 +49,6 @@ LOG
 
 # Thumbnails
 ._*
+
+# program output
+spider_result.txt
