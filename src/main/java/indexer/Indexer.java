@@ -1,18 +1,12 @@
 package indexer;
 
-import model.MetaData;
+import model.PageInfo;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 import repository.Repository;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.security.KeyStore;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Indexer {
     public static RocksDB invertedIndexDb;
@@ -38,12 +32,14 @@ public class Indexer {
         }
     }
 
-    public void insert_page(String url) {
+    public String insert_page(String url) {
+        String pageId = null;
         try {
-            Repository.Page.insertPage(url);
+            pageId = Repository.Page.insertPage(url);
         } catch(RocksDBException e){
             e.printStackTrace();
         }
+        return pageId;
     }
 
     public void update_ForwardFrequency(String url, HashMap<String, Integer> frequencies) {
@@ -58,6 +54,11 @@ public class Indexer {
         } catch (RocksDBException e) {
             e.printStackTrace();
         }
+    }
+
+    public void add_pageInfo(String url, PageInfo pageInfo) {
+        String pageId = insert_page(url);
+        Repository.PageInfo.addPageInfo(pageId, pageInfo);
     }
 
 //

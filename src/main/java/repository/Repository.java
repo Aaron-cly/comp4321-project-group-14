@@ -1,9 +1,7 @@
 package repository;
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import model.MetaData;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
@@ -254,25 +252,25 @@ public class Repository {
         }
 
         // converts forward to inverted and saves it to invertedFrequencyDb
-        public static void saveForwardToInverted(){
+        public static void saveForwardToInverted() {
             HashMap<String, String> map = new HashMap<>();
             // convert forwardFrequency to invertedFrequncy
             RocksIterator iter = ForwardFrequency.forward_frequency_table.newIterator();
-            for(iter.seekToFirst(); iter.isValid(); iter.next()) {
+            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
                 // get pageId and posting list from forward frequency
                 String pageId = new String(iter.key());
                 String postingList = new String(iter.value());
 
                 // split the posting list to its entries
                 var postingEntries = postingList.split(";");
-                for(var entry : postingEntries){
+                for (var entry : postingEntries) {
                     // first index is wordId, second is word frequency
                     var wordId = entry.split("::")[0];
                     var wordFrequency = entry.split("::")[1];
                     // new entry to be place into map
                     var newEntry = pageId + SEPARATOR + wordFrequency + DELIMITER;
 
-                    if(!map.containsKey(wordId)){
+                    if (!map.containsKey(wordId)) {
                         // put to map for the first time
                         map.put(wordId, newEntry);
                         continue;
@@ -283,10 +281,10 @@ public class Repository {
             }
 
             // save this map to db
-            for(Map.Entry<String, String> entry : map.entrySet()){
+            for (Map.Entry<String, String> entry : map.entrySet()) {
                 try {
                     inverted_frequency_table.put(entry.getKey().getBytes(), entry.getValue().getBytes());
-                } catch(RocksDBException e){
+                } catch (RocksDBException e) {
                     e.printStackTrace();
                 }
             }
@@ -332,7 +330,7 @@ public class Repository {
             } catch (RocksDBException e) {
             }
 
-            if (raw_postings == null || raw_postings.equals(""))  return new HashMap<>();
+            if (raw_postings == null || raw_postings.equals("")) return new HashMap<>();
 
             HashMap<String, Integer> map_pageId_freq = new HashMap<>();
             String[] postingArr = raw_postings.split(DELIMITER);
@@ -349,11 +347,11 @@ public class Repository {
         }
     }
 
-    public static class PageInfo{
+    public static class PageInfo {
         private static String dbPath = "Page_Info";
         private static RocksDB pageInfoDb;
 
-        static{
+        static {
             RocksDB.loadLibrary();
             Options options = new Options();
             options.setCreateIfMissing(true);
@@ -365,19 +363,17 @@ public class Repository {
             }
         }
 
-        public static void addPageInfo(int docId, MetaData data) {
+        public static void addPageInfo(String pageId, model.PageInfo data) {
             try {
-                pageInfoDb.put(String.valueOf(docId).getBytes(), MetaData.convertToByteArray(data));
+                pageInfoDb.put(pageId.getBytes(), model.PageInfo.convertToByteArray(data));
             } catch (RocksDBException e) {
                 System.out.println("Could not save meta information of page");
                 e.printStackTrace();
             }
         }
 
-        public static MetaData getMetaInfo(int docId) throws RocksDBException {
-            return MetaData.deserialize(pageInfoDb.get(String.valueOf(docId).getBytes()));
+        public static model.PageInfo getPageInfo(String pageId) throws RocksDBException {
+            return model.PageInfo.deserialize(pageInfoDb.get(pageId.getBytes()));
         }
-
     }
-
 }

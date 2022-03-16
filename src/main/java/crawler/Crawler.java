@@ -1,15 +1,12 @@
 package crawler;
 
 import indexer.Indexer;
-import model.MetaData;
+import model.PageInfo;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.rocksdb.Options;
-import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
-import org.rocksdb.RocksIterator;
 import repository.Repository;
 
 import java.io.IOException;
@@ -17,7 +14,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Crawler {
@@ -49,7 +45,10 @@ public class Crawler {
         System.out.println(crawler.getUrlList());
 
         System.out.println(Repository.Page.getPageUrl("71588285"));
-        Repository.ForwardFrequency.print();
+        for (String turl: crawler.urlList.subList(0, 30)) {
+            System.out.println(Repository.PageInfo.getPageInfo(Repository.Page.getPageId(turl)));
+        }
+//        Repository.ForwardFrequency.print();
     }
 
     public Crawler(String rootURL) {
@@ -145,8 +144,11 @@ public class Crawler {
         // for page size
         var connection = new URL(url).openConnection();
 
+        PageInfo pageInfo = new PageInfo(doc.title(), lastModifiedDate, pagesOnURL);
+
         indexer.insert_page(url);
         indexer.update_ForwardFrequency(url, rootFrequencies);
+        indexer.add_pageInfo(url, pageInfo);
     }
 
     // extract all words from a page
