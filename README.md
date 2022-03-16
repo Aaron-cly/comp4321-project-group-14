@@ -55,5 +55,3 @@ Contains meta information of the individual pages. This includes page title, URL
 The output of the scraped webpages are put in spider_result.txt, which is structured in a similar fashion to the format proposed in the course webpage:
 
 ![](https://i.imgur.com/y79QODV.png)
-
-Note that the size of page is the number of words
