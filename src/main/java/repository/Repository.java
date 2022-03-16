@@ -346,6 +346,18 @@ public class Repository {
         private static String dbPath = "Page_Info";
         private static RocksDB pageInfoDb;
 
+        static{
+            RocksDB.loadLibrary();
+            Options options = new Options();
+            options.setCreateIfMissing(true);
+            try {
+                // drop all data database first to ensure fresh run
+                RocksDB.destroyDB(dbPath, options);
+                pageInfoDb = RocksDB.open(options, dbPath);
+            } catch (RocksDBException e) {
+            }
+        }
+
         public static void addPageInfo(int docId, MetaData data) {
             try {
                 pageInfoDb.put(String.valueOf(docId).getBytes(), MetaData.convertToByteArray(data));
