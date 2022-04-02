@@ -12,6 +12,7 @@ public class Repository {
     public static class Word {
         private static String dbPath = "Word";
         protected static RocksDB word_table;
+        // word -> wordId
 
         static {
             RocksDB.loadLibrary();
@@ -26,10 +27,15 @@ public class Repository {
         }
 
         public static String getWord(String wordId) throws RocksDBException {
-            byte[] value = word_table.get(wordId.getBytes());
-
-            // return word of given wordId
-            return new String(value);
+            RocksIterator iter = word_table.newIterator();
+            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
+                String entry_wordId = new String(iter.value());
+                if (entry_wordId.equals(wordId)) {
+                    // return the word of the given wordId
+                    return new String(iter.key());
+                }
+            }
+            return null;
         }
 
         public static String insertWord(String word) throws RocksDBException {
@@ -42,21 +48,20 @@ public class Repository {
 
             String wordId = String.valueOf(word.hashCode());
             // insert new word to db
-            word_table.put(wordId.getBytes(), word.getBytes());
+            word_table.put(word.getBytes(), wordId.getBytes());
             // return the wordId of the inserted word
             return wordId;
         }
 
         public static String getWordId(String word) {
-            RocksIterator iter = word_table.newIterator();
-            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
-                String entry_word = new String(iter.value());
-                if (entry_word.equals(word)) {
-                    // return the wordId of the given word
-                    return new String(iter.key());
-                }
+            byte[] value = null;
+            try {
+                value = word_table.get(word.getBytes());
+            } catch (RocksDBException e) {
             }
-            return null;
+
+            // return word of given wordId
+            return value == null ? null : new String(value);
         }
 
     }
@@ -64,6 +69,7 @@ public class Repository {
     public static class Page {
         private static String dbPath = "Page";
         protected static RocksDB page_table;
+        // url -> pageId
 
         static {
             RocksDB.loadLibrary();
@@ -78,10 +84,15 @@ public class Repository {
         }
 
         public static String getPageUrl(String pageId) throws RocksDBException {
-            byte[] value = page_table.get(pageId.getBytes());
-
-            // return word of given wordId
-            return new String(value);
+            RocksIterator iter = page_table.newIterator();
+            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
+                String entry_word = new String(iter.value());
+                if (entry_word.equals(pageId)) {
+                    // return the wordId of the given word
+                    return new String(iter.key());
+                }
+            }
+            return null;
         }
 
         public static String insertPage(String url) throws RocksDBException {
@@ -92,27 +103,25 @@ public class Repository {
             }
 
             String pageId = String.valueOf(url.hashCode());
-            // insert new word to db
-            page_table.put(pageId.getBytes(), url.getBytes());
-            // return the pageId of the inserted word
+            page_table.put(url.getBytes(), pageId.getBytes());
+
+            // return the pageId of the inserted page
             return pageId;
         }
 
         public static String getPageId(String url) {
-            //TODO
             //return pageId of the given url
-            RocksIterator iter = page_table.newIterator();
-            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
-                String entry_word = new String(iter.value());
-                if (entry_word.equals(url)) {
-                    // return the wordId of the given word
-                    return new String(iter.key());
-                }
+            byte[] value = null;
+            try {
+                value = page_table.get(url.getBytes());
+            } catch (RocksDBException e) {
             }
-            return null;
+
+            // return pageId of given url
+            return value == null ? null : new String(value);
         }
 
-        public static HashMap<String, String> getMap_PageId_Url() {
+        public static HashMap<String, String> getMap_url_pageId() {
             var map = new HashMap<String, String>();
 
             RocksIterator iter = page_table.newIterator();
@@ -127,8 +136,7 @@ public class Repository {
     public static class ForwardFrequency {
         private static String dbPath = "Forward_Frequency";
         private static RocksDB forward_frequency_table;
-        private static String DELIMITER = ";";
-        private static String SEPARATOR = "::";
+        // pageId -> HashMap(wordId -> freq)
 
         static {
             RocksDB.loadLibrary();
@@ -174,7 +182,7 @@ public class Repository {
         }
 
         // get the HashMap of word frequencies for a given page
-        public static HashMap<String, Integer> getMap_WordId_Freq(String pageId) {
+        public static HashMap<String, Integer> getMap_WordId_Freq(String pageId) throws RocksDBException {
             if (!pageIn_ForwardFrequency(pageId)) {
                 return new HashMap<>();
             }
@@ -183,7 +191,7 @@ public class Repository {
             try {
                 map_wordId_freq = SerializeUtil.deserialize(forward_frequency_table.get(pageId.getBytes()));
             } catch (RocksDBException e) {
-                throw new RuntimeException(e);
+                throw new RocksDBException(e.getMessage());
             }
             return map_wordId_freq;
         }
@@ -348,7 +356,14 @@ public class Repository {
         }
 
         public static model.PageInfo getPageInfo(String pageId) throws RocksDBException {
-            return model.PageInfo.deserialize(pageInfoDb.get(pageId.getBytes()));
+            model.PageInfo pageInfo = null;
+            try {
+                var bytes = pageInfoDb.get(pageId.getBytes());
+                pageInfo = model.PageInfo.deserialize(bytes);
+            } catch (Exception e) {
+            }
+
+            return pageInfo;
         }
     }
 }

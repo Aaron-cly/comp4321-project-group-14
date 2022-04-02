@@ -1,13 +1,14 @@
 Word_Table
-wordId :String -> word :String
+word :String -> wordId :String
 
 Page_Table
-pageId :String -> URL : String
+URL : String -> pageId :String
 
 ForwardFrequency_Table
-pageId :String -> Posting(wordID->frequency)
+pageId :String -> HashMap(wordId -> freq)
 
 InvertedFrequency_Table
 wordId :String -> Posting(pageId->frequency)
 
 PageInfo_Table
+pageId :String -> PageInfo

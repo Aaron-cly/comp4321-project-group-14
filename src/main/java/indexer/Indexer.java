@@ -9,28 +9,6 @@ import repository.Repository;
 import java.util.HashMap;
 
 public class Indexer {
-    public static RocksDB invertedIndexDb;
-    public static RocksDB metaInfoDb;
-    private static String INVERTED_INDEX_PATH = "InvertedIndexDb";
-    private static String META_INFO_PATH = "MetaInfoDb";
-    private static String DELIMITER = ";";
-    private static String SEPARATOR = "::";
-
-    {
-        RocksDB.loadLibrary();
-        Options options = new Options();
-        options.setCreateIfMissing(true);
-
-        try {
-            // drop all data database first to ensure fresh run
-            RocksDB.destroyDB(INVERTED_INDEX_PATH, options);
-            RocksDB.destroyDB(META_INFO_PATH, options);
-            invertedIndexDb = RocksDB.open(options, INVERTED_INDEX_PATH);
-            metaInfoDb = RocksDB.open(options, META_INFO_PATH);
-        } catch (RocksDBException e) {
-            e.printStackTrace();
-        }
-    }
 
     public String insert_page(String url) {
         String pageId = null;
