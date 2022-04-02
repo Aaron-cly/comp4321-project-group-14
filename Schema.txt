@@ -4,7 +4,7 @@ word :String -> wordId :String
 Page_Table
 URL : String -> pageId :String
 
-ForwardFrequency_Table
+ForwardIndex_Table
 pageId :String -> HashMap(wordId -> List(position :Integer))
 
 InvertedFrequency_Table

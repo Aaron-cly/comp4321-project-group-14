@@ -7,9 +7,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.rocksdb.RocksDBException;
-import repository.Repository;
 
-import javax.xml.transform.Result;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -144,7 +142,7 @@ public class Crawler {
         var pagesOnURL = getPagesFromURL(url);
 
         // index the current page
-        var rootFrequencies = consolidateFrequencies(extractWords(doc));
+        var rootFrequencies = consolidatePositions(extractWords(doc));
 
         // for page size
         var connection = new URL(url).openConnection();
@@ -171,25 +169,30 @@ public class Crawler {
             // filter out strings containing numbers and stopwords
             list.addAll(
                     Arrays.stream(words)
-                            .filter(s -> !s.equals("") && !s.matches(".*\\d.*") && !stopWords.contains(s.toLowerCase()))
+                            .map(String::toLowerCase)
+                            .filter(s -> !s.equals("") && !s.matches(".*\\d.*") && !stopWords.contains(s))
                             .collect(Collectors.toList())
             );
         }
         return list;
     }
 
-    private HashMap<String, Integer> consolidateFrequencies(List<String> extracted) {
-        var frequencies = new HashMap<String, Integer>();
-        extracted.forEach(s -> {
-            var currentFreqOfS = frequencies.getOrDefault(s, 0);
-            frequencies.put(s, currentFreqOfS + 1);
-        });
-//        frequencies.forEach((s, i) -> System.out.println(s + ": " + i));
-        return frequencies;
-    }
+    // construct word -> List(position)
+    private HashMap<String, List<Integer>> consolidatePositions(List<String> extracted) {
+        var wordPositions = new HashMap<String, List<Integer>>();
+        for (int i = 0; i < extracted.size(); i++) {
+            String word = extracted.get(i);
 
-    private void outputTxtFile() {
-
+            List<Integer> posList = wordPositions.getOrDefault(word, null);
+            if (posList == null) {
+                posList = new ArrayList<>();
+                posList.add(i);
+                wordPositions.put(word, posList);
+            } else {
+                posList.add(i);
+            }
+        }
+        return wordPositions;
     }
 
     private String getLastModifiedDate(Connection.Response res, Document doc) {

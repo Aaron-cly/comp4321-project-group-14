@@ -23,8 +23,8 @@ public class ResultWriter {
                 writer.append(pageInfo.lastModifiedDate).append(", ")
                         .append(pageInfo.pageSize).append('\n');
 
-                var wordPosting = Repository.ForwardFrequency
-                        .getMap_WordId_Freq(entry.getValue());
+                var wordPosting = Repository.ForwardIndex
+                        .getMap_WordId_Positions(entry.getValue());
 
 //                System.out.println(wordPosting);
 

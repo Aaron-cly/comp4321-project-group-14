@@ -1,12 +1,11 @@
 package indexer;
 
 import model.PageInfo;
-import org.rocksdb.Options;
-import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 import repository.Repository;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class Indexer {
 
@@ -20,15 +19,15 @@ public class Indexer {
         return pageId;
     }
 
-    public void update_ForwardFrequency(String url, HashMap<String, Integer> frequencies) {
-//        System.out.println("Updating Forward_frequency for : " + url);
-        HashMap<String, Integer> map_wordId_freq = new HashMap<>();
+    public void update_ForwardFrequency(String url, HashMap<String, List<Integer>> wordPositions) {
+        // replace the word in key with corresponding wordId
+        HashMap<String, List<Integer>> map_wordId_freq = new HashMap<>();
         try {
-            for (String word : frequencies.keySet()) {
+            for (String word : wordPositions.keySet()) {
                 String wordId = Repository.Word.insertWord(word);
-                map_wordId_freq.put(wordId, frequencies.get(word));
+                map_wordId_freq.put(wordId, wordPositions.get(word));
             }
-            Repository.ForwardFrequency.updateUrl_wordFreq(url, map_wordId_freq);
+            Repository.ForwardIndex.updateUrl_wordPositions(url, map_wordId_freq);
         } catch (RocksDBException e) {
             e.printStackTrace();
         }

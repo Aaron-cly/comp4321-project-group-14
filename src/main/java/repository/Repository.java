@@ -133,9 +133,9 @@ public class Repository {
 
     }
 
-    public static class ForwardFrequency {
-        private static String dbPath = "./rocksdb/Forward_Frequency";
-        private static RocksDB forward_frequency_table;
+    public static class ForwardIndex {
+        private static String dbPath = "./rocksdb/Forward_Index";
+        private static RocksDB forward_index_table;
         // pageId -> HashMap(wordId -> freq)
 
         static {
@@ -145,16 +145,16 @@ public class Repository {
             try {
                 // drop all data database first to ensure fresh run
                 RocksDB.destroyDB(dbPath, options);
-                forward_frequency_table = RocksDB.open(options, dbPath);
+                forward_index_table = RocksDB.open(options, dbPath);
             } catch (RocksDBException e) {
             }
         }
 
         // check if a page is in Forward frequency as a key
-        private static boolean pageIn_ForwardFrequency(String pageId) {
+        private static boolean pageIn_ForwardIndex(String pageId) {
             boolean isIn;
             try {
-                forward_frequency_table.get(pageId.getBytes());
+                forward_index_table.get(pageId.getBytes());
                 isIn = true;
             } catch (RocksDBException e) {
                 isIn = false;
@@ -162,7 +162,7 @@ public class Repository {
             return isIn;
         }
 
-        public static void updateUrl_wordFreq(String url, HashMap<String, Integer> frequencies) throws RocksDBException {
+        public static void updateUrl_wordPositions(String url, HashMap<String, List<Integer>> wordPositions) throws RocksDBException {
             String pageId = null;
             try {
                 pageId = Page.insertPage(url);
@@ -172,32 +172,32 @@ public class Repository {
                 return;
             }
 
-            updatePage_wordFreq(pageId, frequencies);
+            updatePage_wordPositions(pageId, wordPositions);
         }
 
-        // input frequencies: wordId -> freq
-        public static void updatePage_wordFreq(String pageId, HashMap<String, Integer> frequencies) throws RocksDBException {
-            byte[] dataBytes = SerializeUtil.serialize(frequencies);
-            forward_frequency_table.put(pageId.getBytes(), dataBytes);
+        // input wordPositions: wordId -> List(positions)
+        public static void updatePage_wordPositions(String pageId, HashMap<String, List<Integer>> wordPositions) throws RocksDBException {
+            byte[] dataBytes = SerializeUtil.serialize(wordPositions);
+            forward_index_table.put(pageId.getBytes(), dataBytes);
         }
 
-        // get the HashMap of word frequencies for a given page
-        public static HashMap<String, Integer> getMap_WordId_Freq(String pageId) throws RocksDBException {
-            if (!pageIn_ForwardFrequency(pageId)) {
+        // get the HashMap of word positions for a given page
+        public static HashMap<String, List<Integer>> getMap_WordId_Positions(String pageId) throws RocksDBException {
+            if (!pageIn_ForwardIndex(pageId)) {
                 return new HashMap<>();
             }
 
-            HashMap<String, Integer> map_wordId_freq = null;
+            HashMap<String, List<Integer>> map_wordId_positions = null;
             try {
-                map_wordId_freq = SerializeUtil.deserialize(forward_frequency_table.get(pageId.getBytes()));
+                map_wordId_positions = SerializeUtil.deserialize(forward_index_table.get(pageId.getBytes()));
             } catch (RocksDBException e) {
                 throw new RocksDBException(e.getMessage());
             }
-            return map_wordId_freq;
+            return map_wordId_positions;
         }
 
         public static void print() {
-            RocksIterator iter = forward_frequency_table.newIterator();
+            RocksIterator iter = forward_index_table.newIterator();
             for (iter.seekToFirst(); iter.isValid(); iter.next()) {
                 System.out.println(new String(iter.key()) + ": " + new String(iter.value()));
             }
@@ -238,7 +238,7 @@ public class Repository {
         public static void saveForwardToInverted() {
             HashMap<String, String> map = new HashMap<>();
             // convert forwardFrequency to invertedFrequncy
-            RocksIterator iter = ForwardFrequency.forward_frequency_table.newIterator();
+            RocksIterator iter = ForwardIndex.forward_index_table.newIterator();
             for (iter.seekToFirst(); iter.isValid(); iter.next()) {
                 // get pageId and posting list from forward frequency
                 String pageId = new String(iter.key());
