@@ -2,6 +2,7 @@ package repository;
 
 import java.util.*;
 
+import model.SerializeUtil;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
@@ -168,58 +169,22 @@ public class Repository {
 
         // input frequencies: wordId -> freq
         public static void updatePage_wordFreq(String pageId, HashMap<String, Integer> frequencies) throws RocksDBException {
-            HashMap<String, Integer> map_wordId_freq = new HashMap<>();
-
-            if (pageIn_ForwardFrequency(pageId)) {
-                map_wordId_freq = getMap_WordId_Freq(pageId);
-            }
-
-            for (Map.Entry<String, Integer> entry : frequencies.entrySet()) {
-                String wordId = entry.getKey();
-                int freq = entry.getValue();
-
-                int oriValue = map_wordId_freq.getOrDefault(wordId, 0);
-                map_wordId_freq.put(wordId, oriValue + freq);
-            }
-
-            // write to db
-            StringBuilder parsed_WordFreq = new StringBuilder();
-            for (Map.Entry<String, Integer> entry : map_wordId_freq.entrySet()) {
-                parsed_WordFreq.append(entry.getKey() + SEPARATOR + entry.getValue() + DELIMITER);
-            }
-
-            try {
-                forward_frequency_table.put(pageId.getBytes(), parsed_WordFreq.toString().getBytes());
-            } catch (RocksDBException e) {
-                throw new RocksDBException("Error writing to db");
-            }
+            byte[] dataBytes = SerializeUtil.serialize(frequencies);
+            forward_frequency_table.put(pageId.getBytes(), dataBytes);
         }
 
-        // get posting for a given page
+        // get the HashMap of word frequencies for a given page
         public static HashMap<String, Integer> getMap_WordId_Freq(String pageId) {
             if (!pageIn_ForwardFrequency(pageId)) {
                 return new HashMap<>();
             }
 
-            String raw_postings = null;
+            HashMap<String, Integer> map_wordId_freq = null;
             try {
-                raw_postings = new String(forward_frequency_table.get(pageId.getBytes()));
-            } catch (Exception e) {
+                map_wordId_freq = SerializeUtil.deserialize(forward_frequency_table.get(pageId.getBytes()));
+            } catch (RocksDBException e) {
+                throw new RuntimeException(e);
             }
-
-            if (raw_postings == null) return new HashMap<>();
-
-            HashMap<String, Integer> map_wordId_freq = new HashMap<>();
-            String[] postingArr = raw_postings.split(DELIMITER);
-            for (String posting : postingArr) {
-                String[] values = posting.split(SEPARATOR);
-                String wordId = values[0];
-                int freq = Integer.parseInt(values[1]);
-
-                map_wordId_freq.put(wordId, freq);
-            }
-
-            // return the freq map of a page
             return map_wordId_freq;
         }
 
