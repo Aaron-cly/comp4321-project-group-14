@@ -1,4 +1,4 @@
-package crawler;
+package model;
 
 import org.rocksdb.RocksDBException;
 import repository.Repository;
@@ -6,6 +6,8 @@ import repository.Repository;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ResultWriter {
@@ -14,7 +16,7 @@ public class ResultWriter {
         try (var writer = new BufferedWriter(new FileWriter("spider_result.txt"))) {
             writer.write("");
             var map = Repository.Page.getMap_url_pageId();
-            for(Map.Entry<String, String> entry : map.entrySet()){
+            for (Map.Entry<String, String> entry : map.entrySet()) {
                 var pageInfo = Repository.PageInfo.getPageInfo(entry.getValue());
                 if (pageInfo == null) continue;
 
@@ -28,14 +30,14 @@ public class ResultWriter {
 
 //                System.out.println(wordPosting);
 
-                for(var e : wordPosting.entrySet()){
+                for (var e : wordPosting.entrySet()) {
 //                    System.out.println(e);
                     String termId = e.getKey();
                     writer.append(Repository.Word.getWord(termId) + " " + e.getValue() + ";");
                 }
                 writer.append('\n');
 
-                for(var link: pageInfo.childLinks){
+                for (var link : pageInfo.childLinks) {
                     writer.append(link).append('\n');
                 }
 
@@ -48,5 +50,23 @@ public class ResultWriter {
             e.printStackTrace();
         }
 
+    }
+
+    public static void write_inverted_file() {
+        try (var writer = new BufferedWriter(new FileWriter("inverted_file.txt"))) {
+            var inverted = Repository.InvertedIndex.getAll_InvertedIndex();
+
+            for (Map.Entry<String, HashMap<String, List<Integer>>> entry : inverted.entrySet()) {
+                var wordId = entry.getKey();
+                var map_pageId_posList = entry.getValue();
+
+                writer.append(wordId)
+                        .append(": ")
+                        .append(map_pageId_posList.toString())
+                        .append('\n');
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -196,6 +196,18 @@ public class Repository {
             return map_wordId_positions;
         }
 
+        public static HashMap<String, HashMap<String, List<Integer>>> getAll_ForwardIndex() {
+            var forward = new HashMap<String, HashMap<String, List<Integer>>>();
+            RocksIterator iter = forward_index_table.newIterator();
+            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
+                String wordId = new String(iter.key());
+                HashMap<String, List<Integer>> map_wordId_positions = SerializeUtil.deserialize(iter.value());
+
+                forward.put(wordId, map_wordId_positions);
+            }
+            return forward;
+        }
+
         public static void print() {
             RocksIterator iter = forward_index_table.newIterator();
             for (iter.seekToFirst(); iter.isValid(); iter.next()) {
@@ -204,11 +216,9 @@ public class Repository {
         }
     }
 
-    public static class InvertedFrequency {
-        private static String dbPath = "./rocksdb/Inverted_Frequency";
-        private static RocksDB inverted_frequency_table;
-        private static String DELIMITER = ";";
-        private static String SEPARATOR = "::";
+    public static class InvertedIndex {
+        private static String dbPath = "./rocksdb/Inverted_Index";
+        private static RocksDB inverted_index_table;
 
         static {
             RocksDB.loadLibrary();
@@ -217,7 +227,7 @@ public class Repository {
             try {
                 // drop all data database first to ensure fresh run
                 RocksDB.destroyDB(dbPath, options);
-                inverted_frequency_table = RocksDB.open(options, dbPath);
+                inverted_index_table = RocksDB.open(options, dbPath);
             } catch (RocksDBException e) {
             }
         }
@@ -226,7 +236,7 @@ public class Repository {
         public static boolean wordIn_InvertedFrequency(String wordId) {
             boolean isIn;
             try {
-                inverted_frequency_table.get(wordId.getBytes());
+                inverted_index_table.get(wordId.getBytes());
                 isIn = true;
             } catch (RocksDBException e) {
                 isIn = false;
@@ -234,100 +244,34 @@ public class Repository {
             return isIn;
         }
 
-        // converts forward to inverted and saves it to invertedFrequencyDb
-        public static void saveForwardToInverted() {
-            HashMap<String, String> map = new HashMap<>();
-            // convert forwardFrequency to invertedFrequncy
-            RocksIterator iter = ForwardIndex.forward_index_table.newIterator();
-            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
-                // get pageId and posting list from forward frequency
-                String pageId = new String(iter.key());
-                String postingList = new String(iter.value());
+        // wordId :String -> HashMap(pageId -> List(position :Integer))
+        public static void insert_InvertedIndexFile(HashMap<String, HashMap<String, List<Integer>>> inverted) {
+            for (Map.Entry<String, HashMap<String, List<Integer>>> entry : inverted.entrySet()) {
+                var wordId = entry.getKey();
+                var map_pageId_posList = entry.getValue();
+                var dataBytes = SerializeUtil.serialize(map_pageId_posList);
 
-                // split the posting list to its entries
-                var postingEntries = postingList.split(";");
-                for (var entry : postingEntries) {
-                    // first index is wordId, second is word frequency
-                    var wordId = entry.split("::")[0];
-                    var wordFrequency = entry.split("::")[1];
-                    // new entry to be place into map
-                    var newEntry = pageId + SEPARATOR + wordFrequency + DELIMITER;
-
-                    if (!map.containsKey(wordId)) {
-                        // put to map for the first time
-                        map.put(wordId, newEntry);
-                        continue;
-                    }
-                    // append existing entry
-                    map.put(wordId, map.get(wordId) + newEntry);
-                }
-            }
-
-            // save this map to db
-            for (Map.Entry<String, String> entry : map.entrySet()) {
                 try {
-                    inverted_frequency_table.put(entry.getKey().getBytes(), entry.getValue().getBytes());
+                    inverted_index_table.put(wordId.getBytes(), dataBytes);
                 } catch (RocksDBException e) {
+                    System.out.println("Error putting inverted index file to db");
                     e.printStackTrace();
                 }
             }
         }
 
-        // input frequency map pageId -> freq
-//        public static void updateInvertedFrequency(String wordId, HashMap<String, Integer> frequencies) throws RocksDBException {
-//            HashMap<String, Integer> map_pageId_freq = new HashMap<>();
-//
-//            if (wordIn_InvertedFrequency(wordId)) {
-//                map_pageId_freq = getMap_PageId_Freq(wordId);
-//            }
-//
-//            for (Map.Entry<String, Integer> entry : frequencies.entrySet()) {
-//                String pageId = entry.getKey();
-//                int freq = entry.getValue();
-//
-//                int oriValue = map_pageId_freq.getOrDefault(wordId, 0);
-//                map_pageId_freq.put(wordId, oriValue + freq);
-//            }
-//
-//            // write to db
-//            StringBuilder parsed_WordFreq = new StringBuilder();
-//            for (Map.Entry<String, Integer> entry : map_pageId_freq.entrySet()) {
-//                parsed_WordFreq.append(entry.getKey() + SEPARATOR + entry.getValue() + DELIMITER);
-//            }
-//
-//            try {
-//                inverted_frequency_table.put(wordId.getBytes(), parsed_WordFreq.toString().getBytes());
-//            } catch (RocksDBException e) {
-//                throw new RocksDBException("Error writing to db");
-//            }
-//        }
+        public static HashMap<String, HashMap<String, List<Integer>>> getAll_InvertedIndex() {
+            var inverted = new HashMap<String, HashMap<String, List<Integer>>>();
+            RocksIterator iter = inverted_index_table.newIterator();
+            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
+                String wordId = new String(iter.key());
+                HashMap<String, List<Integer>> map_pageId_posList = SerializeUtil.deserialize(iter.value());
 
-        public static HashMap<String, Integer> getMap_PageId_Freq(String wordId) {
-            if (!wordIn_InvertedFrequency(wordId)) {
-                return new HashMap<>();
+                inverted.put(wordId, map_pageId_posList);
             }
-
-            String raw_postings = null;
-            try {
-                raw_postings = new String(inverted_frequency_table.get(wordId.getBytes()));
-            } catch (RocksDBException e) {
-            }
-
-            if (raw_postings == null || raw_postings.equals("")) return new HashMap<>();
-
-            HashMap<String, Integer> map_pageId_freq = new HashMap<>();
-            String[] postingArr = raw_postings.split(DELIMITER);
-            for (String posting : postingArr) {
-                String[] values = posting.split(SEPARATOR);
-                String pageId = values[0];
-                int freq = Integer.parseInt(values[1]);
-
-                map_pageId_freq.put(pageId, freq);
-            }
-
-            // return the freq map of a word
-            return map_pageId_freq;
+            return inverted;
         }
+
     }
 
     public static class PageInfo {
