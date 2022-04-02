@@ -10,7 +10,7 @@ import org.rocksdb.RocksIterator;
 
 public class Repository {
     public static class Word {
-        private static String dbPath = "Word";
+        private static String dbPath = "./rocksdb/Word";
         protected static RocksDB word_table;
         // word -> wordId
 
@@ -67,7 +67,7 @@ public class Repository {
     }
 
     public static class Page {
-        private static String dbPath = "Page";
+        private static String dbPath = "./rocksdb/Page";
         protected static RocksDB page_table;
         // url -> pageId
 
@@ -134,7 +134,7 @@ public class Repository {
     }
 
     public static class ForwardFrequency {
-        private static String dbPath = "Forward_Frequency";
+        private static String dbPath = "./rocksdb/Forward_Frequency";
         private static RocksDB forward_frequency_table;
         // pageId -> HashMap(wordId -> freq)
 
@@ -205,7 +205,7 @@ public class Repository {
     }
 
     public static class InvertedFrequency {
-        private static String dbPath = "Inverted_Frequency";
+        private static String dbPath = "./rocksdb/Inverted_Frequency";
         private static RocksDB inverted_frequency_table;
         private static String DELIMITER = ";";
         private static String SEPARATOR = "::";
@@ -331,7 +331,7 @@ public class Repository {
     }
 
     public static class PageInfo {
-        private static String dbPath = "Page_Info";
+        private static String dbPath = "./rocksdb/Page_Info";
         private static RocksDB pageInfoDb;
 
         static {
