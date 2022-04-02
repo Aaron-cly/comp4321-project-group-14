@@ -5,10 +5,10 @@ Page_Table
 URL : String -> pageId :String
 
 ForwardFrequency_Table
-pageId :String -> HashMap(wordId -> freq)
+pageId :String -> HashMap(wordId -> List(position :Integer))
 
 InvertedFrequency_Table
-wordId :String -> Posting(pageId->frequency)
+wordId :String -> HashMap(pageId -> List(position :Integer))
 
 PageInfo_Table
 pageId :String -> PageInfo
