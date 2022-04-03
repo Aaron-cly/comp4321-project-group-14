@@ -61,15 +61,14 @@ public class Crawler {
         } catch (IOException e) {
         }
 
-        if (res == null) return new HashSet<>();
+        if (doc == null) return new HashSet<>();
 
         Elements links = doc.select("a[href]"); // get all anchors with href attr
 
-        final String strippedUrl = url.charAt(url.length() - 1) == '/' ? url.substring(0, url.length() - 1) : url;
         var urlSet = links.stream()
                 .map(link -> link.attr("href"))
-                .filter(link -> link.startsWith("/") && !link.equals("/"))  // only needs relative urls since they are on the root link
-                .map(link -> strippedUrl + link)  // map to complete url
+                .filter(link -> link.startsWith("https://cse.hkust.edu.hk/") || link.startsWith("/"))
+                .map(link -> link.charAt(0)=='/' ? rootURL+link : link)
                 .collect(Collectors.toCollection(HashSet::new));
 
         return urlSet.stream().limit(numPages).collect(Collectors.toCollection(HashSet::new));
@@ -94,9 +93,8 @@ public class Crawler {
                     this.urlList.add(page);
                 }
             }
-            this.urlList.addAll(pagesOnURL);
 
-            crawlPage(currentURL);
+//            crawlPage(currentURL);
             currentIndex++;
             if (currentIndex % 500 == 0) {
                 System.out.printf("Crawled and indexed %d pages\n", currentIndex);

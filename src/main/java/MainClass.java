@@ -18,7 +18,6 @@ public class MainClass {
         Crawler crawler = new Crawler(URL);
         System.out.println("Running Crawler...");
         start = Instant.now();
-//        crawler.crawlFromRoot(30);
         crawler.crawlFromRoot();
         finish = Instant.now();
         timeElapsed = Duration.between(start, finish).toSeconds();
