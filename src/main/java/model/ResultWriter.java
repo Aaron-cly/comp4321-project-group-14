@@ -7,8 +7,11 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 
 public class ResultWriter {
 
@@ -64,6 +67,28 @@ public class ResultWriter {
                         .append(": ")
                         .append(map_pageId_posList.toString())
                         .append('\n');
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void write_page_children(HashMap<String, HashSet<String>> map) {
+        try (var writer = new BufferedWriter(new FileWriter("page_children.txt"))) {
+            // sort in asc length
+            var sortedKeyList = map.keySet().stream().sorted().collect(Collectors.toList());
+            // for (Map.Entry<String, HashSet<String>> entry : map.entrySet()) {
+            for (String page: sortedKeyList) {
+                
+                var childrenList = map.get(page);
+
+                writer.append(page)
+                        .append(": \n\n");
+                for (String child: childrenList) {
+                    writer.append(child).append("\n");
+                }
+
+                writer.append("==================================================================\n");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -22,6 +22,11 @@ public class Crawler {
     static ArrayList<String> stopWords;
     Indexer indexer = new Indexer();
 
+    HashMap<String, HashSet<String>> pageChildren = new HashMap<>();
+    public HashMap<String, HashSet<String>> getMap_page_children() {
+        return this.pageChildren;
+    }
+
     static {
         // retrieve stopwords from text file
         try {
@@ -68,8 +73,10 @@ public class Crawler {
         final String strippedUrl = url.charAt(url.length() - 1) == '/' ? url.substring(0, url.length() - 1) : url;
         var urlSet = links.stream()
                 .map(link -> link.attr("href"))
-                .filter(link -> link.startsWith("/") && !link.equals("/"))  // only needs relative urls since they are on the root link
-                .map(link -> strippedUrl + link)  // map to complete url
+                // .filter(link -> link.startsWith("/") && !link.equals("/"))  // only needs relative urls since they are on the root link
+                // .map(link -> rootURL + link)  // map to complete url
+                .filter(link -> link.startsWith("https://cse.hkust.edu.hk/") || link.startsWith("/"))
+                .map(link -> link.charAt(0)=='/' ? rootURL+link : link)
                 .collect(Collectors.toCollection(HashSet::new));
 
         return urlSet.stream().limit(numPages).collect(Collectors.toCollection(HashSet::new));
@@ -83,6 +90,7 @@ public class Crawler {
     public void crawlFromRoot(int numPages) throws IOException {
         boolean isCrawlAll = numPages == VALUE_CRAWL_ALL;
         this.urlList.add(this.rootURL);
+        this.urlSet.add(this.rootURL);
 
         int currentIndex = 0;
         while (currentIndex < urlList.size() && (isCrawlAll || currentIndex < numPages)) {
@@ -94,9 +102,10 @@ public class Crawler {
                     this.urlList.add(page);
                 }
             }
-            this.urlList.addAll(pagesOnURL);
+            // this.urlList.addAll(pagesOnURL);
 
-            crawlPage(currentURL);
+            // crawlPage(currentURL, pagesOnURL);
+            pageChildren.put(currentURL, pagesOnURL);
             currentIndex++;
             if (currentIndex % 500 == 0) {
                 System.out.printf("Crawled and indexed %d pages\n", currentIndex);
@@ -104,34 +113,38 @@ public class Crawler {
         }
     }
 
-    private void crawlPage(String url) throws IOException {
+    private void crawlPage(String url, HashSet<String> pagesOnURL) throws IOException {
 
-        Document doc = null;
-        Connection.Response res = null;
-        try {
-            res = getResponse(url);
-            doc = res.parse();
-        } catch (IOException e) {
-        }
-        if (doc == null) return;
+        // Document doc = null;
+        // Connection.Response res = null;
+        // try {
+        //     res = getResponse(url);
+        //     doc = res.parse();
+        // } catch (IOException e) {
+        // }
+        // if (doc == null) return;
 
-        String lastModifiedDate = getLastModifiedDate(res, doc);
-        var pagesOnURL = getPagesFromURL(url);
+        // String lastModifiedDate = getLastModifiedDate(res, doc);
+        // var pagesOnURL = getPagesFromURL(url);
 
-        // index the current page
-        var map_word_posList = consolidatePositions(extractWords(doc));
+        // // index the current page
+        // var map_word_posList = consolidatePositions(extractWords(doc));
 
-        // for page size
-        var connection = new URL(url).openConnection();
-        connection.getContentLength();
+        // // for page size
+        // var connection = new URL(url).openConnection();
+        // connection.getContentLength();
 
-        PageInfo pageInfo = new PageInfo(doc.title(), lastModifiedDate,
+        // PageInfo pageInfo = new PageInfo(doc.title(), lastModifiedDate,
+        //         pagesOnURL,
+        //         String.valueOf(connection.getContentLength())
+        // );
+        PageInfo pageInfo = new PageInfo("", "",
                 pagesOnURL,
-                String.valueOf(connection.getContentLength())
+                ""
         );
 
         indexer.insert_page(url);
-        indexer.update_ForwardFrequency(url, map_word_posList);
+        // indexer.update_ForwardFrequency(url, map_word_posList);
         indexer.add_pageInfo(url, pageInfo);
     }
 
