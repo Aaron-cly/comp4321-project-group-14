@@ -9,6 +9,16 @@ import org.rocksdb.RocksDBException;
 import org.rocksdb.RocksIterator;
 
 public class Repository {
+    static List<RocksDB> dbList;
+    static {
+         dbList = List.of(Word.word_table, Page.page_table, ForwardIndex.forward_index_table, InvertedIndex.inverted_index_table, PageInfo.pageInfoDb);
+    }
+
+    public static void closeAllConnections() {
+        var dbList = List.of(Word.word_table, Page.page_table, ForwardIndex.forward_index_table, InvertedIndex.inverted_index_table, PageInfo.pageInfoDb);
+        dbList.forEach(RocksDB::close);
+    }
+
     public static class Word {
         private static String dbPath = "./rocksdb/Word";
         protected static RocksDB word_table;

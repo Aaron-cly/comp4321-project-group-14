@@ -6,7 +6,6 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.rocksdb.RocksDBException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 public class Crawler {
     static final int VALUE_CRAWL_ALL = Integer.MAX_VALUE;
     String rootURL = "http://www.cse.ust.hk";
-    static int currentDocCount = 0;
+    HashSet<String> urlSet = new HashSet<>();   // avoid crawling the same page twice
     ArrayList<String> urlList = new ArrayList<>();
     static ArrayList<String> stopWords;
     Indexer indexer = new Indexer();
@@ -33,25 +32,6 @@ public class Crawler {
             System.out.println("Something went wrong while reading the file");
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) throws IOException, RocksDBException {
-//        String url = "http://www.cse.ust.hk";
-//
-//        Crawler crawler = new Crawler(url);
-//        crawler.crawlFromRoot(30);
-//
-////        System.out.println(crawler.getUrlList());
-////
-////        System.out.println(Repository.Page.getPageUrl("71588285"));
-////        for (String turl: crawler.urlList.subList(0, 30)) {
-//////            System.out.println(Repository.PageInfo.getPageInfo(Repository.Page.getPageId(turl)));
-////        }
-//
-//        ResultWriter.write_spider_result();
-//
-//
-////        Repository.ForwardFrequency.print();
     }
 
     public Crawler(String rootURL) {
@@ -101,30 +81,26 @@ public class Crawler {
 
     // crawl URLs from the root url
     public void crawlFromRoot(int numPages) throws IOException {
-        Connection.Response res = null;
-        try {
-            res = getResponse(this.rootURL);
-        } catch (IOException e) {
-            throw new IOException("Invalid root url");
-        }
-
-        List<String> crawlList = List.of(this.rootURL);
         boolean isCrawlAll = numPages == VALUE_CRAWL_ALL;
         this.urlList.add(this.rootURL);
 
-        // index the root and get page info from root
-        crawlPage(rootURL);
-
         int currentIndex = 0;
-        int crawledNum = 0;
-        while (crawledNum < numPages) {
+        while (currentIndex < urlList.size() && (isCrawlAll || currentIndex < numPages)) {
             String currentURL = this.urlList.get(currentIndex);
-            var pagesOnURL = getPagesFromURL(currentURL, numPages - this.urlList.size());
+            var pagesOnURL = getPagesFromURL(currentURL);
+            for (String page : pagesOnURL) {
+                if (!urlSet.contains(page)) {
+                    this.urlSet.add(page);
+                    this.urlList.add(page);
+                }
+            }
             this.urlList.addAll(pagesOnURL);
 
             crawlPage(currentURL);
             currentIndex++;
-            crawledNum++;
+            if (currentIndex % 500 == 0) {
+                System.out.printf("Crawled and indexed %d pages\n", currentIndex);
+            }
         }
     }
 
@@ -137,12 +113,13 @@ public class Crawler {
             doc = res.parse();
         } catch (IOException e) {
         }
+        if (doc == null) return;
 
         String lastModifiedDate = getLastModifiedDate(res, doc);
         var pagesOnURL = getPagesFromURL(url);
 
         // index the current page
-        var rootFrequencies = consolidatePositions(extractWords(doc));
+        var map_word_posList = consolidatePositions(extractWords(doc));
 
         // for page size
         var connection = new URL(url).openConnection();
@@ -154,7 +131,7 @@ public class Crawler {
         );
 
         indexer.insert_page(url);
-        indexer.update_ForwardFrequency(url, rootFrequencies);
+        indexer.update_ForwardFrequency(url, map_word_posList);
         indexer.add_pageInfo(url, pageInfo);
     }
 
