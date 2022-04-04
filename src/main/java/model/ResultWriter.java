@@ -30,14 +30,14 @@ public class ResultWriter {
                 writer.append(pageInfo.lastModifiedDate).append(", ")
                         .append(pageInfo.pageSize).append('\n');
 
-//                var wordPosting = Repository.ForwardIndex
-//                        .getMap_WordId_Positions(pageId);
-//
-//                for (var e : wordPosting.entrySet()) {
-//                    String termId = e.getKey();
-//                    writer.append(Repository.Word.getWord(termId) + " " + e.getValue() + ";");
-//                }
-//                writer.append('\n');
+                var wordPosting = Repository.ForwardIndex
+                        .getMap_WordId_Positions(pageId);
+
+                for (var e : wordPosting.entrySet()) {
+                    String termId = e.getKey();
+                    writer.append(Repository.Word.getWord(termId) + " " + e.getValue() + ";");
+                }
+                writer.append('\n');
 
                 for (var link : pageInfo.childLinks) {
                     writer.append(link).append('\n');
@@ -48,6 +48,8 @@ public class ResultWriter {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (RocksDBException e) {
+            throw new RuntimeException(e);
         }
 //        catch (RocksDBException e) {
 //            e.printStackTrace();

@@ -1,40 +1,77 @@
 package repository;
 
-import java.util.*;
-
 import model.SerializeUtil;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 import org.rocksdb.RocksIterator;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class Repository {
-    static List<RocksDB> dbList;
+    protected static RocksDB word_table;
+    protected static RocksDB page_table;
+    protected static RocksDB forward_index_table;
+    protected static RocksDB inverted_index_table;
+    protected static RocksDB pageInfoDb;
+
+    static List<String> dbPathList = List.of(Word.dbPath, Page.dbPath, ForwardIndex.dbPath, InvertedIndex.dbPath, PageInfo.dbPath);
+//    static List<RocksDB> dbList = List.of(word_table, page_table, forward_index_table, inverted_index_table, pageInfoDb);
+
     static {
-         dbList = List.of(Word.word_table, Page.page_table, ForwardIndex.forward_index_table, InvertedIndex.inverted_index_table, PageInfo.pageInfoDb);
+        RocksDB.loadLibrary();
+    }
+
+    public static void destroyAll() {
+        Options options = new Options();
+        try {
+            // drop all data database first to ensure fresh run
+            for (String dbPath : dbPathList) {
+                RocksDB.destroyDB(dbPath, options);
+            }
+        } catch (RocksDBException e) {
+        }
+    }
+
+    public static void openConnections() {
+        Options options = new Options();
+        options.setCreateIfMissing(true);
+        try {
+            word_table = RocksDB.open(options, Word.dbPath);
+            page_table = RocksDB.open(options, Page.dbPath);
+            forward_index_table = RocksDB.open(options, ForwardIndex.dbPath);
+            inverted_index_table = RocksDB.open(options, InvertedIndex.dbPath);
+            pageInfoDb = RocksDB.open(options, PageInfo.dbPath);
+        } catch (RocksDBException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void closeAllConnections() {
-        var dbList = List.of(Word.word_table, Page.page_table, ForwardIndex.forward_index_table, InvertedIndex.inverted_index_table, PageInfo.pageInfoDb);
-        dbList.forEach(RocksDB::close);
+        word_table.close();
+        page_table.close();
+        forward_index_table.close();
+        inverted_index_table.close();
+        pageInfoDb.close();
     }
 
     public static class Word {
         private static String dbPath = "./rocksdb/Word";
-        protected static RocksDB word_table;
         // word -> wordId
 
-        static {
-            RocksDB.loadLibrary();
-            Options options = new Options();
-            options.setCreateIfMissing(true);
-            try {
-                // drop all data database first to ensure fresh run
-                RocksDB.destroyDB(dbPath, options);
-                word_table = RocksDB.open(options, dbPath);
-            } catch (RocksDBException e) {
-            }
-        }
+//        static {
+//            RocksDB.loadLibrary();
+//            Options options = new Options();
+//            options.setCreateIfMissing(true);
+//            try {
+//                // drop all data database first to ensure fresh run
+//                RocksDB.destroyDB(dbPath, options);
+//                word_table = RocksDB.open(options, dbPath);
+//            } catch (RocksDBException e) {
+//            }
+//        }
 
         public static String getWord(String wordId) throws RocksDBException {
             RocksIterator iter = word_table.newIterator();
@@ -78,19 +115,27 @@ public class Repository {
 
     public static class Page {
         private static String dbPath = "./rocksdb/Page";
-        protected static RocksDB page_table;
         // url -> pageId
 
-        static {
-            RocksDB.loadLibrary();
-            Options options = new Options();
-            options.setCreateIfMissing(true);
-            try {
-                // drop all data database first to ensure fresh run
-                RocksDB.destroyDB(dbPath, options);
-                page_table = RocksDB.open(options, dbPath);
-            } catch (RocksDBException e) {
+//        static {
+//            RocksDB.loadLibrary();
+//            Options options = new Options();
+//            options.setCreateIfMissing(true);
+//            try {
+//                // drop all data database first to ensure fresh run
+//                RocksDB.destroyDB(dbPath, options);
+//                page_table = RocksDB.open(options, dbPath);
+//            } catch (RocksDBException e) {
+//            }
+//        }
+
+        public static int getTotalNumPage() {
+            int count = 0;
+            RocksIterator iter = page_table.newIterator();
+            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
+                count++;
             }
+            return count;
         }
 
         public static String getPageUrl(String pageId) throws RocksDBException {
@@ -145,20 +190,19 @@ public class Repository {
 
     public static class ForwardIndex {
         private static String dbPath = "./rocksdb/Forward_Index";
-        private static RocksDB forward_index_table;
         // pageId -> HashMap(wordId -> freq)
-
-        static {
-            RocksDB.loadLibrary();
-            Options options = new Options();
-            options.setCreateIfMissing(true);
-            try {
-                // drop all data database first to ensure fresh run
-                RocksDB.destroyDB(dbPath, options);
-                forward_index_table = RocksDB.open(options, dbPath);
-            } catch (RocksDBException e) {
-            }
-        }
+//
+//        static {
+//            RocksDB.loadLibrary();
+//            Options options = new Options();
+//            options.setCreateIfMissing(true);
+//            try {
+//                // drop all data database first to ensure fresh run
+//                RocksDB.destroyDB(dbPath, options);
+//                forward_index_table = RocksDB.open(options, dbPath);
+//            } catch (RocksDBException e) {
+//            }
+//        }
 
         // check if a page is in Forward frequency as a key
         private static boolean pageIn_ForwardIndex(String pageId) {
@@ -228,19 +272,18 @@ public class Repository {
 
     public static class InvertedIndex {
         private static String dbPath = "./rocksdb/Inverted_Index";
-        private static RocksDB inverted_index_table;
 
-        static {
-            RocksDB.loadLibrary();
-            Options options = new Options();
-            options.setCreateIfMissing(true);
-            try {
-                // drop all data database first to ensure fresh run
-                RocksDB.destroyDB(dbPath, options);
-                inverted_index_table = RocksDB.open(options, dbPath);
-            } catch (RocksDBException e) {
-            }
-        }
+//        static {
+//            RocksDB.loadLibrary();
+//            Options options = new Options();
+//            options.setCreateIfMissing(true);
+//            try {
+//                // drop all data database first to ensure fresh run
+//                RocksDB.destroyDB(dbPath, options);
+//                inverted_index_table = RocksDB.open(options, dbPath);
+//            } catch (RocksDBException e) {
+//            }
+//        }
 
         // check if a word is in Inverted Frequency as a key
         public static boolean wordIn_InvertedFrequency(String wordId) {
@@ -282,23 +325,34 @@ public class Repository {
             return inverted;
         }
 
+        public static HashMap<String, List<Integer>> getMap_pageId_wordPosList(String wordId) {
+            byte[] databyte = null;
+
+            try {
+                databyte = inverted_index_table.get(wordId.getBytes());
+            } catch (RocksDBException e) {
+            }
+            if (databyte == null) return new HashMap<>();
+
+            return SerializeUtil.deserialize(databyte);
+        }
+
     }
 
     public static class PageInfo {
         private static String dbPath = "./rocksdb/Page_Info";
-        private static RocksDB pageInfoDb;
-
-        static {
-            RocksDB.loadLibrary();
-            Options options = new Options();
-            options.setCreateIfMissing(true);
-            try {
-                // drop all data database first to ensure fresh run
-                RocksDB.destroyDB(dbPath, options);
-                pageInfoDb = RocksDB.open(options, dbPath);
-            } catch (RocksDBException e) {
-            }
-        }
+//
+//        static {
+//            RocksDB.loadLibrary();
+//            Options options = new Options();
+//            options.setCreateIfMissing(true);
+//            try {
+//                // drop all data database first to ensure fresh run
+//                RocksDB.destroyDB(dbPath, options);
+//                pageInfoDb = RocksDB.open(options, dbPath);
+//            } catch (RocksDBException e) {
+//            }
+//        }
 
         public static void addPageInfo(String pageId, model.PageInfo data) {
             try {

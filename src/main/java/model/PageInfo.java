@@ -1,6 +1,6 @@
 package model;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.HashSet;
 
 public class PageInfo implements Serializable {
