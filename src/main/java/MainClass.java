@@ -19,7 +19,7 @@ public class MainClass {
         System.out.println("Running Crawler...");
         start = Instant.now();
         // crawler.crawlFromRoot(2000);
-        crawler.crawlFromRoot(20000);
+        crawler.crawlFromRoot(2000);
         finish = Instant.now();
         timeElapsed = Duration.between(start, finish).toSeconds();
         System.out.println("Time elapsed crawling pages: " + timeElapsed + " seconds\n");
@@ -31,16 +31,17 @@ public class MainClass {
 
 
 
-        // System.out.println("Writing spider result...");
+        System.out.println("Writing spider result...");
         // ResultWriter.write_spider_result();
-        // System.out.println("Indexed pages written to spider_result.txt\n");
+        ResultWriter.write_BDI_result();
+        System.out.println("Indexed pages written to spider_result.txt\n");
 
-        // System.out.println("Constructing Inverted Index...");
-        // start = Instant.now();
-        // Indexer.construct_invertedIndex();
-        // finish = Instant.now();
-        // timeElapsed = Duration.between(start, finish).toSeconds();
-        // System.out.println("Time elapsed constructing Inverted Index: " + timeElapsed + " seconds\n");
+        System.out.println("Constructing Inverted Index...");
+        start = Instant.now();
+        Indexer.construct_invertedIndex();
+        finish = Instant.now();
+        timeElapsed = Duration.between(start, finish).toSeconds();
+        System.out.println("Time elapsed constructing Inverted Index: " + timeElapsed + " seconds\n");
 
         // System.out.println("Writing Inverted Index...");
         // ResultWriter.write_inverted_file();

@@ -56,14 +56,14 @@ public class Crawler {
         return getPagesFromURL(url, Integer.MAX_VALUE);
     }
 
-    private static List<String> extensionList = List.of(".pdf", "png", ".jpeg", ".jpg", ".mp4", ".mp3", ".doc", ".zip", ".rar", ".ppt", ".pptx", ".docx", ".bib", ".Z", ".ps", ".tgz");
+     private static final List<String> extensionList = List.of(".pdf", "png", ".jpeg", ".jpg", ".mp4", ".mp3", ".doc", ".zip", ".rar", ".ppt", ".pptx", ".docx", ".bib", ".Z", ".ps", ".tgz");
     private boolean validLink(String link) {
-        
-        return 
-            !link.equals("/") && !link.startsWith("../") && !link.contains("ftp") && !link.contains("@") && !link.equals("index.html") 
-            && !link.startsWith("javascript") 
-            && !link.equals(".") && !link.contains("?") && !link.contains("#") && !link.contains("http")
-            && !extensionList.stream().anyMatch(ext -> link.endsWith(ext));
+
+        return !link.equals("/") && !link.startsWith("../") && !link.contains("ftp") && !link.contains("@") && !link.equals("index.html")
+                && !link.startsWith("javascript")
+                && !link.equals(".") && !link.contains("?") && !link.contains("#") && !link.contains("http")
+                && extensionList.stream().noneMatch(link::endsWith)
+                && extensionList.stream().map(String::toUpperCase).noneMatch(link::endsWith);
 
     }
 
@@ -84,7 +84,7 @@ public class Crawler {
         final String currentUrl = url;
         var urlSet = links.stream()
                 .map(link -> link.attr("href"))
-                .filter(link -> validLink(link))
+                .filter(this::validLink)
                 .map(link -> {
                     if (link.startsWith("/")) {
                         return rootURL + link;
@@ -97,11 +97,11 @@ public class Crawler {
                         if (currentUrl.endsWith(".html")) {
                             int mountPoint = currentUrl.lastIndexOf('/');
                             String baseUrl = currentUrl.substring(0, mountPoint+1);
-                            return baseUrl + link;   
+                            return baseUrl + link;
                         } else if (currentUrl.endsWith(".html/")) {
                             int mountPoint = currentUrl.substring(0,currentUrl.length()-1).lastIndexOf('/');
                             String baseUrl = currentUrl.substring(0, mountPoint+1);
-                            return baseUrl + link;   
+                            return baseUrl + link;
                         } else {
                             char lastChar = currentUrl.charAt(currentUrl.length()-1);
                             return currentUrl + (lastChar=='/' ? "" : '/') + link;
@@ -134,7 +134,7 @@ public class Crawler {
                 }
             }
 
-            // crawlPage(currentURL, pagesOnURL);
+            crawlPage(currentURL, pagesOnURL);
             pageChildren.put(currentURL, pagesOnURL);
             currentIndex++;
             if (currentIndex % 500 == 0) {

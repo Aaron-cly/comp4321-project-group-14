@@ -15,11 +15,30 @@ import java.util.stream.Collectors;
 
 public class ResultWriter {
 
+    public static void write_BDI_result() {
+        try (var writer = new BufferedWriter(new FileWriter("spider_result.txt"))) { 
+            var pageId = String.valueOf("http://www.cse.ust.hk/BDI/".hashCode());
+            var pageInfo = Repository.PageInfo.getPageInfo(pageId);
+            writer.append(pageInfo.pgTitle).append(String.valueOf('\n'));
+            for (var link : pageInfo.childLinks) {
+                writer.append(link).append('\n');
+            }
+
+            writer.append('\n');
+
+        }catch(Exception e) {}
+
+    }
+
     public static void write_spider_result() {
         try (var writer = new BufferedWriter(new FileWriter("spider_result.txt"))) {
             writer.write("");
             var map = Repository.Page.getMap_url_pageId();
+            int printNum = 100;
+            int printed = 0;
             for (Map.Entry<String, String> entry : map.entrySet()) {
+                if (printed++ >= printNum) break;
+
                 var pageInfo = Repository.PageInfo.getPageInfo(entry.getValue());
                 if (pageInfo == null) continue;
 
