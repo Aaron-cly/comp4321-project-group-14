@@ -319,5 +319,16 @@ public class Repository {
 
             return pageInfo;
         }
+
+        public static HashMap<String, model.PageInfo> getMap_pageId_pageInfo() {
+            var map = new HashMap<String, model.PageInfo>();
+
+            RocksIterator iter = pageInfoDb.newIterator();
+            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
+                model.PageInfo pageInfo = SerializeUtil.deserialize(iter.value());
+                map.put(new String(iter.key()), pageInfo);
+            }
+            return map;
+        }
     }
 }
