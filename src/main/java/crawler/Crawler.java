@@ -56,6 +56,17 @@ public class Crawler {
         return getPagesFromURL(url, Integer.MAX_VALUE);
     }
 
+    private static List<String> extensionList = List.of(".pdf", "png", ".jpeg", ".jpg", ".mp4", ".mp3", ".doc", ".zip", ".rar", ".ppt", ".pptx", ".docx", ".bib", ".Z", ".ps", ".tgz");
+    private boolean validLink(String link) {
+        
+        return 
+            !link.equals("/") && !link.startsWith("../") && !link.contains("ftp") && !link.contains("@") && !link.equals("index.html") 
+            && !link.startsWith("javascript") 
+            && !link.equals(".") && !link.contains("?") && !link.contains("#") && !link.contains("http")
+            && !extensionList.stream().anyMatch(ext -> link.endsWith(ext));
+
+    }
+
     // obtain all pages embedded in html of a URL
     private HashSet<String> getPagesFromURL(String url, int numPages) throws IOException {
         Document doc = null;
@@ -66,17 +77,37 @@ public class Crawler {
         } catch (IOException e) {
         }
 
-        if (res == null) return new HashSet<>();
+        if (doc == null) return new HashSet<>();
 
         Elements links = doc.select("a[href]"); // get all anchors with href attr
 
-        final String strippedUrl = url.charAt(url.length() - 1) == '/' ? url.substring(0, url.length() - 1) : url;
+        final String currentUrl = url;
         var urlSet = links.stream()
                 .map(link -> link.attr("href"))
-                // .filter(link -> link.startsWith("/") && !link.equals("/"))  // only needs relative urls since they are on the root link
-                // .map(link -> rootURL + link)  // map to complete url
-                .filter(link -> link.startsWith("https://cse.hkust.edu.hk/") || link.startsWith("/"))
-                .map(link -> link.charAt(0)=='/' ? rootURL+link : link)
+                .filter(link -> validLink(link))
+                .map(link -> {
+                    if (link.startsWith("/")) {
+                        return rootURL + link;
+                    } else if (link.startsWith("./")){
+                        int mountPoint = currentUrl.lastIndexOf('/');
+                        String baseUrl = currentUrl.substring(0, mountPoint+1);
+
+                        return baseUrl + link.substring(2);
+                    } else {
+                        if (currentUrl.endsWith(".html")) {
+                            int mountPoint = currentUrl.lastIndexOf('/');
+                            String baseUrl = currentUrl.substring(0, mountPoint+1);
+                            return baseUrl + link;   
+                        } else if (currentUrl.endsWith(".html/")) {
+                            int mountPoint = currentUrl.substring(0,currentUrl.length()-1).lastIndexOf('/');
+                            String baseUrl = currentUrl.substring(0, mountPoint+1);
+                            return baseUrl + link;   
+                        } else {
+                            char lastChar = currentUrl.charAt(currentUrl.length()-1);
+                            return currentUrl + (lastChar=='/' ? "" : '/') + link;
+                        }
+                    }
+                })
                 .collect(Collectors.toCollection(HashSet::new));
 
         return urlSet.stream().limit(numPages).collect(Collectors.toCollection(HashSet::new));
@@ -102,7 +133,6 @@ public class Crawler {
                     this.urlList.add(page);
                 }
             }
-            // this.urlList.addAll(pagesOnURL);
 
             // crawlPage(currentURL, pagesOnURL);
             pageChildren.put(currentURL, pagesOnURL);
@@ -115,36 +145,31 @@ public class Crawler {
 
     private void crawlPage(String url, HashSet<String> pagesOnURL) throws IOException {
 
-        // Document doc = null;
-        // Connection.Response res = null;
-        // try {
-        //     res = getResponse(url);
-        //     doc = res.parse();
-        // } catch (IOException e) {
-        // }
-        // if (doc == null) return;
+        Document doc = null;
+        Connection.Response res = null;
+        try {
+            res = getResponse(url);
+            doc = res.parse();
+        } catch (IOException e) {
+        }
+        if (doc == null) return;
 
-        // String lastModifiedDate = getLastModifiedDate(res, doc);
-        // var pagesOnURL = getPagesFromURL(url);
+        String lastModifiedDate = getLastModifiedDate(res, doc);
 
-        // // index the current page
-        // var map_word_posList = consolidatePositions(extractWords(doc));
+        // index the current page
+        var map_word_posList = consolidatePositions(extractWords(doc));
 
-        // // for page size
-        // var connection = new URL(url).openConnection();
-        // connection.getContentLength();
+        // for page size
+        var connection = new URL(url).openConnection();
+        connection.getContentLength();
 
-        // PageInfo pageInfo = new PageInfo(doc.title(), lastModifiedDate,
-        //         pagesOnURL,
-        //         String.valueOf(connection.getContentLength())
-        // );
-        PageInfo pageInfo = new PageInfo("", "",
+        PageInfo pageInfo = new PageInfo(doc.title(), lastModifiedDate,
                 pagesOnURL,
-                ""
+                String.valueOf(connection.getContentLength())
         );
 
         indexer.insert_page(url);
-        // indexer.update_ForwardFrequency(url, map_word_posList);
+        indexer.update_ForwardFrequency(url, map_word_posList);
         indexer.add_pageInfo(url, pageInfo);
     }
 

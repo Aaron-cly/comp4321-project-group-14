@@ -83,7 +83,7 @@ public class ResultWriter {
                 var childrenList = map.get(page);
 
                 writer.append(page)
-                        .append(": \n\n");
+                        .append("> \n\n");
                 for (String child: childrenList) {
                     writer.append(child).append("\n");
                 }

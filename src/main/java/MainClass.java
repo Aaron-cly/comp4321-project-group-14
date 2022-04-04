@@ -19,7 +19,7 @@ public class MainClass {
         System.out.println("Running Crawler...");
         start = Instant.now();
         // crawler.crawlFromRoot(2000);
-        crawler.crawlFromRoot();
+        crawler.crawlFromRoot(20000);
         finish = Instant.now();
         timeElapsed = Duration.between(start, finish).toSeconds();
         System.out.println("Time elapsed crawling pages: " + timeElapsed + " seconds\n");
