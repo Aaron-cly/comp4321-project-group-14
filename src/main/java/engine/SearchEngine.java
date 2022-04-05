@@ -14,7 +14,6 @@ public class SearchEngine {
 
     // in here, a term means a word or a phrase
     public static List<RetrievedDocument> processQuery(String query) throws RocksDBException {
-
         String[] terms = parseQuery(query);
         HashMap<String, HashMap<String, Integer>> termFreq = new HashMap<>(); // map term -> (map pageId -> freq)
 
@@ -137,7 +136,6 @@ public class SearchEngine {
         return IDF;
     }
 
-
     protected static int[] computeDF(String[] terms, HashMap<String, HashMap<String, Integer>> termFreq) {
         int[] DF = new int[terms.length];
         for (int i = 0; i < terms.length; i++) {
@@ -188,7 +186,6 @@ public class SearchEngine {
 
     // returns map(pageId -> tf of a single word)
     public static HashMap<String, Integer> computeTermFreq_word(String word) {
-//        String wordId = String.valueOf(word.hashCode());
         String wordId = Repository.Word.getWordId(word);
 
         var termPos_word = Repository.InvertedIndex.getMap_pageId_wordPosList(wordId);
