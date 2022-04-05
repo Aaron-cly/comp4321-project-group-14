@@ -152,6 +152,7 @@ public class Crawler {
 
         // index the current page
         var map_word_posList = consolidatePositions(extractWords(doc));
+        var max_termFreq = getMax_termFreq(map_word_posList);
 
         // for page size
         var connection = new URL(url).openConnection();
@@ -159,12 +160,21 @@ public class Crawler {
 
         PageInfo pageInfo = new PageInfo(doc.title(), lastModifiedDate,
                 pagesOnURL,
-                String.valueOf(connection.getContentLength())
+                String.valueOf(connection.getContentLength()),
+                max_termFreq
         );
 
         indexer.insert_page(url);
-        indexer.update_ForwardFrequency(url, map_word_posList);
+        indexer.update_ForwardIndex(url, map_word_posList);
         indexer.add_pageInfo(url, pageInfo);
+    }
+
+    public int getMax_termFreq(HashMap<String, List<Integer>> word_posList) {
+        int max = 0;
+        for (var posList : word_posList.values()) {
+            max = Math.max(max, posList.size());
+        }
+        return max;
     }
 
     // extract all words from a page

@@ -8,12 +8,14 @@ public class PageInfo implements Serializable {
     public String lastModifiedDate;
     public HashSet<String> childLinks;
     public String pageSize;
+    public int max_termFreq;
 
-    public PageInfo(String pgTitle, String lastModifiedData, HashSet<String> childLinks, String pageSize) {
+    public PageInfo(String pgTitle, String lastModifiedData, HashSet<String> childLinks, String pageSize, int max_termFreq) {
         this.pgTitle = pgTitle;
         this.lastModifiedDate = lastModifiedData;
         this.childLinks = childLinks;
         this.pageSize = pageSize;
+        this.max_termFreq = max_termFreq;
     }
 
     public static byte[] convertToByteArray(PageInfo data) {
@@ -29,7 +31,8 @@ public class PageInfo implements Serializable {
         return "PageInfo {" +
                 "pgTitle='" + pgTitle + '\'' +
                 ", lastModifiedData=" + lastModifiedDate +
-                ", childLinks=" + childLinks +
+                ", childLinks= " + childLinks +
+                ", max_termFreq= " + max_termFreq +
                 '}';
     }
 

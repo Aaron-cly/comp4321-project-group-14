@@ -20,15 +20,15 @@ public class Indexer {
         return pageId;
     }
 
-    public void update_ForwardFrequency(String url, HashMap<String, List<Integer>> wordPositions) {
+    public void update_ForwardIndex(String url, HashMap<String, List<Integer>> wordPositions) {
         // replace the word in key with corresponding wordId
-        HashMap<String, List<Integer>> map_wordId_freq = new HashMap<>();
+        HashMap<String, List<Integer>> forwardIndex_page = new HashMap<>();
         try {
             for (String word : wordPositions.keySet()) {
                 String wordId = Repository.Word.insertWord(word);
-                map_wordId_freq.put(wordId, wordPositions.get(word));
+                forwardIndex_page.put(wordId, wordPositions.get(word));
             }
-            Repository.ForwardIndex.updateUrl_wordPositions(url, map_wordId_freq);
+            Repository.ForwardIndex.updateUrl_wordPositions(url, forwardIndex_page);
         } catch (RocksDBException e) {
             e.printStackTrace();
         }
