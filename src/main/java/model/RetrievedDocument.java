@@ -21,7 +21,7 @@ public class RetrievedDocument extends PageInfo {
 
     @Override
     public String toString() {
-        return String.format("%,.2f", score) + "\t" + pageTitle + '\n' +
+        return String.format("%.2f", score) + "\t" + pageTitle+
                 "\t\t" + url + '\n' +
                 "\t\t" + lastModifiedDate + ", " + pageSize + '\n' +
                 "\t\t" + keyword_freq + '\n' +
@@ -29,7 +29,7 @@ public class RetrievedDocument extends PageInfo {
                 "\t\t" + parentLinks.stream().map(url -> url + '\n') +
                 "\tChild Links" + '\n' +
                 "\t\t" + childLinks.stream().map(url -> url + '\n') +
-                "=======================================================" ;
+                "=======================================================\n" ;
     }
 
 }

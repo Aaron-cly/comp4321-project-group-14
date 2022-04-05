@@ -39,8 +39,7 @@ public class SearchEngine {
         }
 
         // IDF
-        int totalNum_pages = Repository.Page.getTotalNumPage();
-        var IDF = computeIDF(DF, totalNum_pages);
+        var IDF = computeIDF(DF);
 
         // Page vectors
         HashMap<String, double[]> doc_vectors = compute_docVectors(terms, termFreq, candidatePageSet, IDF);
@@ -127,7 +126,9 @@ public class SearchEngine {
         return page_vectors;
     }
 
-    protected static double[] computeIDF(int[] DF, int totalNum_pages) {
+    protected static double[] computeIDF(int[] DF) {
+        int totalNum_pages = Repository.Page.getTotalNumPage();
+
         double[] IDF = new double[DF.length];
         for (int i = 0; i < DF.length; i++) {
             double idf = (Math.log(totalNum_pages) - Math.log(DF[i])) / Math.log(2);
@@ -244,7 +245,9 @@ public class SearchEngine {
                 positionList.add(new HashSet<>(posList));
             }
             HashSet<Integer> posIntersection = getIntersection(positionList);
-            map_pageId_freq.put(pageId, posIntersection.size());
+            if (!posIntersection.isEmpty()) {
+                map_pageId_freq.put(pageId, posIntersection.size());
+            }
         }
 
         return map_pageId_freq;
