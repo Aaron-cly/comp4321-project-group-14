@@ -12,8 +12,8 @@ public class MainClass {
     static String URL = "http://www.cse.ust.hk";
 
     public static void main(String[] args) throws RocksDBException, IOException {
-//        runCrawler();
-        testSearchEngine();
+        runCrawler();
+//        testSearchEngine();
     }
 
     public static void runCrawler() throws IOException {
