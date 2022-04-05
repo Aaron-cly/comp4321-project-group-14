@@ -1,19 +1,24 @@
 package model;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.HashSet;
 
 public class PageInfo implements Serializable {
-    public String pgTitle;
+    public String pageTitle;
+    public String url;
     public String lastModifiedDate;
     public HashSet<String> childLinks;
     public String pageSize;
+    public int max_termFreq;
 
-    public PageInfo(String pgTitle, String lastModifiedData, HashSet<String> childLinks, String pageSize) {
-        this.pgTitle = pgTitle;
+
+    public PageInfo(String pageTitle, String url, String lastModifiedData, HashSet<String> childLinks, String pageSize, int max_termFreq) {
+        this.pageTitle = pageTitle;
+        this.url = url;
         this.lastModifiedDate = lastModifiedData;
         this.childLinks = childLinks;
         this.pageSize = pageSize;
+        this.max_termFreq = max_termFreq;
     }
 
     public static byte[] convertToByteArray(PageInfo data) {
@@ -27,9 +32,11 @@ public class PageInfo implements Serializable {
     @Override
     public String toString() {
         return "PageInfo {" +
-                "pgTitle='" + pgTitle + '\'' +
+                "pgTitle='" + pageTitle + '\'' +
+                "url= " + url +
                 ", lastModifiedData=" + lastModifiedDate +
-                ", childLinks=" + childLinks +
+                ", childLinks= " + childLinks +
+                ", max_termFreq= " + max_termFreq +
                 '}';
     }
 
