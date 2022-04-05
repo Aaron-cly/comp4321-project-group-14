@@ -25,7 +25,7 @@ public class ResultWriter {
                 var pageInfo = map_pageId_pageInfo.get(pageId);
                 if (pageInfo == null) continue;
 
-                writer.append(pageInfo.pgTitle).append(String.valueOf('\n'));
+                writer.append(pageInfo.pageTitle).append(String.valueOf('\n'));
                 writer.append(new String(url)).append(String.valueOf('\n'));
                 writer.append(pageInfo.lastModifiedDate).append(", ")
                         .append(pageInfo.pageSize).append('\n');

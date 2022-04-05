@@ -1,5 +1,7 @@
 package engine;
 
+import model.PageInfo;
+import model.RetrievedDocument;
 import org.rocksdb.RocksDBException;
 import repository.Repository;
 
@@ -8,9 +10,10 @@ import java.util.stream.Collectors;
 
 public class SearchEngine {
     private static char TERM_INDICATOR = '\"';
+    private static int OUTPUT_NUM = 50;
 
     // in here, a term means a word or a phrase
-    public static List<String> processQuery(String query) throws RocksDBException {
+    public static List<RetrievedDocument> processQuery(String query) throws RocksDBException {
 
         String[] terms = parseQuery(query);
         HashMap<String, HashMap<String, Integer>> termFreq = new HashMap<>(); // map term -> (map pageId -> freq)
@@ -26,7 +29,7 @@ public class SearchEngine {
         }
 
         double[] query_vector = new double[terms.length];
-        Arrays.fill(query_vector, 1.0);
+        Arrays.fill(query_vector, 1.0);     // assume all terms have equal weight
 
         var DF = computeDF(terms, termFreq);
 
@@ -40,25 +43,69 @@ public class SearchEngine {
         var IDF = computeIDF(DF, totalNum_pages);
 
         // Page vectors
-        HashMap<String, double[]> page_vector = compute_pageVectors(terms, termFreq, candidatePageSet, IDF);
+        HashMap<String, double[]> doc_vectors = compute_docVectors(terms, termFreq, candidatePageSet, IDF);
 
-        // cosine sim
-//        HashMap<String, Double> cosSim = new HashMap<>();
-//        double queryLength = Math.sqrt(query_vector.stream().reduce(0.0, (sum, w) -> sum + Math.pow(w,2)));
-//        for (String page : candidatePageSet) {
-//            double inner = page_vector.get(page).stream().reduce(0.0, Double::sum);
-//            double pageLength = Math.sqrt(page_vector.get(page).stream().reduce(0.0, (sum, w) -> sum + Math.pow(w,2)));
-//
-//
-//        }
-//
-        return null;
+        // cosine sim scores
+        HashMap<String, Double> scores = compute_scores(doc_vectors, query_vector);
 
+        return constructOutput(scores, termFreq);
     }
 
-//    private static cosSim
+    protected static List<RetrievedDocument> constructOutput(HashMap<String, Double> scores, HashMap<String, HashMap<String, Integer>> inverted) throws RocksDBException {
+        var sortedDoc = scores.keySet().stream().sorted(Comparator.comparing(scores::get)).collect(Collectors.toList());
+        Collections.reverse(sortedDoc);
+        if (sortedDoc.size() > 50) {
+            sortedDoc = sortedDoc.subList(0, OUTPUT_NUM);
+        }
 
-    protected static HashMap<String, double[]> compute_pageVectors(String[] terms, HashMap<String, HashMap<String, Integer>> termFreq, HashSet<String> candidatePageSet, double[] IDF) throws RocksDBException {
+        List<RetrievedDocument> outputList = new ArrayList<>();
+        for (var doc : sortedDoc) {
+            PageInfo pageInfo = Repository.PageInfo.getPageInfo(doc);
+            HashSet<String> parentLinks = new HashSet<>();  // need to store it in a new DB file
+
+            HashMap<String, Integer> term_freq_doc = new HashMap<>();
+            for (String term : inverted.keySet()) {
+                term_freq_doc.put(term, inverted.get(term).getOrDefault(doc, 0));
+            }
+
+            RetrievedDocument outputDoc = new RetrievedDocument(pageInfo, scores.get(doc), parentLinks, term_freq_doc);
+            outputList.add(outputDoc);
+        }
+
+        return outputList;
+    }
+
+    protected static HashMap<String, Double> compute_scores(HashMap<String, double[]> page_vectors, double[] query_vector) {
+        HashMap<String, Double> pages_score = new HashMap<>();
+        double query_length = compute_vectorLength(query_vector);
+
+        for (String page : page_vectors.keySet()) {
+            var pageVec = page_vectors.get(page);
+
+            double inner = 0;
+            for (int i = 0; i < query_vector.length; i++) {
+                var query_weight = query_vector[i];
+                var doc_term_weight = pageVec[i];
+                inner += query_weight * doc_term_weight;
+            }
+
+            double doc_length = compute_vectorLength(pageVec);
+
+            double score = inner / (doc_length * query_length);
+            pages_score.put(page, score);
+        }
+        return pages_score;
+    }
+
+    protected static double compute_vectorLength(double[] vector) {
+        double length = 0;
+        for (var weight : vector) {
+            length += Math.pow(weight, 2);
+        }
+        return Math.sqrt(length);
+    }
+
+    protected static HashMap<String, double[]> compute_docVectors(String[] terms, HashMap<String, HashMap<String, Integer>> termFreq, HashSet<String> candidatePageSet, double[] IDF) throws RocksDBException {
         HashMap<String, double[]> page_vectors = new HashMap<>();
         for (String page : candidatePageSet) {
             double[] vector = new double[terms.length];
@@ -70,13 +117,8 @@ public class SearchEngine {
                     continue;
                 }
 
-                // compute the term weight in this page
-                int tf_max = 0;
-//                var termFreqInPage = Repository.ForwardIndex.getMap_WordId_Positions(page);
-//                for (var freq : termFreqInPage.values()) {
-//                    tf_max = Math.max(freq.stream().max(Integer::compareTo).orElse(0), tf_max);
-//                }
-                tf_max = 1;
+                int tf_max = Repository.PageInfo.getPageInfo(page).max_termFreq;
+
                 double weight = (termFreq.get(term).get(page) / (double) tf_max) * IDF[termIndex];
                 vector[termIndex] = weight;
             }

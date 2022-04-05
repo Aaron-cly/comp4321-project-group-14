@@ -1,5 +1,6 @@
 package engine;
 
+import model.PageInfo;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,13 +9,10 @@ import org.mockito.Mockito;
 import org.rocksdb.RocksDBException;
 import repository.Repository;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SearchEngineTest {
     @Test
@@ -89,13 +87,41 @@ public class SearchEngineTest {
         invertedFile.put(w3_hash, pageFreq_word3);
     }
 
+    static HashMap<String, HashMap<String, Integer>> get_termFreq(String query) {
+        HashMap<String, HashMap<String, Integer>> termFreq = new HashMap<>();
+
+        try (MockedStatic<Repository.Word> WORD = Mockito.mockStatic(Repository.Word.class);
+             MockedStatic<Repository.InvertedIndex> INVERTED = Mockito.mockStatic(Repository.InvertedIndex.class)
+        ) {
+            WORD.when(() -> Repository.Word.getWordId(word1)).thenReturn(w1_hash);
+            WORD.when(() -> Repository.Word.getWordId(word2)).thenReturn(w2_hash);
+            WORD.when(() -> Repository.Word.getWordId(word3)).thenReturn(w3_hash);
+            INVERTED.when(() -> Repository.InvertedIndex.getMap_pageId_wordPosList(w1_hash)).thenReturn(invertedFile.get(w1_hash));
+            INVERTED.when(() -> Repository.InvertedIndex.getMap_pageId_wordPosList(w2_hash)).thenReturn(invertedFile.get(w2_hash));
+            INVERTED.when(() -> Repository.InvertedIndex.getMap_pageId_wordPosList(w3_hash)).thenReturn(invertedFile.get(w3_hash));
+
+            String[] terms = SearchEngine.parseQuery(query);
+
+            for (String term : terms) {
+                HashMap<String, Integer> freq;
+                if (!term.contains(" ")) {      // actually a single word
+                    freq = SearchEngine.computeTermFreq_word(term);
+                } else {                        // a phrase containing multiple keywords
+                    freq = SearchEngine.computeTermFreq_phrase(term);
+                }
+                termFreq.put(term, freq);
+            }
+
+        }
+        return termFreq;
+    }
+
     @Test
     void test_computeTermFreq() {
 
         String queryPhrase = "word1 word2 word3";
 
-        try (MockedStatic<Repository.Page> PAGE = Mockito.mockStatic(Repository.Page.class);
-             MockedStatic<Repository.Word> WORD = Mockito.mockStatic(Repository.Word.class);
+        try (MockedStatic<Repository.Word> WORD = Mockito.mockStatic(Repository.Word.class);
              MockedStatic<Repository.InvertedIndex> INVERTED = Mockito.mockStatic(Repository.InvertedIndex.class)
         ) {
             WORD.when(() -> Repository.Word.getWordId(word1)).thenReturn(w1_hash);
@@ -182,12 +208,95 @@ public class SearchEngineTest {
         var DF = SearchEngine.computeDF(terms, termFreq);
         var IDF = SearchEngine.computeIDF(DF, TOTAL_NUM_DOCS);
 
-        System.out.println();
-        var vectors = SearchEngine.compute_pageVectors(terms, termFreq, candidatePageSet, IDF);
-        for (String page : vectors.keySet()) {
-            System.out.println(page + " " + Arrays.toString(vectors.get(page)));
+        try (
+                MockedStatic<Repository.PageInfo> PAGEINFO = Mockito.mockStatic(Repository.PageInfo.class)
+        ) {
+            PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d1_hash)).thenReturn(new PageInfo("", "", "", new HashSet<>(), "", 4));
+            PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d2_hash)).thenReturn(new PageInfo("", "", "", new HashSet<>(), "", 3));
+            PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d3_hash)).thenReturn(new PageInfo("", "", "", new HashSet<>(), "", 5));
+            PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d4_hash)).thenReturn(new PageInfo("", "", "", new HashSet<>(), "", 3));
+
+
+            double epsilon = 0.001d;
+            HashMap<String, double[]> expected = new HashMap<>();
+
+            double[] d1 = {0.415, 0.311, 0};
+            double[] d2 = {0.415, 0, 0};
+            double[] d3 = {0.249, 0.415, 0};
+            double[] d4 = {0, 0.415, 0};
+            expected.put(d1_hash, d1);
+            expected.put(d2_hash, d2);
+            expected.put(d3_hash, d3);
+            expected.put(d4_hash, d4);
+
+            var vectors = SearchEngine.compute_docVectors(terms, termFreq, candidatePageSet, IDF);
+            for (String page : vectors.keySet()) {
+                for (int i = 0; i < terms.length; i++) {
+                    assertTrue(Math.abs(expected.get(page)[i] - vectors.get(page)[i]) < epsilon);
+                }
+            }
+
         }
     }
 
+    @Test
+    void test_compute_scores() {
+        double[] query_vector = {1, 1, 1};
 
+        HashMap<String, double[]> doc_vectors = new HashMap<>();
+        double[] d1 = {0.415, 0.311, 0};
+        double[] d2 = {0.415, 0, 0};
+        double[] d3 = {0.249, 0.415, 0};
+        double[] d4 = {0, 0.415, 0};
+        doc_vectors.put(d1_hash, d1);
+        doc_vectors.put(d2_hash, d2);
+        doc_vectors.put(d3_hash, d3);
+        doc_vectors.put(d4_hash, d4);
+
+
+        HashMap<String, Double> expected = new HashMap<>();
+        expected.put(d1_hash, 0.808);
+        expected.put(d2_hash, 0.577);
+        expected.put(d3_hash, 0.792);
+        expected.put(d4_hash, 0.577);
+
+        double epsilon = 0.001d;
+
+        var scores = SearchEngine.compute_scores(doc_vectors, query_vector);
+        for (String page : doc_vectors.keySet()) {
+            for (int i = 0; i < query_vector.length; i++) {
+                assertTrue(Math.abs(expected.get(page) - scores.get(page)) < epsilon);
+            }
+        }
+    }
+
+    @Test
+    void test_construct_output() throws RocksDBException {
+        HashMap<String, Double> scores = new HashMap<>();
+        scores.put(d1_hash, 0.808);
+        scores.put(d2_hash, 0.577);
+        scores.put(d3_hash, 0.792);
+        scores.put(d4_hash, 0.578);
+
+        String query = "word1 word2 word3";
+        var termFreq = get_termFreq(query);
+
+        try (
+                MockedStatic<Repository.PageInfo> PAGEINFO = Mockito.mockStatic(Repository.PageInfo.class)
+        ) {
+            PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d1_hash)).thenReturn(new PageInfo("", d1, "", new HashSet<>(), "", 4));
+            PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d2_hash)).thenReturn(new PageInfo("", d2, "", new HashSet<>(), "", 3));
+            PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d3_hash)).thenReturn(new PageInfo("", d3, "", new HashSet<>(), "", 5));
+            PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d4_hash)).thenReturn(new PageInfo("", d4, "", new HashSet<>(), "", 3));
+
+
+            var outputList = SearchEngine.constructOutput(scores, termFreq);
+            var expectedOrder = List.of(d1, d3, d4, d2);
+
+            assertEquals(expectedOrder.size(), outputList.size());
+            for (int i = 0; i < outputList.size(); i++) {
+                assertEquals(expectedOrder.get(i), outputList.get(i).url);
+            }
+        }
+    }
 }

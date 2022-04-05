@@ -158,7 +158,7 @@ public class Crawler {
         var connection = new URL(url).openConnection();
         connection.getContentLength();
 
-        PageInfo pageInfo = new PageInfo(doc.title(), lastModifiedDate,
+        PageInfo pageInfo = new PageInfo(doc.title(), url, lastModifiedDate,
                 pagesOnURL,
                 String.valueOf(connection.getContentLength()),
                 max_termFreq
