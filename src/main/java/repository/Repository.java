@@ -1,5 +1,6 @@
 package repository;
 
+import model.PageInfo;
 import model.SerializeUtil;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
@@ -295,7 +296,7 @@ public class Repository {
 
         public static void addPageInfo(String pageId, model.PageInfo data) {
             try {
-                pageInfoDB.put(pageId.getBytes(), model.PageInfo.convertToByteArray(data));
+                pageInfoDB.put(pageId.getBytes(), SerializeUtil.serialize(data));
             } catch (RocksDBException e) {
                 System.out.println("Could not save meta information of page");
                 e.printStackTrace();
@@ -306,8 +307,10 @@ public class Repository {
             model.PageInfo pageInfo = null;
             try {
                 var bytes = pageInfoDB.get(pageId.getBytes());
-                pageInfo = model.PageInfo.deserialize(bytes);
+                pageInfo = SerializeUtil.deserialize(bytes);
             } catch (Exception e) {
+                System.out.println("Error getting PageInfo for pageId " + pageId);
+                e.printStackTrace();
             }
 
             return pageInfo;

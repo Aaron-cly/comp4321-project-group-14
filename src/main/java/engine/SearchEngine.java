@@ -84,12 +84,16 @@ public class SearchEngine {
             for (int i = 0; i < query_vector.length; i++) {
                 var query_weight = query_vector[i];
                 var doc_term_weight = pageVec[i];
+
                 inner += query_weight * doc_term_weight;
             }
 
             double doc_length = compute_vectorLength(pageVec);
 
-            double score = inner / (doc_length * query_length);
+            double score = (doc_length==0)
+                    ?   0
+                    :   inner / (doc_length * query_length);
+
             pages_score.put(page, score);
         }
         return pages_score;

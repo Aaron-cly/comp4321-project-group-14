@@ -2,6 +2,7 @@ package model;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 public class RetrievedDocument extends PageInfo {
     public double score;
@@ -21,15 +22,15 @@ public class RetrievedDocument extends PageInfo {
 
     @Override
     public String toString() {
-        return String.format("%.2f", score) + "\t" + pageTitle+
+        return String.format("%.2f", score) + "\t" + pageTitle + '\n' +
                 "\t\t" + url + '\n' +
                 "\t\t" + lastModifiedDate + ", " + pageSize + '\n' +
                 "\t\t" + keyword_freq + '\n' +
-                "\tParent Links" + '\n' +
-                "\t\t" + parentLinks.stream().map(url -> url + '\n') +
-                "\tChild Links" + '\n' +
-                "\t\t" + childLinks.stream().map(url -> url + '\n') +
-                "=======================================================\n" ;
+                "\t\tParent Links" + '\n' +
+                "\t\t" + parentLinks.toString() + '\n' +
+                "\t\tChild Links" + '\n' +
+                "\t\t" + childLinks.toString() + '\n' +
+                "\t=======================================================\n" ;
     }
 
 }

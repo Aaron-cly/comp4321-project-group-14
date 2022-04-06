@@ -51,10 +51,6 @@ public class ResultWriter {
         } catch (RocksDBException e) {
             throw new RuntimeException(e);
         }
-//        catch (RocksDBException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
     public static void write_inverted_file() {
@@ -70,6 +66,18 @@ public class ResultWriter {
                         .append(map_pageId_posList.toString())
                         .append('\n');
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void write_queryResult(List<RetrievedDocument> resultList) {
+        try (var writer = new BufferedWriter(new FileWriter("query_result.txt"))) {
+//            for (int i = 0; i < resultList.size(); i++) {
+//                var page = resultList.get(i);
+//
+//            }
+            writer.append(resultList.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

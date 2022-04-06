@@ -1,4 +1,5 @@
 import crawler.Crawler;
+import engine.SearchEngine;
 import indexer.Indexer;
 import model.ResultWriter;
 import org.rocksdb.RocksDBException;
@@ -12,8 +13,8 @@ public class MainClass {
     static String URL = "http://www.cse.ust.hk";
 
     public static void main(String[] args) throws RocksDBException, IOException {
-        runCrawler();
-//        testSearchEngine();
+//        runCrawler();
+        runQuery("challenges");
     }
 
     public static void runCrawler() throws IOException {
@@ -61,12 +62,11 @@ public class MainClass {
         Repository.closeAllConnections();
     }
 
-    public static void testSearchEngine() {
+    public static void runQuery(String query) throws RocksDBException {
         Repository.openConnections();
 
-        String query = "admissions";
-//        var map = SearchEngine.computeMap_pageId_wordFrequency(query);
-//        System.out.println(map);
+        var resultList = SearchEngine.processQuery(query);
+        ResultWriter.write_queryResult(resultList);
 
         Repository.closeAllConnections();
     }
