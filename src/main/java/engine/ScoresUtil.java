@@ -7,6 +7,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ScoresUtil {
+
+    private static <E> HashSet<E> getIntersection(List<Set<E>> setList) {
+        var intersection = new HashSet<E>();
+        for (var set : setList) {
+            if (intersection.isEmpty()) {
+                intersection.addAll(set);
+            } else {
+                intersection.retainAll(set);
+            }
+        }
+        return intersection;
+    }
+
+    public static String[] getWords_in_phrase(String phrase) {
+        return phrase.split(" ");
+    }
+
     public static class Content {
         protected static HashMap<String, Double> compute_scoresOnContent(String[] queryTerms, HashMap<String, HashMap<String, Integer>> termFreq) throws RocksDBException {
             double[] query_vector = new double[queryTerms.length];
@@ -171,26 +188,66 @@ public class ScoresUtil {
 
             return map_pageId_freq;
         }
-
-        private static <E> HashSet<E> getIntersection(List<Set<E>> setList) {
-            var intersection = new HashSet<E>();
-            for (var set : setList) {
-                if (intersection.isEmpty()) {
-                    intersection.addAll(set);
-                } else {
-                    intersection.retainAll(set);
-                }
-            }
-            return intersection;
-        }
-
-        public static String[] getWords_in_phrase(String phrase) {
-            return phrase.split(" ");
-        }
     }
 
     public static class Title {
 
-    }
+        protected static HashMap<String, Double> compute_scoresOnTitle(String[] queryTerms) throws RocksDBException {
+            HashMap<String, Double> scores = new HashMap<>();  // score of a page title is the number matches of query terms in the title
 
+            for (var term : queryTerms) {
+                HashSet<String> pageSet;
+                if (term.contains(" ")) {
+                    pageSet = get_pagesWithPhraseInTitle(term);
+                } else {
+                    pageSet = get_pagesWithWordInTitle(term);
+                }
+                for (var pageId : pageSet) {
+                    var currentScore = scores.getOrDefault(pageId, 0.0);
+                    scores.put(pageId, currentScore + 1);
+                }
+            }
+            return scores;
+        }
+
+        protected static HashSet<String> get_pagesWithWordInTitle(String word) {
+            var wordId = Repository.Word.getWordId(word);
+            var map_pageId_posList = Repository.InvertedIndex_Title.getMap_pageId_wordPosList(wordId);
+            return (new HashSet<String>(map_pageId_posList.keySet()));
+        }
+
+        protected static HashSet<String> get_pagesWithPhraseInTitle(String phrase) throws RocksDBException {
+            // a different approach from page content because title is very concise
+            var wordArr = getWords_in_phrase(phrase);
+            HashSet<String> return_pageSet = new HashSet<>();
+            HashSet<String> candidate_pageSet = new HashSet<>();
+
+            for (var word : wordArr) {      // get candidate pages
+                var wordId = Repository.Word.getWordId(word);
+                var map_pageId_posList = Repository.InvertedIndex_Title.getMap_pageId_wordPosList(wordId);
+                candidate_pageSet.addAll(map_pageId_posList.keySet());
+            }
+
+            for (var pageId : candidate_pageSet) {  // get the real pages that have titles with the phrase from the candidates
+                var map_wordId_posList = Repository.ForwardIndex_Title.getMap_WordId_Positions(pageId);
+                String firstWord = wordArr[0];
+                int firstWordIndex = map_wordId_posList.get(firstWord).get(0);
+
+                boolean isConsecutive = true;
+                for (int wordIndex = 1; wordIndex < wordArr.length; wordIndex++) {
+                    var word = wordArr[wordIndex];
+                    int thisWordIndex = map_wordId_posList.get(word).get(0);
+                    if (thisWordIndex - wordIndex != firstWordIndex) {
+                        isConsecutive = false;
+                        break;
+                    }
+                }
+                if (isConsecutive) {
+                    return_pageSet.add(pageId);
+                }
+            }
+
+            return return_pageSet;
+        }
+    }
 }

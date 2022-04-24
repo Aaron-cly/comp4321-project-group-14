@@ -13,10 +13,8 @@ public class MainClass {
     static String URL = "http://www.cse.ust.hk";
 
     public static void main(String[] args) throws RocksDBException, IOException {
-        runCrawler();
-//        runQuery("challenges");
-//        Repository.openConnections();
-//        ResultWriter.write_forwardTitle_File();
+//        runCrawler();
+        runQuery("Optimization");
     }
 
     public static void runCrawler() throws IOException {
@@ -64,7 +62,6 @@ public class MainClass {
 
 
         }
-
 
         Repository.closeAllConnections();
     }

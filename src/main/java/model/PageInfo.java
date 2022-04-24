@@ -7,7 +7,7 @@ public class PageInfo implements Serializable {
     public String pageTitle;
     public String url;
     public String lastModifiedDate;
-    public HashSet<String> childLinks;
+    public HashSet<String> childLinks;  // actual url
     public String pageSize;
     public int max_termFreq;
 

@@ -6,7 +6,6 @@ import org.rocksdb.RocksDBException;
 import repository.Repository;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SearchEngine {
     private static char TERM_INDICATOR = '\"';
@@ -27,31 +26,51 @@ public class SearchEngine {
             termFreq.put(term, freq);
         }
 
-        var score_on_content = ScoresUtil.Content.compute_scoresOnContent(queryTerms, termFreq);
+        var scores_on_content = ScoresUtil.Content.compute_scoresOnContent(queryTerms, termFreq);
+        var scores_on_title = ScoresUtil.Title.compute_scoresOnTitle(queryTerms);
 
-        // sort by topic DESC then content DESC
-
-        return constructOutput(score_on_content, termFreq);
+        return constructOutput(scores_on_content, scores_on_title, termFreq);
     }
 
-    protected static List<RetrievedDocument> constructOutput(HashMap<String, Double> scores, HashMap<String, HashMap<String, Integer>> inverted) throws RocksDBException {
-        var sortedDoc = scores.keySet().stream().sorted(Comparator.comparing(scores::get)).collect(Collectors.toList());
-        Collections.reverse(sortedDoc);
-        if (sortedDoc.size() > 50) {
-            sortedDoc = sortedDoc.subList(0, OUTPUT_NUM);
+    protected static List<RetrievedDocument> constructOutput(HashMap<String, Double> scoresOnContent, HashMap<String, Double> scoresOnTitle, HashMap<String, HashMap<String, Integer>> inverted) throws RocksDBException {
+        // sort by title DESC then content DESC
+        HashSet<String> pageSet = new HashSet<>();
+        pageSet.addAll(scoresOnContent.keySet());
+        pageSet.addAll(scoresOnTitle.keySet());
+        List<RetrievedDocument> outputList = new ArrayList<>();
+
+        ArrayList<String> sortedPages = new ArrayList<>(pageSet);
+        sortedPages.sort((page1, page2) -> {
+            double EPSILON = 0.0001;
+            var page1_titleScore = scoresOnTitle.getOrDefault(page1, 0.0);
+            var page2_titleScore = scoresOnTitle.getOrDefault(page2, 0.0);
+            if (Math.abs(page1_titleScore - page2_titleScore) > EPSILON) {
+                return Double.compare(page2_titleScore, page1_titleScore);
+            }
+
+            var page1_contentScore = scoresOnContent.getOrDefault(page1, 0.0);
+            var page2_contentScore = scoresOnContent.getOrDefault(page2, 0.0);
+            if (Math.abs(page1_contentScore - page2_contentScore) > EPSILON) {
+                return Double.compare(page2_contentScore, page1_contentScore);
+            }
+
+            return 0;
+        });
+
+        if (sortedPages.size() > OUTPUT_NUM) {
+            sortedPages = (ArrayList<String>) sortedPages.subList(0, OUTPUT_NUM);
         }
 
-        List<RetrievedDocument> outputList = new ArrayList<>();
-        for (var doc : sortedDoc) {
-            PageInfo pageInfo = Repository.PageInfo.getPageInfo(doc);
+        for (var pageId : sortedPages) {
+            PageInfo pageInfo = Repository.PageInfo.getPageInfo(pageId);
             HashSet<String> parentLinks = new HashSet<>();  // need to store it in a new DB file
 
             HashMap<String, Integer> term_freq_doc = new HashMap<>();   // get the query terms freq in this doc
             for (String term : inverted.keySet()) {
-                term_freq_doc.put(term, inverted.get(term).getOrDefault(doc, 0));
+                term_freq_doc.put(term, inverted.get(term).getOrDefault(pageId, 0));
             }
 
-            RetrievedDocument outputDoc = new RetrievedDocument(pageInfo, scores.get(doc), parentLinks, term_freq_doc);
+            RetrievedDocument outputDoc = new RetrievedDocument(pageInfo, scoresOnContent.getOrDefault(pageId, 0.0), parentLinks, term_freq_doc);
             outputList.add(outputDoc);
         }
 
@@ -93,5 +112,4 @@ public class SearchEngine {
         }
         return phraseList.toArray(new String[0]);
     }
-
 }
