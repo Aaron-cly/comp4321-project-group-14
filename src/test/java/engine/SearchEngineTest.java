@@ -29,8 +29,8 @@ public class SearchEngineTest {
 
     @Test
     void test_getWords_in_phrase() {
-        assertArrayEquals(new String[]{"hk"}, SearchEngine.getWords_in_phrase("hk"));
-        assertArrayEquals(new String[]{"hong", "kong", "u"}, SearchEngine.getWords_in_phrase("hong kong u"));
+        assertArrayEquals(new String[]{"hk"}, ScoresUtil.Content.getWords_in_phrase("hk"));
+        assertArrayEquals(new String[]{"hong", "kong", "u"}, ScoresUtil.Content.getWords_in_phrase("hong kong u"));
     }
 
     static HashMap<String, HashMap<String, List<Integer>>> invertedFile;
@@ -96,9 +96,9 @@ public class SearchEngineTest {
             for (String term : terms) {
                 HashMap<String, Integer> freq;
                 if (!term.contains(" ")) {      // actually a single word
-                    freq = SearchEngine.computeTermFreq_word(term);
+                    freq = ScoresUtil.Content.computeTermFreq_word(term);
                 } else {                        // a phrase containing multiple keywords
-                    freq = SearchEngine.computeTermFreq_phrase(term);
+                    freq = ScoresUtil.Content.computeTermFreq_phrase(term);
                 }
                 termFreq.put(term, freq);
             }
@@ -123,7 +123,7 @@ public class SearchEngineTest {
             expectedFreq.put(d1_hash, 4);
             expectedFreq.put(d2_hash, 3);
             expectedFreq.put(d3_hash, 3);
-            assertEquals(expectedFreq, SearchEngine.computeTermFreq_word(term));
+            assertEquals(expectedFreq, ScoresUtil.Content.computeTermFreq_word(term));
         }
     }
 
@@ -145,7 +145,7 @@ public class SearchEngineTest {
             expectedFreq = new HashMap<>();
             expectedFreq.put(d1_hash, 2);
             expectedFreq.put(d3_hash, 1);
-            assertEquals(expectedFreq, SearchEngine.computeTermFreq_phrase(term));
+            assertEquals(expectedFreq, ScoresUtil.Content.computeTermFreq_phrase(term));
         }
     }
 
@@ -167,7 +167,7 @@ public class SearchEngineTest {
             expectedFreq = new HashMap<>();
             expectedFreq.put(d1_hash, 2);
             expectedFreq.put(d3_hash, 2);
-            assertEquals(expectedFreq, SearchEngine.computeTermFreq_phrase(term));
+            assertEquals(expectedFreq, ScoresUtil.Content.computeTermFreq_phrase(term));
         }
     }
 
@@ -190,7 +190,7 @@ public class SearchEngineTest {
             expectedFreq = new HashMap<>();
             expectedFreq.put(d1_hash, 2);
             expectedFreq.put(d3_hash, 1);
-            assertEquals(expectedFreq, SearchEngine.computeTermFreq_phrase(term));
+            assertEquals(expectedFreq, ScoresUtil.Content.computeTermFreq_phrase(term));
         }
     }
 
@@ -209,7 +209,7 @@ public class SearchEngineTest {
             termFreq.put(term, docFreq);
         }
         int[] expected = {3, 3, 4};
-        assertArrayEquals(expected, SearchEngine.computeDF(terms, termFreq));
+        assertArrayEquals(expected, ScoresUtil.Content.computeDF(terms, termFreq));
     }
 
     @Test
@@ -242,8 +242,8 @@ public class SearchEngineTest {
             PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d4_hash)).thenReturn(new PageInfo("", "", "", new HashSet<>(), "", 3));
             PAGE.when(Repository.Page::getTotalNumPage).thenReturn(TOTAL_NUM_DOCS);
 
-            var DF = SearchEngine.computeDF(terms, termFreq);
-            var IDF = SearchEngine.computeIDF(DF);
+            var DF = ScoresUtil.Content.computeDF(terms, termFreq);
+            var IDF = ScoresUtil.Content.computeIDF(DF);
 
             double epsilon = 0.001d;
             HashMap<String, double[]> expected = new HashMap<>();
@@ -257,7 +257,7 @@ public class SearchEngineTest {
             expected.put(d3_hash, d3);
             expected.put(d4_hash, d4);
 
-            var vectors = SearchEngine.compute_docVectors(terms, termFreq, candidatePageSet, IDF);
+            var vectors = ScoresUtil.Content.compute_docVectors(terms, termFreq, candidatePageSet, IDF);
             for (String page : vectors.keySet()) {
                 for (int i = 0; i < terms.length; i++) {
                     assertTrue(Math.abs(expected.get(page)[i] - vectors.get(page)[i]) < epsilon);
@@ -288,7 +288,7 @@ public class SearchEngineTest {
 
         double epsilon = 0.001d;
 
-        var scores = SearchEngine.compute_scores(doc_vectors, query_vector);
+        var scores = ScoresUtil.Content.compute_CosSimScores(doc_vectors, query_vector);
         for (String page : doc_vectors.keySet()) {
             for (int i = 0; i < query_vector.length; i++) {
                 assertTrue(Math.abs(expected.get(page) - scores.get(page)) < epsilon);
