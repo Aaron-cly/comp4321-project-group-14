@@ -26,7 +26,6 @@ public class Crawler {
         // retrieve stopwords from text file
         try {
             var list = Files.readAllLines(Paths.get("./stopwords.txt"));
-//            list.forEach(System.out::println);
             stopWords = new ArrayList<>(list);
         } catch (Exception e) {
             System.out.println("Something went wrong while reading the file");
@@ -52,14 +51,13 @@ public class Crawler {
     }
 
     private static final List<String> extensionList = List.of(".pdf", "png", ".jpeg", ".jpg", ".mp4", ".mp3", ".doc", ".zip", ".rar", ".ppt", ".pptx", ".docx", ".bib", ".Z", ".ps", ".tgz");
+
     private boolean validLink(String link) {
 
         return !link.equals("/") && !link.startsWith("../") && !link.contains("ftp") && !link.contains("@") && !link.equals("index.html")
                 && !link.equals(".") && !link.contains("?") && !link.contains("#") && !link.contains("http")
                 && !link.startsWith("javascript")
-                && extensionList.stream().noneMatch(link::endsWith)
-                && extensionList.stream().map(String::toUpperCase).noneMatch(link::endsWith);
-
+                && extensionList.stream().noneMatch(ext -> link.toLowerCase().endsWith(ext.toLowerCase()));
     }
 
     // obtain all pages embedded in html of a URL
@@ -83,23 +81,23 @@ public class Crawler {
                 .map(link -> {
                     if (link.startsWith("/")) {
                         return rootURL + link;
-                    } else if (link.startsWith("./")){
+                    } else if (link.startsWith("./")) {
                         int mountPoint = currentUrl.lastIndexOf('/');
-                        String baseUrl = currentUrl.substring(0, mountPoint+1);
+                        String baseUrl = currentUrl.substring(0, mountPoint + 1);
 
                         return baseUrl + link.substring(2);
                     } else {
                         if (currentUrl.endsWith(".html")) {
                             int mountPoint = currentUrl.lastIndexOf('/');
-                            String baseUrl = currentUrl.substring(0, mountPoint+1);
+                            String baseUrl = currentUrl.substring(0, mountPoint + 1);
                             return baseUrl + link;
                         } else if (currentUrl.endsWith(".html/")) {
-                            int mountPoint = currentUrl.substring(0,currentUrl.length()-1).lastIndexOf('/');
-                            String baseUrl = currentUrl.substring(0, mountPoint+1);
+                            int mountPoint = currentUrl.substring(0, currentUrl.length() - 1).lastIndexOf('/');
+                            String baseUrl = currentUrl.substring(0, mountPoint + 1);
                             return baseUrl + link;
                         } else {
-                            char lastChar = currentUrl.charAt(currentUrl.length()-1);
-                            return currentUrl + (lastChar=='/' ? "" : '/') + link;
+                            char lastChar = currentUrl.charAt(currentUrl.length() - 1);
+                            return currentUrl + (lastChar == '/' ? "" : '/') + link;
                         }
                     }
                 })
@@ -167,6 +165,14 @@ public class Crawler {
         indexer.insert_page(url);
         indexer.update_ForwardIndex(url, map_word_posList);
         indexer.add_pageInfo(url, pageInfo);
+
+        // index the title of the page too
+        int lastIndex = doc.title().lastIndexOf(" |");
+        String title = lastIndex == -1 ? doc.title() : doc.title().substring(0, lastIndex);
+        var wordList_title = Arrays.stream(title.split(" ")).filter(w -> !w.isBlank()).collect(Collectors.toList());
+
+        map_word_posList = consolidatePositions(wordList_title);
+        indexer.update_ForwardIndex_Title(url, map_word_posList);
     }
 
     public int getMax_termFreq(HashMap<String, List<Integer>> word_posList) {

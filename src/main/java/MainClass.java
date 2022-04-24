@@ -13,8 +13,10 @@ public class MainClass {
     static String URL = "http://www.cse.ust.hk";
 
     public static void main(String[] args) throws RocksDBException, IOException {
-//        runCrawler();
-        runQuery("challenges");
+        runCrawler();
+//        runQuery("challenges");
+//        Repository.openConnections();
+//        ResultWriter.write_forwardTitle_File();
     }
 
     public static void runCrawler() throws IOException {
@@ -45,17 +47,22 @@ public class MainClass {
             ResultWriter.write_spider_result();
             System.out.println("Indexed pages written to spider_result.txt\n");
 
-            System.out.println("Constructing Inverted Index...");
+            System.out.println("Constructing Inverted Index for Content&Title...");
             start = Instant.now();
             Indexer.construct_invertedIndex();
+            Indexer.construct_invertedIndex_Title();
             finish = Instant.now();
             timeElapsed = Duration.between(start, finish).toSeconds();
             System.out.println("Time elapsed constructing Inverted Index: " + timeElapsed + " seconds\n");
 
             System.out.println("Writing Inverted Index...");
             ResultWriter.write_inverted_file();
+            ResultWriter.write_invertedTitle_file();
+//            ResultWriter.write_forwardTitle_File();
 
             System.out.println("Inverted index file written to inverted_file.txt");
+
+
         }
 
 

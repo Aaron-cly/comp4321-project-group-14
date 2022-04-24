@@ -71,6 +71,52 @@ public class ResultWriter {
         }
     }
 
+    public static void write_forwardTitle_File() {
+        try (var writer = new BufferedWriter(new FileWriter("forwardTitle.txt"))) {
+            var forwardIndexFile = Repository.ForwardIndex_Title.getAll_ForwardIndex();
+
+            for (Map.Entry<String, HashMap<String, List<Integer>>> entry : forwardIndexFile.entrySet()) {
+                var pageId = entry.getKey();
+                var pageTitle = entry.getValue();
+
+                writer.append(Repository.Page.getPageUrl(pageId))
+                        .append(": {");
+                for (var wordId : pageTitle.keySet()) {
+                    var word = Repository.Word.getWord(wordId);
+                    writer.append(word).append(" :").append(pageTitle.get(wordId).toString());
+                }
+                writer.append("}").append('\n');
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (RocksDBException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void write_invertedTitle_file() {
+        try (var writer = new BufferedWriter(new FileWriter("invertedTitle_file.txt"))) {
+            var inverted = Repository.InvertedIndex_Title.getAll_InvertedIndex();
+
+            for (Map.Entry<String, HashMap<String, List<Integer>>> entry : inverted.entrySet()) {
+                var wordId = entry.getKey();
+                var map_pageId_posList = entry.getValue();
+
+
+                writer.append(Repository.Word.getWord(wordId))
+                        .append(": ")
+                        .append(map_pageId_posList.toString())
+                        .append('\n');
+
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (RocksDBException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public static void write_queryResult(List<RetrievedDocument> resultList) {
         try (var writer = new BufferedWriter(new FileWriter("query_result.txt"))) {
 //            for (int i = 0; i < resultList.size(); i++) {

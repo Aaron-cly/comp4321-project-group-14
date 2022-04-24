@@ -22,13 +22,26 @@ public class Indexer {
 
     public void update_ForwardIndex(String url, HashMap<String, List<Integer>> wordPositions) {
         // replace the word in key with corresponding wordId
-        HashMap<String, List<Integer>> forwardIndex_page = new HashMap<>();
+        HashMap<String, List<Integer>> postings = new HashMap<>();
         try {
             for (String word : wordPositions.keySet()) {
                 String wordId = Repository.Word.insertWord(word);
-                forwardIndex_page.put(wordId, wordPositions.get(word));
+                postings.put(wordId, wordPositions.get(word));
             }
-            Repository.ForwardIndex.updateUrl_wordPositions(url, forwardIndex_page);
+            Repository.ForwardIndex.updateUrl_wordPositions(url, postings);
+        } catch (RocksDBException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void update_ForwardIndex_Title(String url, HashMap<String, List<Integer>> wordPositions) {
+        HashMap<String, List<Integer>> postings = new HashMap<>();
+        try {
+            for (String word : wordPositions.keySet()) {
+                String wordId = Repository.Word.insertWord(word);
+                postings.put(wordId, wordPositions.get(word));
+            }
+            Repository.ForwardIndex_Title.updateUrl_wordPositions(url, postings);
         } catch (RocksDBException e) {
             e.printStackTrace();
         }
@@ -62,89 +75,31 @@ public class Indexer {
             }
         }
         // write to db
-        Repository.InvertedIndex.insert_InvertedIndexFile(inverted);
+        Repository.InvertedIndex.create_InvertedIndexFile(inverted);
     }
 
-//
-//    public void updateIndex(int docId, HashMap<String, Integer> frequencies) {
-//        try {
-//            for (Map.Entry<String, Integer> entry : frequencies.entrySet()) {
-//                byte[] value = invertedIndexDb.get(entry.getKey().getBytes());
-//                String newPosting = String.valueOf(docId) + SEPARATOR + entry.getValue() + DELIMITER;
-//                // case where term has not been indexed before
-//                if (value == null) {
-//                    invertedIndexDb.put(entry.getKey().getBytes(), newPosting.getBytes());
-//                    continue;
-//                }
-//                // term has already been indexed
-//                // append to the posting list
-//                var currentPostList = new String(value);
-//                currentPostList += newPosting;
-//
-//                invertedIndexDb.put(entry.getKey().getBytes(), currentPostList.getBytes());
-//            }
-//
-//        } catch (RocksDBException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public void printInvertedIndex() {
-//        var iter = invertedIndexDb.newIterator();
-//        for (iter.seekToFirst(); iter.isValid(); iter.next()) {
-//            System.out.println(new String(iter.key()) + ": " + new String(iter.value()));
-//        }
-//    }
-//
-//    public void printMetaInfo() {
-//        String directory = Paths.get("").toAbsolutePath().toString();
-//        try (var writer = new BufferedWriter(new FileWriter("spider_result.txt"))) {
-//            writer.write("");
-//            var iter = metaInfoDb.newIterator();
-//            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
-//                var currentMetaData = MetaData.deserialize(iter.value());
-//                System.out.println(new String(iter.key()) + ": \n" + currentMetaData);
-//                writer.append(currentMetaData.pgTitle + "\n");
-//                writer.append(currentMetaData.url + "\n");
-//                writer.append(currentMetaData.lastModifiedDate.toString() + "\n");
-//                for (Map.Entry<String, Integer> e : currentMetaData.frequencies.entrySet()) {
-//                    writer.append(e.getKey() + " " + e.getValue() + ";");
-//                }
-//                writer.append("\n");
-//                for (String s : currentMetaData.childLinks) {
-//                    writer.append(s + "\n");
-//                }
-//                writer.append("=====================================================\n\n");
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
-//
-//    public void addMetaInformation(int docId, MetaData data) {
-//        try {
-//            metaInfoDb.put(String.valueOf(docId).getBytes(), MetaData.convertToByteArray(data));
-//        } catch (RocksDBException e) {
-//            System.out.println("Could not save meta information of page");
-//            e.printStackTrace();
-//        }
-//    }
+    // should call only after all crawling completed
+    public static void construct_invertedIndex_Title() {
+        var forwardIndexTitle_file = Repository.ForwardIndex_Title.getAll_ForwardIndex();
+        var inverted = new HashMap<String, HashMap<String, List<Integer>>>();
 
+        // loop through each word  O(sum(# keyword in each page))
+        for (String pageId : forwardIndexTitle_file.keySet()) {
+            var map_wordId_posList = forwardIndexTitle_file.get(pageId);
 
-//    public void retrieveKeywords(int docId){
-//        var iter = invertedIndexDb.newIterator();
-//        var wordMap = new HashMap<String, Integer>();
-//        for(iter.seekToFirst(); iter.isValid(); iter.next()){
-//            var currentPosting = new String(iter.value());
-//            var individualPostings = currentPosting.split(DELIMITER);
-//            for(String s: individualPostings){
-//                var element = s.split(SEPARATOR);
-//                wordMap.put(new String(iter.key()), element)
-//            }
-//
-//        }
-//    }
+            for (Map.Entry<String, List<Integer>> entry : map_wordId_posList.entrySet()) {
+                var wordId = entry.getKey();
+                var posList = entry.getValue();
 
+                if (!inverted.containsKey(wordId) || inverted.get(wordId) == null) {
+                    inverted.put(wordId, new HashMap<>());
+                }
+                assert inverted.containsKey(wordId);
 
+                inverted.get(wordId).put(pageId, posList);
+            }
+        }
+        // write to db
+        Repository.InvertedIndex_Title.create_InvertedIndexFile(inverted);
+    }
 }
