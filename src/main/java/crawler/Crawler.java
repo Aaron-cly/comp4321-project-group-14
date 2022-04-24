@@ -169,7 +169,11 @@ public class Crawler {
         // index the title of the page too
         int lastIndex = doc.title().lastIndexOf(" |");
         String title = lastIndex == -1 ? doc.title() : doc.title().substring(0, lastIndex);
-        var wordList_title = Arrays.stream(title.split(" ")).filter(w -> !w.isBlank()).collect(Collectors.toList());
+        var wordList_title =
+                Arrays.stream(title.split(" "))
+                        .filter(w -> !w.isBlank())
+                        .map(String::toLowerCase)
+                        .collect(Collectors.toList());
 
         map_word_posList = consolidatePositions(wordList_title);
         indexer.update_ForwardIndex_Title(url, map_word_posList);
