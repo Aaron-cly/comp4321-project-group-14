@@ -6,6 +6,7 @@ import org.rocksdb.RocksDBException;
 import repository.Repository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SearchEngine {
     private static char TERM_INDICATOR = '\"';
@@ -58,7 +59,7 @@ public class SearchEngine {
         });
 
         if (sortedPages.size() > OUTPUT_NUM) {
-            sortedPages = (ArrayList<String>) sortedPages.subList(0, OUTPUT_NUM);
+            sortedPages = sortedPages.stream().limit(OUTPUT_NUM).collect(Collectors.toCollection(ArrayList::new));
         }
 
         for (var pageId : sortedPages) {

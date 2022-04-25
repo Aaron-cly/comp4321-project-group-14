@@ -231,16 +231,25 @@ public class ScoresUtil {
             for (var pageId : candidate_pageSet) {  // get the real pages that have titles with the phrase from the candidates
                 var map_wordId_posList = Repository.ForwardIndex_Title.getMap_WordId_Positions(pageId);
                 String firstWord = wordArr[0];
-                int firstWordIndex = map_wordId_posList.get(firstWord).get(0);
+                String firstWord_id = Repository.Word.getWordId(firstWord);
+                if (!map_wordId_posList.containsKey(firstWord_id)) continue;    // does not even contain the first word in query phrase
+                int firstWordIndex = map_wordId_posList.get(firstWord_id).get(0);
 
                 boolean isConsecutive = true;
                 for (int wordIndex = 1; wordIndex < wordArr.length; wordIndex++) {
-                    var word = wordArr[wordIndex];
-                    int thisWordIndex = map_wordId_posList.get(word).get(0);
-                    if (thisWordIndex - wordIndex != firstWordIndex) {
+                    String word = wordArr[wordIndex];
+                    String wordId = Repository.Word.getWordId(word);
+                    if (map_wordId_posList.containsKey(wordId)) {
+                        int thisWordIndex = map_wordId_posList.get(wordId).get(0);
+                        if (thisWordIndex - wordIndex != firstWordIndex) {
+                            isConsecutive = false;
+                            break;
+                        }
+                    } else {
                         isConsecutive = false;
                         break;
                     }
+
                 }
                 if (isConsecutive) {
                     return_pageSet.add(pageId);
