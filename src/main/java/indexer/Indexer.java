@@ -8,6 +8,8 @@ import repository.Repository;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,35 @@ public class Indexer {
             System.out.println("Something went wrong while reading the file");
             e.printStackTrace();
         }
+    }
+
+    // determines whether url should be ignored by the crawler
+    // should only ignore if url to be indexed is not in index, orelse if the last modified date is later
+    // than the one recorded in db
+    public boolean shouldIgnoreUrl(String url, String latestDate){
+         // should not ignore if page is not yet in db
+        String pageId = Repository.Page.getPageId(url);
+         if(pageId == null)
+             return false;
+
+         String existingModifiedDate = Repository.PageInfo.getPageInfo(pageId).lastModifiedDate;
+         // should not ignore if any one of the dates are null
+         if(existingModifiedDate == null || latestDate == null)
+             return false;
+
+        // compare latest last-modified-date and existing last-modified-date
+        try {
+            Date newDate = new SimpleDateFormat("yyyy-MM-dd").parse(latestDate);
+            Date currentDate = new SimpleDateFormat("yyyy-MM-dd").parse(existingModifiedDate);
+            // should not ignore if last modification date is later than the one recorded in db
+            if(newDate.after(currentDate))
+                return false;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // ignore if all other conditions do not hold
+        return true;
     }
 
     // inserts new page and its title into dbs

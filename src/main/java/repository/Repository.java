@@ -433,7 +433,7 @@ public class Repository {
             }
         }
 
-        public static model.PageInfo getPageInfo(String pageId) throws RocksDBException {
+        public static model.PageInfo getPageInfo(String pageId) {
             model.PageInfo pageInfo = null;
             try {
                 var bytes = pageInfoDB.get(pageId.getBytes());

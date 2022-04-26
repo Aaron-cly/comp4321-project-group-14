@@ -112,10 +112,9 @@ public class Crawler {
                 }
             }
 
-            System.out.println(currentIndex);
-
             crawlPage(currentURL, pagesOnURL);
             currentIndex++;
+//            System.out.println(currentIndex + ": " + currentURL);
             if (currentIndex % 500 == 0) {
                 System.out.printf("Crawled and indexed %d pages\n", currentIndex);
             }
@@ -123,7 +122,6 @@ public class Crawler {
     }
 
     private void crawlPage(String url, HashSet<String> pagesOnURL) throws IOException {
-
         Document doc = null;
         Connection.Response res = null;
         try {
@@ -138,7 +136,10 @@ public class Crawler {
         var pgSize = connection.getContentLength();
         String lastModifiedDate = getLastModifiedDate(res, doc);
 
-        indexer.insert_new_page(doc, url, lastModifiedDate, pgSize, pagesOnURL);
+        // insert new page if url should not be ignore
+        if(!indexer.shouldIgnoreUrl(url, lastModifiedDate)) {
+            indexer.insert_new_page(doc, url, lastModifiedDate, pgSize, pagesOnURL);
+        }
     }
 
     private String getLastModifiedDate(Connection.Response res, Document doc) {
