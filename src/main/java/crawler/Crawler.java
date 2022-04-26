@@ -27,7 +27,7 @@ public class Crawler {
     }
 
     private Connection.Response getResponse(String url) throws IOException {
-        Connection conn = Jsoup.connect(url);
+        Connection conn = Jsoup.connect(url).timeout(5 * 1000);
         return conn.execute();
     }
 
@@ -114,7 +114,7 @@ public class Crawler {
 
             crawlPage(currentURL, pagesOnURL);
             currentIndex++;
-//            System.out.println(currentIndex + ": " + currentURL);
+            System.out.println(currentIndex + ": " + currentURL);
             if (currentIndex % 500 == 0) {
                 System.out.printf("Crawled and indexed %d pages\n", currentIndex);
             }
@@ -133,6 +133,7 @@ public class Crawler {
 
         // open connection for page size
         var connection = new URL(url).openConnection();
+        connection.setConnectTimeout(5 * 1000);
         var pgSize = connection.getContentLength();
         String lastModifiedDate = getLastModifiedDate(res, doc);
 
