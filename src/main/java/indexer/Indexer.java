@@ -207,6 +207,10 @@ public class Indexer {
         Repository.InvertedIndex_Title.create_InvertedIndexFile(inverted);
     }
 
+    public static void construct_parents_from_child_links(){
+
+    }
+
     // extract all words from a page
     private List<String> extractWords(Document d) {
         var list = new ArrayList<String>();

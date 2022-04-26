@@ -173,7 +173,10 @@ public class Repository {
 
             RocksIterator iter = pageDB.newIterator();
             for (iter.seekToFirst(); iter.isValid(); iter.next()) {
-                map.put(new String(iter.key()), new String(iter.value()));
+                Map.Entry<String, Boolean> page = SerializeUtil.deserialize(iter.value());
+                if(page == null) continue;
+
+                map.put(new String(iter.key()), page.getKey());
             }
             return map;
         }

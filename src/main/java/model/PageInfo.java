@@ -8,15 +8,18 @@ public class PageInfo implements Serializable {
     public String url;
     public String lastModifiedDate;
     public HashSet<String> childLinks;  // actual url
+    public HashSet<String> parentLinks;
     public String pageSize;
     public int max_termFreq;
 
 
-    public PageInfo(String pageTitle, String url, String lastModifiedData, HashSet<String> childLinks, String pageSize, int max_termFreq) {
+    public PageInfo(String pageTitle, String url, String lastModifiedData, HashSet<String> childLinks,
+                    String pageSize, int max_termFreq) {
         this.pageTitle = pageTitle;
         this.url = url;
         this.lastModifiedDate = lastModifiedData;
         this.childLinks = childLinks;
+        this.parentLinks = new HashSet<String>();
         this.pageSize = pageSize;
         this.max_termFreq = max_termFreq;
     }

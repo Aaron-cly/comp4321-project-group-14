@@ -40,7 +40,7 @@ public class ResultWriter {
                 writer.append('\n');
 
                 for (var link : pageInfo.childLinks) {
-                    writer.append(link).append('\n');
+                    writer.append(Repository.Page.getPageUrl(link)).append('\n');
                 }
 
                 writer.append("---------------------------------------------").append("\n\n");

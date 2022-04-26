@@ -36,15 +36,15 @@ public class MainClass {
             Crawler crawler = new Crawler(URL);
             System.out.println("Running Crawler...");
             start = Instant.now();
-//            crawler.crawlFromRoot(30);
-            crawler.crawlFromRoot();
+            crawler.crawlFromRoot(30);
+//            crawler.crawlFromRoot();
             finish = Instant.now();
             timeElapsed = Duration.between(start, finish).toSeconds();
             System.out.println("Time elapsed crawling pages: " + timeElapsed + " seconds\n");
 
-//            System.out.println("Writing spider result...");
-//            ResultWriter.write_spider_result();
-//            System.out.println("Indexed pages written to spider_result.txt\n");
+            System.out.println("Writing spider result...");
+            ResultWriter.write_spider_result();
+            System.out.println("Indexed pages written to spider_result.txt\n");
 
             System.out.println("Constructing Inverted Index for Content&Title...");
             start = Instant.now();
