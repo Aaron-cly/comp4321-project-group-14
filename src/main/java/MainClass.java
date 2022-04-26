@@ -13,13 +13,13 @@ public class MainClass {
     static String URL = "http://www.cse.ust.hk";
 
     public static void main(String[] args) throws RocksDBException, IOException {
-        runCrawler();
-//        runQuery("FAQ \"Postgraduate Students\"");
+//        runCrawler();
+        runQuery("FAQ \"Postgraduate Students\"");
 //        runQuery("Postgraduate");
     }
 
     public static void runCrawler() throws IOException {
-        boolean freshStart = false;
+        boolean freshStart = true;
         boolean crawlRequired = true;
 
         Instant start;

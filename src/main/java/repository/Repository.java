@@ -1,12 +1,12 @@
 package repository;
 
-import model.PageInfo;
 import model.SerializeUtil;
 import org.rocksdb.Options;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 import org.rocksdb.RocksIterator;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,7 +121,10 @@ public class Repository {
         public static String getPageUrl(String pageId) throws RocksDBException {
             RocksIterator iter = pageDB.newIterator();
             for (iter.seekToFirst(); iter.isValid(); iter.next()) {
-                String entry_word = new String(iter.value());
+                Map.Entry<String, Boolean> pair = SerializeUtil.deserialize(iter.value());
+                if(pair == null) continue;
+
+                String entry_word = pair.getKey();
                 if (entry_word.equals(pageId)) {
                     // return the wordId of the given word
                     return new String(iter.key());
@@ -130,21 +133,25 @@ public class Repository {
             return null;
         }
 
-        public static String insertPage(String url) throws RocksDBException {
-            String existingId = getPageId(url);
+        public static String insertPage(String url, boolean indexed) throws RocksDBException {
+            Map.Entry<String, Boolean> page = getPage(url);
 
-            if (existingId != null) {
-                return existingId;
+            if (page != null) {
+                return page.getKey();
             }
 
             String pageId = String.valueOf(url.hashCode());
-            pageDB.put(url.getBytes(), pageId.getBytes());
+            var dataBytes = SerializeUtil.serialize(
+                    new AbstractMap.SimpleEntry<>(pageId, indexed)
+            );
+
+            pageDB.put(url.getBytes(), dataBytes);
 
             // return the pageId of the inserted page
             return pageId;
         }
 
-        public static String getPageId(String url) {
+        public static Map.Entry<String, Boolean> getPage(String url) {
             //return pageId of the given url
             byte[] value = null;
             try {
@@ -152,8 +159,13 @@ public class Repository {
             } catch (RocksDBException e) {
             }
 
-            // return pageId of given url
-            return value == null ? null : new String(value);
+            // return page of given url
+            if(value == null)
+                return null;
+            else {
+                Map.Entry<String, Boolean> pair = SerializeUtil.deserialize(value);
+                return pair;
+            }
         }
 
         public static HashMap<String, String> getMap_url_pageId() {
@@ -187,7 +199,7 @@ public class Repository {
         public static void updateUrl_wordPositions(String url, HashMap<String, List<Integer>> wordPositions) throws RocksDBException {
             String pageId = null;
             try {
-                pageId = Page.insertPage(url);
+                pageId = Page.insertPage(url, true);
             } catch (RocksDBException e) {
             }
             if (pageId == null) {
@@ -314,7 +326,7 @@ public class Repository {
         public static void updateUrl_wordPositions(String url, HashMap<String, List<Integer>> wordPositions) throws RocksDBException {
             String pageId = null;
             try {
-                pageId = Page.insertPage(url);
+                pageId = Page.insertPage(url, true);
             } catch (RocksDBException e) {
             }
             if (pageId == null) {

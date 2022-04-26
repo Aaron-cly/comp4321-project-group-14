@@ -65,6 +65,15 @@ public class SearchEngine {
 
         for (var pageId : sortedPages) {
             PageInfo pageInfo = Repository.PageInfo.getPageInfo(pageId);
+            pageInfo.childLinks = pageInfo.childLinks.stream().map(id -> {
+                try {
+                    return Repository.Page.getPageUrl(id);
+                } catch (RocksDBException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }).collect(Collectors.toCollection(HashSet::new));
+
             HashSet<String> parentLinks = new HashSet<>();  // need to store it in a new DB file
 
             HashMap<String, Integer> term_freq_doc = new HashMap<>();   // get the query terms freq in this doc

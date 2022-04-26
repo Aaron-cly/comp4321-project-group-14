@@ -34,9 +34,15 @@ public class Indexer {
     // than the one recorded in db
     public boolean shouldIgnoreUrl(String url, String latestDate){
          // should not ignore if page is not yet in db
-        String pageId = Repository.Page.getPageId(url);
-         if(pageId == null)
-             return false;
+        Map.Entry<String, Boolean> page = Repository.Page.getPage(url);
+        if(page == null)
+            return false;
+
+        // should not ignore if page has not been indexed.
+        String pageId = page.getKey();
+        boolean indexed = page.getValue();
+        if(!indexed)
+            return false;
 
          String existingModifiedDate = Repository.PageInfo.getPageInfo(pageId).lastModifiedDate;
          // should not ignore if any one of the dates are null
@@ -66,6 +72,17 @@ public class Indexer {
         var stemList = stemWords(extractWords(doc));
         var map_word_posList = consolidatePositions(stemList);
         var max_termFreq = getMax_termFreq(map_word_posList);
+
+        // convert child urls to its page ids
+        childLinks = childLinks.stream().map(l -> {
+            try {
+                return Repository.Page.insertPage(l, false);
+            } catch (RocksDBException e) {
+                e.printStackTrace();
+            }
+            return l;
+        }).collect(Collectors.toCollection(HashSet::new));
+
         PageInfo pageInfo = new PageInfo(doc.title(), url, lastModifiedDate,
                 childLinks,
                 String.valueOf(pgSize),
@@ -95,7 +112,7 @@ public class Indexer {
         // index the current page
         String pageId = null;
         try {
-            pageId = Repository.Page.insertPage(url);
+            pageId = Repository.Page.insertPage(url, true);
         } catch (RocksDBException e) {
             e.printStackTrace();
         }
