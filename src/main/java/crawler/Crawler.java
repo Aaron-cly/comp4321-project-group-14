@@ -1,7 +1,6 @@
 package crawler;
 
 import indexer.Indexer;
-import model.PageInfo;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,8 +8,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,19 +16,7 @@ public class Crawler {
     String rootURL = "http://www.cse.ust.hk";
     HashSet<String> urlSet = new HashSet<>();   // avoid crawling the same page twice
     ArrayList<String> urlList = new ArrayList<>();
-    static ArrayList<String> stopWords;
     Indexer indexer = new Indexer();
-
-    static {
-        // retrieve stopwords from text file
-        try {
-            var list = Files.readAllLines(Paths.get("./stopwords.txt"));
-            stopWords = new ArrayList<>(list);
-        } catch (Exception e) {
-            System.out.println("Something went wrong while reading the file");
-            e.printStackTrace();
-        }
-    }
 
     public Crawler(String rootURL) {
         this.rootURL = rootURL;
@@ -127,6 +112,8 @@ public class Crawler {
                 }
             }
 
+            System.out.println(currentIndex);
+
             crawlPage(currentURL, pagesOnURL);
             currentIndex++;
             if (currentIndex % 500 == 0) {
@@ -146,82 +133,12 @@ public class Crawler {
         }
         if (doc == null) return;
 
+        // open connection for page size
+        var connection = new URL(url).openConnection();
+        var pgSize = connection.getContentLength();
         String lastModifiedDate = getLastModifiedDate(res, doc);
 
-        // index the current page
-        var map_word_posList = consolidatePositions(extractWords(doc));
-        var max_termFreq = getMax_termFreq(map_word_posList);
-
-        // for page size
-        var connection = new URL(url).openConnection();
-        connection.getContentLength();
-
-        PageInfo pageInfo = new PageInfo(doc.title(), url, lastModifiedDate,
-                pagesOnURL,
-                String.valueOf(connection.getContentLength()),
-                max_termFreq
-        );
-
-        indexer.insert_page(url);
-        indexer.update_ForwardIndex(url, map_word_posList);
-        indexer.add_pageInfo(url, pageInfo);
-
-        // index the title of the page too
-        int lastIndex = doc.title().lastIndexOf(" |");
-        String title = lastIndex == -1 ? doc.title() : doc.title().substring(0, lastIndex);
-        var wordList_title =
-                Arrays.stream(title.split(" "))
-                        .filter(w -> !w.isBlank())
-                        .map(String::toLowerCase)
-                        .collect(Collectors.toList());
-
-        map_word_posList = consolidatePositions(wordList_title);
-        indexer.update_ForwardIndex_Title(url, map_word_posList);
-    }
-
-    public int getMax_termFreq(HashMap<String, List<Integer>> word_posList) {
-        int max = 0;
-        for (var posList : word_posList.values()) {
-            max = Math.max(max, posList.size());
-        }
-        return max;
-    }
-
-    // extract all words from a page
-    public List<String> extractWords(Document d) {
-        var list = new ArrayList<String>();
-        var elements = d.body().select("*");
-        for (var e : elements) {
-            // skip the elements with empty content
-            String[] words = e.ownText().split("\\W+");
-
-            // filter out strings containing numbers and stopwords
-            list.addAll(
-                    Arrays.stream(words)
-                            .map(String::toLowerCase)
-                            .filter(s -> !s.equals("") && !s.matches(".*\\d.*") && !stopWords.contains(s))
-                            .collect(Collectors.toList())
-            );
-        }
-        return list;
-    }
-
-    // construct word -> List(position)
-    private HashMap<String, List<Integer>> consolidatePositions(List<String> extracted) {
-        var wordPositions = new HashMap<String, List<Integer>>();
-        for (int i = 0; i < extracted.size(); i++) {
-            String word = extracted.get(i);
-
-            List<Integer> posList = wordPositions.getOrDefault(word, null);
-            if (posList == null) {
-                posList = new ArrayList<>();
-                posList.add(i);
-                wordPositions.put(word, posList);
-            } else {
-                posList.add(i);
-            }
-        }
-        return wordPositions;
+        indexer.insert_new_page(doc, url, lastModifiedDate, pgSize, pagesOnURL);
     }
 
     private String getLastModifiedDate(Connection.Response res, Document doc) {

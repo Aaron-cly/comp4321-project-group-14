@@ -1,5 +1,6 @@
 package engine;
 
+import indexer.Indexer;
 import model.PageInfo;
 import model.RetrievedDocument;
 import org.rocksdb.RocksDBException;
@@ -89,25 +90,31 @@ public class SearchEngine {
         for (String word : wordArr) {
             if (word.startsWith(TERM_INDICATOR + "") && word.endsWith(TERM_INDICATOR + "")) {
                 if (word.length() > 2) {
-                    phraseList.add(word.substring(1, word.length() - 1));
+                    phraseList.add(
+                            Indexer.porter.stripAffixes(word.substring(1, word.length() - 1))
+                    );
                 }
                 continue;
             }
 
             if (word.startsWith(TERM_INDICATOR + "")) {
                 isInTerm = true;
-                tempTerm.append(word.substring(1));
+                tempTerm.append(
+                        Indexer.porter.stripAffixes(word.substring(1))
+                );
             } else if (word.endsWith(TERM_INDICATOR + "")) {
                 isInTerm = false;
-                tempTerm.append(" ").append(word.substring(0, word.length() - 1));
+                tempTerm.append(" ").append(
+                        Indexer.porter.stripAffixes(word.substring(0, word.length() - 1))
+                );
 
                 phraseList.add(tempTerm.toString());
                 tempTerm = new StringBuilder();
             } else {    // words surrounded with NO quotation
                 if (isInTerm) {
-                    tempTerm.append(" ").append(word);
+                    tempTerm.append(" ").append(Indexer.porter.stripAffixes(word));
                 } else {
-                    phraseList.add(word);
+                    phraseList.add(Indexer.porter.stripAffixes(word));
                 }
             }
         }
