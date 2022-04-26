@@ -9,15 +9,17 @@ import org.rocksdb.RocksIterator;
 import java.util.*;
 
 public class Repository {
-    protected static RocksDB wordDB;
-    protected static RocksDB pageDB;
+    protected static RocksDB WordToWordId;
+    protected static RocksDB WordIdToWord;
+    protected static RocksDB PageToPageId;
+    protected static RocksDB PageIdToPage;
     protected static RocksDB forwardDB;
     protected static RocksDB invertedDB;
     protected static RocksDB pageInfoDB;
     protected static RocksDB forwardTitleDB;
     protected static RocksDB invertedTitleDB;
 
-    static List<String> dbPathList = List.of(Word.dbPath, Page.dbPath, ForwardIndex.dbPath, InvertedIndex.dbPath, ForwardIndex_Title.dbPath, InvertedIndex_Title.dbPath, PageInfo.dbPath);
+    static List<String> dbPathList = List.of(Word.dbPath_1, Word.dbPath_2, Page.dbPath_1, Page.dbPath_2, ForwardIndex.dbPath, InvertedIndex.dbPath, ForwardIndex_Title.dbPath, InvertedIndex_Title.dbPath, PageInfo.dbPath);
 
     static {
         RocksDB.loadLibrary();
@@ -38,8 +40,10 @@ public class Repository {
         Options options = new Options();
         options.setCreateIfMissing(true);
         try {
-            wordDB = RocksDB.open(options, Word.dbPath);
-            pageDB = RocksDB.open(options, Page.dbPath);
+            WordToWordId = RocksDB.open(options, Word.dbPath_1);
+            WordIdToWord = RocksDB.open(options, Word.dbPath_2);
+            PageToPageId = RocksDB.open(options, Page.dbPath_1);
+            PageIdToPage = RocksDB.open(options, Page.dbPath_2);
             forwardDB = RocksDB.open(options, ForwardIndex.dbPath);
             invertedDB = RocksDB.open(options, InvertedIndex.dbPath);
             pageInfoDB = RocksDB.open(options, PageInfo.dbPath);
@@ -51,27 +55,28 @@ public class Repository {
     }
 
     public static void closeAllConnections() {
-        wordDB.close();
-        pageDB.close();
+        WordToWordId.close();
+        PageToPageId.close();
         forwardDB.close();
         invertedDB.close();
         pageInfoDB.close();
+        forwardTitleDB.close();
+        invertedTitleDB.close();
     }
 
     public static class Word {
-        private static String dbPath = "./rocksdb/Word";
-        // word -> wordId
+        private static String dbPath_1 = "./rocksdb/WordToWordId";
+        private static String dbPath_2 = "./rocksdb/WordIdToWord";
 
         public static String getWord(String wordId) throws RocksDBException {
-            RocksIterator iter = wordDB.newIterator();
-            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
-                String entry_wordId = new String(iter.value());
-                if (entry_wordId.equals(wordId)) {
-                    // return the word of the given wordId
-                    return new String(iter.key());
-                }
+            byte[] value = null;
+            try {
+                value = WordIdToWord.get(wordId.getBytes());
+            } catch (RocksDBException e) {
             }
-            return null;
+
+            // return word of given wordId
+            return value == null ? null : new String(value);
         }
 
         public static String insertWord(String word) throws RocksDBException {
@@ -84,7 +89,8 @@ public class Repository {
 
             String wordId = String.valueOf(word.hashCode());
             // insert new word to db
-            wordDB.put(word.getBytes(), wordId.getBytes());
+            WordToWordId.put(word.getBytes(), wordId.getBytes());
+            WordIdToWord.put(wordId.getBytes(), word.getBytes());
             // return the wordId of the inserted word
             return wordId;
         }
@@ -92,7 +98,7 @@ public class Repository {
         public static String getWordId(String word) {
             byte[] value = null;
             try {
-                value = wordDB.get(word.getBytes());
+                value = WordToWordId.get(word.getBytes());
             } catch (RocksDBException e) {
             }
 
@@ -103,12 +109,13 @@ public class Repository {
     }
 
     public static class Page {
-        private static String dbPath = "./rocksdb/Page";
+        private static String dbPath_1 = "./rocksdb/PageToPageId";
+        private static String dbPath_2 = "./rocksdb/PageIdToPage";
         // url -> pageId
 
         public static int getTotalNumPage() {
             int count = 0;
-            RocksIterator iter = pageDB.newIterator();
+            RocksIterator iter = PageToPageId.newIterator();
             for (iter.seekToFirst(); iter.isValid(); iter.next()) {
                 count++;
             }
@@ -116,18 +123,33 @@ public class Repository {
         }
 
         public static String getPageUrl(String pageId) throws RocksDBException {
-            RocksIterator iter = pageDB.newIterator();
-            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
-                Map.Entry<String, Boolean> pair = SerializeUtil.deserialize(iter.value());
-                if(pair == null) continue;
-
-                String entry_word = pair.getKey();
-                if (entry_word.equals(pageId)) {
-                    // return the wordId of the given word
-                    return new String(iter.key());
-                }
+            //return url of the given pageId
+            byte[] dataBytes = null;
+            try {
+                dataBytes = PageIdToPage.get(pageId.getBytes());
+            } catch (RocksDBException e) {
             }
-            return null;
+
+            if (dataBytes == null)
+                return null;
+            else {
+                return SerializeUtil.deserialize(dataBytes);
+            }
+        }
+
+        public static String getPageId(String url) {
+            //return pageId of the given url
+            byte[] dataBytes = null;
+            try {
+                dataBytes = PageToPageId.get(url.getBytes());
+            } catch (RocksDBException e) {
+            }
+
+            if (dataBytes == null)
+                return null;
+            else {
+                return SerializeUtil.deserialize(dataBytes);
+            }
         }
 
         public static String insertPage(String url, boolean indexed) throws RocksDBException {
@@ -143,7 +165,8 @@ public class Repository {
             );
 
 
-            pageDB.put(url.getBytes(), dataBytes);
+            PageToPageId.put(url.getBytes(), dataBytes);
+            PageIdToPage.put(dataBytes, url.getBytes());
 
 //            System.out.println("After Inserting: " + indexed + ", " + getPage(url));
 
@@ -155,12 +178,12 @@ public class Repository {
             //return pageId of the given url
             byte[] value = null;
             try {
-                value = pageDB.get(url.getBytes());
+                value = PageToPageId.get(url.getBytes());
             } catch (RocksDBException e) {
             }
 
             // return page of given url
-            if(value == null)
+            if (value == null)
                 return null;
             else {
                 Map.Entry<String, Boolean> pair = SerializeUtil.deserialize(value);
@@ -171,10 +194,10 @@ public class Repository {
         public static HashMap<String, String> getMap_url_pageId() {
             var map = new HashMap<String, String>();
 
-            RocksIterator iter = pageDB.newIterator();
+            RocksIterator iter = PageToPageId.newIterator();
             for (iter.seekToFirst(); iter.isValid(); iter.next()) {
                 Map.Entry<String, Boolean> page = SerializeUtil.deserialize(iter.value());
-                if(page == null) continue;
+                if (page == null) continue;
 
                 map.put(new String(iter.key()), page.getKey());
             }
@@ -184,10 +207,10 @@ public class Repository {
         public static List<String> getCrawledPageIds() {
             var crawledIds = new ArrayList<String>();
 
-            RocksIterator iter = pageDB.newIterator();
+            RocksIterator iter = PageToPageId.newIterator();
             for (iter.seekToFirst(); iter.isValid(); iter.next()) {
                 Map.Entry<String, Boolean> page = SerializeUtil.deserialize(iter.value());
-                if(page == null || !page.getValue()) continue;
+                if (page == null || !page.getValue()) continue;
 
                 crawledIds.add(page.getKey());
             }
