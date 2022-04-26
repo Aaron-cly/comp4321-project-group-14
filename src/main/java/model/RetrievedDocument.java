@@ -6,17 +6,16 @@ import java.util.stream.Collectors;
 
 public class RetrievedDocument extends PageInfo {
     public double score;
-    public HashSet<String> parentLinks;
     public HashMap<String, Integer> keyword_freq;
 
     private RetrievedDocument(String pageTitle, String url, String lastModifiedData, HashSet<String> childLinks, String pageSize, int max_termFreq) {
         super(pageTitle, url, lastModifiedData, childLinks, pageSize, max_termFreq);
     }
 
-    public RetrievedDocument(PageInfo pageInfo, double score, HashSet<String> parentLinks, HashMap<String, Integer> keyword_freq) {
+    public RetrievedDocument(PageInfo pageInfo, double score, HashMap<String, Integer> keyword_freq) {
         this(pageInfo.pageTitle, pageInfo.url, pageInfo.lastModifiedDate, pageInfo.childLinks, pageInfo.pageSize, pageInfo.max_termFreq);
+        this.parentLinks = pageInfo.parentLinks;
         this.score = score;
-        this.parentLinks = parentLinks;
         this.keyword_freq = keyword_freq;
     }
 

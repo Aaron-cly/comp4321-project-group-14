@@ -7,8 +7,8 @@ public class PageInfo implements Serializable {
     public String pageTitle;
     public String url;
     public String lastModifiedDate;
+    public HashSet<String> parentLinks = new HashSet<String>();
     public HashSet<String> childLinks;  // actual url
-    public HashSet<String> parentLinks;
     public String pageSize;
     public int max_termFreq;
 
@@ -19,7 +19,6 @@ public class PageInfo implements Serializable {
         this.url = url;
         this.lastModifiedDate = lastModifiedData;
         this.childLinks = childLinks;
-        this.parentLinks = new HashSet<String>();
         this.pageSize = pageSize;
         this.max_termFreq = max_termFreq;
     }

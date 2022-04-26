@@ -208,7 +208,19 @@ public class Indexer {
     }
 
     public static void construct_parents_from_child_links(){
+        List<String> crawledIds = Repository.Page.getCrawledPageIds();
+        var map = Repository.PageInfo.getMap_pageId_pageInfo();
 
+        for(String id: crawledIds){
+            List<String> parents = new ArrayList<String>();
+            for(Map.Entry<String, PageInfo> e: map.entrySet()){
+                if(e.getValue().childLinks.contains(id))
+                    parents.add(e.getKey());
+            }
+            var currentPageInfo = Repository.PageInfo.getPageInfo(id);
+            currentPageInfo.parentLinks = new HashSet<>(parents);
+            Repository.PageInfo.addPageInfo(id, currentPageInfo);
+        }
     }
 
     // extract all words from a page

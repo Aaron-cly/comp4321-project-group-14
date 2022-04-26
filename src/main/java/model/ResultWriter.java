@@ -39,6 +39,12 @@ public class ResultWriter {
                 }
                 writer.append('\n');
 
+                writer.append("Parent Links\n");
+                for (var link : pageInfo.parentLinks) {
+                    writer.append(Repository.Page.getPageUrl(link)).append('\n');
+                }
+
+                writer.append("Child Links\n");
                 for (var link : pageInfo.childLinks) {
                     writer.append(Repository.Page.getPageUrl(link)).append('\n');
                 }

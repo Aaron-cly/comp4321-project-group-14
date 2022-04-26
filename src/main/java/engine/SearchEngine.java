@@ -74,14 +74,23 @@ public class SearchEngine {
                 return null;
             }).collect(Collectors.toCollection(HashSet::new));
 
-            HashSet<String> parentLinks = new HashSet<>();  // need to store it in a new DB file
+            pageInfo.parentLinks = pageInfo.parentLinks.stream().map(id -> {
+                try {
+                    return Repository.Page.getPageUrl(id);
+                } catch (RocksDBException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }).collect(Collectors.toCollection(HashSet::new));
+
+//            HashSet<String> parentLinks = new HashSet<>();  // need to store it in a new DB file
 
             HashMap<String, Integer> term_freq_doc = new HashMap<>();   // get the query terms freq in this doc
             for (String term : inverted.keySet()) {
                 term_freq_doc.put(term, inverted.get(term).getOrDefault(pageId, 0));
             }
 
-            RetrievedDocument outputDoc = new RetrievedDocument(pageInfo, scoresOnContent.getOrDefault(pageId, 0.0), parentLinks, term_freq_doc);
+            RetrievedDocument outputDoc = new RetrievedDocument(pageInfo, scoresOnContent.getOrDefault(pageId, 0.0), term_freq_doc);
             outputList.add(outputDoc);
         }
 

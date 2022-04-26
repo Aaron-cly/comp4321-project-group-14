@@ -6,10 +6,7 @@ import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 import org.rocksdb.RocksIterator;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Repository {
     protected static RocksDB wordDB;
@@ -136,16 +133,19 @@ public class Repository {
         public static String insertPage(String url, boolean indexed) throws RocksDBException {
             Map.Entry<String, Boolean> page = getPage(url);
 
-            if (page != null) {
+            if (page != null && page.getValue()) {
                 return page.getKey();
             }
 
             String pageId = String.valueOf(url.hashCode());
             var dataBytes = SerializeUtil.serialize(
-                    new AbstractMap.SimpleEntry<>(pageId, indexed)
+                    new AbstractMap.SimpleEntry<String, Boolean>(pageId, indexed)
             );
 
+
             pageDB.put(url.getBytes(), dataBytes);
+
+//            System.out.println("After Inserting: " + indexed + ", " + getPage(url));
 
             // return the pageId of the inserted page
             return pageId;
@@ -181,6 +181,18 @@ public class Repository {
             return map;
         }
 
+        public static List<String> getCrawledPageIds() {
+            var crawledIds = new ArrayList<String>();
+
+            RocksIterator iter = pageDB.newIterator();
+            for (iter.seekToFirst(); iter.isValid(); iter.next()) {
+                Map.Entry<String, Boolean> page = SerializeUtil.deserialize(iter.value());
+                if(page == null || !page.getValue()) continue;
+
+                crawledIds.add(page.getKey());
+            }
+            return crawledIds;
+        }
     }
 
     public static class ForwardIndex {

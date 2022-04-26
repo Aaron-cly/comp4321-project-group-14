@@ -114,11 +114,12 @@ public class Crawler {
 
             crawlPage(currentURL, pagesOnURL);
             currentIndex++;
-            System.out.println(currentIndex + ": " + currentURL);
+//            System.out.println(currentIndex + ": " + currentURL);
             if (currentIndex % 500 == 0) {
                 System.out.printf("Crawled and indexed %d pages\n", currentIndex);
             }
         }
+        Indexer.construct_parents_from_child_links();
     }
 
     private void crawlPage(String url, HashSet<String> pagesOnURL) throws IOException {
