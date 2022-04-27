@@ -119,7 +119,7 @@ public class Crawler {
                 System.out.printf("Crawled and indexed %d pages\n", currentIndex);
             }
         }
-        Indexer.construct_parents_from_child_links();
+        indexer.construct_parents_from_child_links();
     }
 
     private void crawlPage(String url, HashSet<String> pagesOnURL) throws IOException {

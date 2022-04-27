@@ -13,8 +13,8 @@ public class MainClass {
     static String URL = "http://www.cse.ust.hk";
 
     public static void main(String[] args) throws RocksDBException, IOException {
-        runCrawler();
-//        runQuery("FAQ \"Postgraduate Students\"");
+//        runCrawler();
+        runQuery("FAQ \"Postgraduate Students\"");
 //        runQuery("Postgraduate");
     }
 
