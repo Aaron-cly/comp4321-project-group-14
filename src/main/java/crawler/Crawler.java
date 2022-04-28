@@ -5,6 +5,7 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import repository.Repository;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,22 +32,19 @@ public class Crawler {
         return conn.execute();
     }
 
-    private HashSet<String> getPagesFromURL(String url) throws IOException {
-        return getPagesFromURL(url, Integer.MAX_VALUE);
-    }
-
-    private static final List<String> extensionList = List.of(".pdf", "png", ".jpeg", ".jpg", ".mp4", ".mp3", ".doc", ".zip", ".rar", ".ppt", ".pptx", ".docx", ".bib", ".Z", ".ps", ".tgz", ".wmv", ".ai", ".ps.gz", ".mov", ".mpeg", ".mpg", ".avi", ".rm", ".key", ".it");
+    private static final List<String> extensionList = List.of(".pdf", ".gif", ".png", ".jpeg", ".jpg", ".mp4", ".mp3", ".doc", ".zip", ".rar", ".ppt", ".pptx", ".docx", ".bib", ".Z", ".ps", ".tgz", ".wmv", ".ai", ".ps.gz", ".mov", ".mpeg", ".mpg", ".avi", ".rm", ".key", ".it");
 
     private boolean validLink(String link) {
 
-        return !link.equals("/") && !link.startsWith("../") && !link.contains("ftp") && !link.contains("@") && !link.equals("index.html")
-                && !link.equals(".") && !link.contains("?") && !link.contains("#") && !link.contains("www") && !link.contains("http")
+        return !link.equals("/") && !link.contains("ftp") && !link.contains("@") && !link.contains("Password_Only")
+                && !link.contains("?") && !link.contains("#") && !link.contains("www") && !link.contains("http")
                 && !link.startsWith("javascript")
+                && !link.contains("index.html") // have visited and not meaningful
                 && extensionList.stream().noneMatch(ext -> link.toLowerCase().endsWith(ext.toLowerCase()));
     }
 
     // obtain all pages embedded in html of a URL
-    private HashSet<String> getPagesFromURL(String url, int numPages) throws IOException {
+    private HashSet<String> getPagesFromURL(String url) {
         Document doc = null;
         Connection.Response res = null;
         try {
@@ -64,6 +62,9 @@ public class Crawler {
                 .map(link -> link.attr("href"))
                 .filter(this::validLink)
                 .map(link -> {
+                    if (link.equals(".")) {
+                        return rootURL;
+                    }
                     if (link.startsWith("/")) {
                         return rootURL + link;
                     } else if (link.startsWith("./")) {
@@ -71,6 +72,25 @@ public class Crawler {
                         String baseUrl = currentUrl.substring(0, mountPoint + 1);
 
                         return baseUrl + link.substring(2);
+                    } else if (link.startsWith("../")) {
+                        System.out.print(currentUrl + ":" + link + "    :");
+                        String baseUrl = null;
+                        int mountPoint = currentUrl.lastIndexOf('/');
+                        baseUrl = currentUrl.substring(0, mountPoint);
+                        while (link.startsWith("../")) {
+                            mountPoint = baseUrl.lastIndexOf('/');
+                            baseUrl = baseUrl.substring(0, mountPoint);
+                            if (link.length() > 3)
+                                link = link.substring(3);
+                            else {
+                                link = "";
+                                break;
+                            }
+                        }
+                        char lastChar = baseUrl.charAt(baseUrl.length() - 1);
+                        String child = baseUrl + (lastChar == '/' ? "" : '/') + link;
+                        System.out.println(child);
+                        return child;
                     } else {
                         if (currentUrl.endsWith(".html") || currentUrl.endsWith(".htm")) {
                             int mountPoint = currentUrl.lastIndexOf('/');
@@ -88,7 +108,7 @@ public class Crawler {
                 })
                 .collect(Collectors.toCollection(HashSet::new));
 
-        return urlSet.stream().limit(numPages).collect(Collectors.toCollection(HashSet::new));
+        return urlSet;
     }
 
     public void crawlFromRoot() throws IOException {
