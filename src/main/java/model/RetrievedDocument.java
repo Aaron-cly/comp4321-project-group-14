@@ -43,7 +43,7 @@ public class RetrievedDocument extends PageInfo {
                 "&emsp;&emsp;" + "Document most frequent words:\t" + top_document_keywords + "<br />" +
                 "&emsp;&emsp;Parent Links" + "<br />" +
                 "&emsp;&emsp;" + parentLinks.toString() + "<br />" +
-                "&emsp;&emsp;Child Links" + "<br /" +
+                "&emsp;&emsp;Child Links" + "<br />" +
                 "&emsp;&emsp;" + childLinks.toString() + "<br />" +
                 "&emsp;=======================================================<br />";
     }
