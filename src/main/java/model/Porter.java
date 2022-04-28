@@ -1,4 +1,4 @@
-package engine;
+package model;
 
 /* author:   Fotis Lazarinis (actually I translated from C to Java)
    date:     June 1997
@@ -9,8 +9,6 @@ package engine;
              input and returns the stem of this String again as a String.
 
 */
-
-import java.io.*;
 
 class NewString {
     public String str;

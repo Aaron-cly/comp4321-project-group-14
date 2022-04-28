@@ -1,17 +1,31 @@
 package engine;
 
-import indexer.Indexer;
 import model.PageInfo;
+import model.Porter;
 import model.RetrievedDocument;
 import org.rocksdb.RocksDBException;
 import repository.Repository;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SearchEngine {
-    private static char TERM_INDICATOR = '\"';
+    private static String TERM_INDICATOR = "\"";
     private static int OUTPUT_NUM = 50;
+    private static ArrayList<String> stopWords;
+
+    static {
+        // retrieve stopwords from text file
+        try {
+            var list = Files.readAllLines(Paths.get("./stopwords.txt"));
+            stopWords = new ArrayList<>(list);
+        } catch (Exception e) {
+            System.out.println("Something went wrong while reading the file");
+            e.printStackTrace();
+        }
+    }
 
     // in here, a term means a word or a phrase
     public static List<RetrievedDocument> processQuery(String query) throws RocksDBException {
@@ -83,33 +97,49 @@ public class SearchEngine {
                 return null;
             }).collect(Collectors.toCollection(HashSet::new));
 
-//            HashSet<String> parentLinks = new HashSet<>();  // need to store it in a new DB file
-
             HashMap<String, Integer> term_freq_doc = new HashMap<>();   // get the query terms freq in this doc
             for (String term : inverted.keySet()) {
                 term_freq_doc.put(term, inverted.get(term).getOrDefault(pageId, 0));
             }
 
-            RetrievedDocument outputDoc = new RetrievedDocument(pageInfo, scoresOnContent.getOrDefault(pageId, 0.0), term_freq_doc);
+            // the top 5 frequent stemmed keywords of the doc
+            var forward = Repository.ForwardIndex.getMap_WordId_Positions(pageId);
+            var top5_word = forward.keySet().stream().sorted(Comparator.comparing(word -> -forward.get(word).size()))
+                    .limit(5)
+                    .collect(Collectors.toList());
+
+            LinkedHashMap<String, Integer> sorted_top5_words = new LinkedHashMap<>();
+            top5_word.forEach(wId -> {
+                try {
+                    sorted_top5_words.put(Repository.Word.getWord(wId), forward.get(wId).size());
+                } catch (RocksDBException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            RetrievedDocument outputDoc = new RetrievedDocument(pageInfo, scoresOnContent.getOrDefault(pageId, 0.0), term_freq_doc, sorted_top5_words);
             outputList.add(outputDoc);
         }
 
         return outputList;
     }
 
-    // returns  terms, e.g. "hong kong" university  -> ["hong kong", "university"]
+    // returns stemmed terms, e.g. "hong kong" university  -> ["hong kong", "univers"]
     public static String[] parseQuery(String query) {
         query = query.toLowerCase();
         List<String> phraseList = new ArrayList<>();
+        Porter porter = new Porter();
 
         var wordArr = query.split(" ");
         StringBuilder tempTerm = new StringBuilder();
         boolean isInTerm = false;
         for (String word : wordArr) {
+            if (stopWords.contains(word)) continue;
+
             if (word.startsWith(TERM_INDICATOR + "") && word.endsWith(TERM_INDICATOR + "")) {
                 if (word.length() > 2) {
                     phraseList.add(
-                            Indexer.porter.stripAffixes(word.substring(1, word.length() - 1))
+                            porter.stripAffixes(word.substring(1, word.length() - 1))
                     );
                 }
                 continue;
@@ -118,21 +148,21 @@ public class SearchEngine {
             if (word.startsWith(TERM_INDICATOR + "")) {
                 isInTerm = true;
                 tempTerm.append(
-                        Indexer.porter.stripAffixes(word.substring(1))
+                        porter.stripAffixes(word.substring(1))
                 );
             } else if (word.endsWith(TERM_INDICATOR + "")) {
                 isInTerm = false;
                 tempTerm.append(" ").append(
-                        Indexer.porter.stripAffixes(word.substring(0, word.length() - 1))
+                        porter.stripAffixes(word.substring(0, word.length() - 1))
                 );
 
                 phraseList.add(tempTerm.toString());
                 tempTerm = new StringBuilder();
             } else {    // words surrounded with NO quotation
                 if (isInTerm) {
-                    tempTerm.append(" ").append(Indexer.porter.stripAffixes(word));
+                    tempTerm.append(" ").append(porter.stripAffixes(word));
                 } else {
-                    phraseList.add(Indexer.porter.stripAffixes(word));
+                    phraseList.add(porter.stripAffixes(word));
                 }
             }
         }

@@ -1,6 +1,6 @@
 package indexer;
 
-import engine.Porter;
+import model.Porter;
 import model.PageInfo;
 import org.jsoup.nodes.Document;
 import org.rocksdb.RocksDBException;
