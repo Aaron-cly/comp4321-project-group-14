@@ -73,7 +73,7 @@ public class Crawler {
 
                         return baseUrl + link.substring(2);
                     } else if (link.startsWith("../")) {
-                        System.out.print(currentUrl + ":" + link + "    :");
+                        // System.out.print(currentUrl + ":" + link + "    :");
                         String baseUrl = null;
                         int mountPoint = currentUrl.lastIndexOf('/');
                         baseUrl = currentUrl.substring(0, mountPoint);
@@ -89,7 +89,7 @@ public class Crawler {
                         }
                         char lastChar = baseUrl.charAt(baseUrl.length() - 1);
                         String child = baseUrl + (lastChar == '/' ? "" : '/') + link;
-                        System.out.println(child);
+                        // System.out.println(child);
                         return child;
                     } else {
                         if (currentUrl.endsWith(".html") || currentUrl.endsWith(".htm")) {
@@ -134,7 +134,7 @@ public class Crawler {
 
             crawlPage(currentURL, pagesOnURL);
             currentIndex++;
-            System.out.println(currentIndex + ": " + currentURL);
+//            System.out.println(currentIndex + ": " + currentURL);
             if (currentIndex % 500 == 0) {
                 System.out.printf("Crawled and indexed %d pages\n", currentIndex);
             }
