@@ -13,18 +13,21 @@ public class MainClass {
     static String URL = "http://www.cse.ust.hk";
     static int targetNumPages = 30;
     static boolean freshStart = false;
-//    static String URL = "http://www.cse.ust.hk/acm/photo/20040417HKUSTProgrammingContest/120_2020.wmv";
 
     public static void main(String[] args) throws RocksDBException, IOException {
-        if (args.length != 2 || (!args[0].equals("FRESH_CRAWL") && !args[1].equals("CONTINUE_CRAWL"))) {
+        if ((args.length != 1 && args.length != 2) || (!args[0].equals("FRESH_CRAWL") && !args[0].equals("CONTINUE_CRAWL"))) {
             System.out.println("Invalid Arguments." +
-                    " Please input run --args=\"[FRESH_CRAWL|CONTINUE_CRAWL] [num_pages_to_crawl]\"");
+                    " Please input run --args=\"[FRESH_CRAWL|CONTINUE_CRAWL] [num_pages_to_crawl]\" , omit num_pages_to_crawl to crawl all pages");
             return;
         }
-//        System.out.println(args[0] + args[1]);
-        freshStart = args[0].equals("FRESH_CRAWL");
-        targetNumPages = Integer.parseInt(args[1]);
 
+        freshStart = args[0].equals("FRESH_CRAWL");
+
+        if (args.length == 1) {
+            targetNumPages = 0;
+        } else {
+            targetNumPages = Integer.parseInt(args[1]);
+        }
 
         runCrawler();
 //        runQuery("FAQ \"Postgraduate Students\"");
@@ -32,7 +35,6 @@ public class MainClass {
     }
 
     public static void runCrawler() throws IOException {
-
         Instant start;
         Instant finish;
         long timeElapsed;
@@ -69,7 +71,6 @@ public class MainClass {
 //            ResultWriter.write_invertedTitle_file();
 //            ResultWriter.write_forwardTitle_File();
 //            System.out.println("Inverted index file written to inverted_file.txt");
-
 
         Repository.closeAllConnections();
     }

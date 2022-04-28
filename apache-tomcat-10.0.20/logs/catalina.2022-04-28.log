@@ -1017,3 +1017,228 @@
 28-Apr-2022 02:37:29.110 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [C:\Users\User\OneDrive\Desktop\COMP 4321\project\comp4321-project-group-14\apache-tomcat-10.0.20\webapps\ROOT] has finished in [181] ms
 28-Apr-2022 02:37:29.117 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
 28-Apr-2022 02:37:29.337 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [1443] milliseconds
+28-Apr-2022 23:42:57.558 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.0.20
+28-Apr-2022 23:42:57.564 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Mar 31 2022 14:24:36 UTC
+28-Apr-2022 23:42:57.565 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.0.20.0
+28-Apr-2022 23:42:57.565 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Mac OS X
+28-Apr-2022 23:42:57.565 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            10.16
+28-Apr-2022 23:42:57.565 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          x86_64
+28-Apr-2022 23:42:57.565 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /Library/Java/JavaVirtualMachines/jdk-15.0.2.jdk/Contents/Home
+28-Apr-2022 23:42:57.566 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           15.0.2+7-27
+28-Apr-2022 23:42:57.566 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Oracle Corporation
+28-Apr-2022 23:42:57.566 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20
+28-Apr-2022 23:42:57.566 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20
+28-Apr-2022 23:42:57.588 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+28-Apr-2022 23:42:57.588 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+28-Apr-2022 23:42:57.589 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+28-Apr-2022 23:42:57.589 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+28-Apr-2022 23:42:57.589 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+28-Apr-2022 23:42:57.590 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/conf/logging.properties
+28-Apr-2022 23:42:57.590 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+28-Apr-2022 23:42:57.590 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+28-Apr-2022 23:42:57.590 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+28-Apr-2022 23:42:57.590 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+28-Apr-2022 23:42:57.590 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dignore.endorsed.dirs=
+28-Apr-2022 23:42:57.590 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20
+28-Apr-2022 23:42:57.591 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20
+28-Apr-2022 23:42:57.591 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/temp
+28-Apr-2022 23:42:57.593 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/Users/ferdy/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.]
+28-Apr-2022 23:42:58.105 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+28-Apr-2022 23:42:58.126 SEVERE [main] org.apache.catalina.util.LifecycleBase.handleSubClassException Failed to initialize component [Connector[HTTP/1.1-8080]]
+	org.apache.catalina.LifecycleException: Protocol handler initialization failed
+		at org.apache.catalina.connector.Connector.initInternal(Connector.java:1055)
+		at org.apache.catalina.util.LifecycleBase.init(LifecycleBase.java:136)
+		at org.apache.catalina.core.StandardService.initInternal(StandardService.java:556)
+		at org.apache.catalina.util.LifecycleBase.init(LifecycleBase.java:136)
+		at org.apache.catalina.core.StandardServer.initInternal(StandardServer.java:1042)
+		at org.apache.catalina.util.LifecycleBase.init(LifecycleBase.java:136)
+		at org.apache.catalina.startup.Catalina.load(Catalina.java:747)
+		at org.apache.catalina.startup.Catalina.load(Catalina.java:769)
+		at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+		at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:64)
+		at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+		at java.base/java.lang.reflect.Method.invoke(Method.java:564)
+		at org.apache.catalina.startup.Bootstrap.load(Bootstrap.java:305)
+		at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:475)
+	Caused by: java.net.BindException: Address already in use
+		at java.base/sun.nio.ch.Net.bind0(Native Method)
+		at java.base/sun.nio.ch.Net.bind(Net.java:550)
+		at java.base/sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:249)
+		at org.apache.tomcat.util.net.NioEndpoint.initServerSocket(NioEndpoint.java:245)
+		at org.apache.tomcat.util.net.NioEndpoint.bind(NioEndpoint.java:200)
+		at org.apache.tomcat.util.net.AbstractEndpoint.bindWithCleanup(AbstractEndpoint.java:1192)
+		at org.apache.tomcat.util.net.AbstractEndpoint.init(AbstractEndpoint.java:1205)
+		at org.apache.coyote.AbstractProtocol.init(AbstractProtocol.java:580)
+		at org.apache.coyote.http11.AbstractHttp11Protocol.init(AbstractHttp11Protocol.java:82)
+		at org.apache.catalina.connector.Connector.initInternal(Connector.java:1052)
+		... 13 more
+28-Apr-2022 23:42:58.127 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [805] milliseconds
+28-Apr-2022 23:42:58.179 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+28-Apr-2022 23:42:58.179 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.0.20]
+28-Apr-2022 23:42:58.186 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/docs]
+28-Apr-2022 23:42:58.569 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/docs] has finished in [382] ms
+28-Apr-2022 23:42:58.570 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/manager]
+28-Apr-2022 23:42:58.644 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/manager] has finished in [74] ms
+28-Apr-2022 23:42:58.644 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/examples]
+28-Apr-2022 23:42:59.092 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/examples] has finished in [448] ms
+28-Apr-2022 23:42:59.093 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/ROOT]
+28-Apr-2022 23:42:59.311 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+28-Apr-2022 23:42:59.316 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/ROOT] has finished in [224] ms
+28-Apr-2022 23:42:59.317 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/host-manager]
+28-Apr-2022 23:42:59.367 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/host-manager] has finished in [49] ms
+28-Apr-2022 23:42:59.376 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [1248] milliseconds
+28-Apr-2022 23:42:59.383 SEVERE [main] org.apache.catalina.core.StandardServer.await Failed to create server shutdown socket on address [localhost] and port [8005] (base port [8005] and offset [0])
+	java.net.BindException: Address already in use
+		at java.base/sun.nio.ch.Net.bind0(Native Method)
+		at java.base/sun.nio.ch.Net.bind(Net.java:550)
+		at java.base/sun.nio.ch.Net.bind(Net.java:539)
+		at java.base/sun.nio.ch.NioSocketImpl.bind(NioSocketImpl.java:643)
+		at java.base/java.net.ServerSocket.bind(ServerSocket.java:396)
+		at java.base/java.net.ServerSocket.<init>(ServerSocket.java:282)
+		at org.apache.catalina.core.StandardServer.await(StandardServer.java:577)
+		at org.apache.catalina.startup.Catalina.await(Catalina.java:887)
+		at org.apache.catalina.startup.Catalina.start(Catalina.java:833)
+		at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+		at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:64)
+		at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+		at java.base/java.lang.reflect.Method.invoke(Method.java:564)
+		at org.apache.catalina.startup.Bootstrap.start(Bootstrap.java:345)
+		at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:476)
+28-Apr-2022 23:42:59.400 INFO [main] org.apache.coyote.AbstractProtocol.pause Pausing ProtocolHandler ["http-nio-8080"]
+28-Apr-2022 23:42:59.400 INFO [main] org.apache.catalina.core.StandardService.stopInternal Stopping service [Catalina]
+28-Apr-2022 23:42:59.440 INFO [main] org.apache.coyote.AbstractProtocol.stop Stopping ProtocolHandler ["http-nio-8080"]
+28-Apr-2022 23:42:59.442 INFO [main] org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["http-nio-8080"]
+28-Apr-2022 23:53:14.808 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.0.20
+28-Apr-2022 23:53:14.815 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Mar 31 2022 14:24:36 UTC
+28-Apr-2022 23:53:14.815 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.0.20.0
+28-Apr-2022 23:53:14.815 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Mac OS X
+28-Apr-2022 23:53:14.815 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            10.16
+28-Apr-2022 23:53:14.815 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          x86_64
+28-Apr-2022 23:53:14.815 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /Library/Java/JavaVirtualMachines/jdk-15.0.2.jdk/Contents/Home
+28-Apr-2022 23:53:14.815 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           15.0.2+7-27
+28-Apr-2022 23:53:14.815 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Oracle Corporation
+28-Apr-2022 23:53:14.816 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20
+28-Apr-2022 23:53:14.816 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20
+28-Apr-2022 23:53:14.841 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+28-Apr-2022 23:53:14.841 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+28-Apr-2022 23:53:14.841 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+28-Apr-2022 23:53:14.841 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+28-Apr-2022 23:53:14.842 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+28-Apr-2022 23:53:14.842 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/conf/logging.properties
+28-Apr-2022 23:53:14.842 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+28-Apr-2022 23:53:14.842 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+28-Apr-2022 23:53:14.842 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+28-Apr-2022 23:53:14.843 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+28-Apr-2022 23:53:14.843 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dignore.endorsed.dirs=
+28-Apr-2022 23:53:14.843 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20
+28-Apr-2022 23:53:14.843 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20
+28-Apr-2022 23:53:14.843 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/temp
+28-Apr-2022 23:53:14.845 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/Users/ferdy/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.]
+28-Apr-2022 23:53:15.379 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+28-Apr-2022 23:53:15.407 SEVERE [main] org.apache.catalina.util.LifecycleBase.handleSubClassException Failed to initialize component [Connector[HTTP/1.1-8080]]
+	org.apache.catalina.LifecycleException: Protocol handler initialization failed
+		at org.apache.catalina.connector.Connector.initInternal(Connector.java:1055)
+		at org.apache.catalina.util.LifecycleBase.init(LifecycleBase.java:136)
+		at org.apache.catalina.core.StandardService.initInternal(StandardService.java:556)
+		at org.apache.catalina.util.LifecycleBase.init(LifecycleBase.java:136)
+		at org.apache.catalina.core.StandardServer.initInternal(StandardServer.java:1042)
+		at org.apache.catalina.util.LifecycleBase.init(LifecycleBase.java:136)
+		at org.apache.catalina.startup.Catalina.load(Catalina.java:747)
+		at org.apache.catalina.startup.Catalina.load(Catalina.java:769)
+		at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+		at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:64)
+		at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+		at java.base/java.lang.reflect.Method.invoke(Method.java:564)
+		at org.apache.catalina.startup.Bootstrap.load(Bootstrap.java:305)
+		at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:475)
+	Caused by: java.net.BindException: Address already in use
+		at java.base/sun.nio.ch.Net.bind0(Native Method)
+		at java.base/sun.nio.ch.Net.bind(Net.java:550)
+		at java.base/sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:249)
+		at org.apache.tomcat.util.net.NioEndpoint.initServerSocket(NioEndpoint.java:245)
+		at org.apache.tomcat.util.net.NioEndpoint.bind(NioEndpoint.java:200)
+		at org.apache.tomcat.util.net.AbstractEndpoint.bindWithCleanup(AbstractEndpoint.java:1192)
+		at org.apache.tomcat.util.net.AbstractEndpoint.init(AbstractEndpoint.java:1205)
+		at org.apache.coyote.AbstractProtocol.init(AbstractProtocol.java:580)
+		at org.apache.coyote.http11.AbstractHttp11Protocol.init(AbstractHttp11Protocol.java:82)
+		at org.apache.catalina.connector.Connector.initInternal(Connector.java:1052)
+		... 13 more
+28-Apr-2022 23:53:15.409 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [849] milliseconds
+28-Apr-2022 23:53:15.466 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+28-Apr-2022 23:53:15.466 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.0.20]
+28-Apr-2022 23:53:15.476 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/docs]
+28-Apr-2022 23:53:15.853 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/docs] has finished in [375] ms
+28-Apr-2022 23:53:15.853 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/manager]
+28-Apr-2022 23:53:15.933 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/manager] has finished in [80] ms
+28-Apr-2022 23:53:15.933 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/examples]
+28-Apr-2022 23:53:16.359 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/examples] has finished in [426] ms
+28-Apr-2022 23:53:16.359 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/ROOT]
+28-Apr-2022 23:53:16.509 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+28-Apr-2022 23:53:16.518 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/ROOT] has finished in [158] ms
+28-Apr-2022 23:53:16.518 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/host-manager]
+28-Apr-2022 23:53:16.559 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/host-manager] has finished in [41] ms
+28-Apr-2022 23:53:16.569 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [1159] milliseconds
+28-Apr-2022 23:53:16.576 SEVERE [main] org.apache.catalina.core.StandardServer.await Failed to create server shutdown socket on address [localhost] and port [8005] (base port [8005] and offset [0])
+	java.net.BindException: Address already in use
+		at java.base/sun.nio.ch.Net.bind0(Native Method)
+		at java.base/sun.nio.ch.Net.bind(Net.java:550)
+		at java.base/sun.nio.ch.Net.bind(Net.java:539)
+		at java.base/sun.nio.ch.NioSocketImpl.bind(NioSocketImpl.java:643)
+		at java.base/java.net.ServerSocket.bind(ServerSocket.java:396)
+		at java.base/java.net.ServerSocket.<init>(ServerSocket.java:282)
+		at org.apache.catalina.core.StandardServer.await(StandardServer.java:577)
+		at org.apache.catalina.startup.Catalina.await(Catalina.java:887)
+		at org.apache.catalina.startup.Catalina.start(Catalina.java:833)
+		at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+		at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:64)
+		at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+		at java.base/java.lang.reflect.Method.invoke(Method.java:564)
+		at org.apache.catalina.startup.Bootstrap.start(Bootstrap.java:345)
+		at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:476)
+28-Apr-2022 23:53:16.576 INFO [main] org.apache.coyote.AbstractProtocol.pause Pausing ProtocolHandler ["http-nio-8080"]
+28-Apr-2022 23:53:16.576 INFO [main] org.apache.catalina.core.StandardService.stopInternal Stopping service [Catalina]
+28-Apr-2022 23:53:16.619 INFO [main] org.apache.coyote.AbstractProtocol.stop Stopping ProtocolHandler ["http-nio-8080"]
+28-Apr-2022 23:53:16.621 INFO [main] org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["http-nio-8080"]
+28-Apr-2022 23:53:20.152 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/10.0.20
+28-Apr-2022 23:53:20.161 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Mar 31 2022 14:24:36 UTC
+28-Apr-2022 23:53:20.162 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 10.0.20.0
+28-Apr-2022 23:53:20.162 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Mac OS X
+28-Apr-2022 23:53:20.162 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            10.16
+28-Apr-2022 23:53:20.162 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          x86_64
+28-Apr-2022 23:53:20.162 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /Library/Java/JavaVirtualMachines/jdk-15.0.2.jdk/Contents/Home
+28-Apr-2022 23:53:20.162 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           15.0.2+7-27
+28-Apr-2022 23:53:20.162 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Oracle Corporation
+28-Apr-2022 23:53:20.162 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20
+28-Apr-2022 23:53:20.162 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20
+28-Apr-2022 23:53:20.188 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.lang=ALL-UNNAMED
+28-Apr-2022 23:53:20.188 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.io=ALL-UNNAMED
+28-Apr-2022 23:53:20.188 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util=ALL-UNNAMED
+28-Apr-2022 23:53:20.188 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+28-Apr-2022 23:53:20.189 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+28-Apr-2022 23:53:20.189 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/conf/logging.properties
+28-Apr-2022 23:53:20.189 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+28-Apr-2022 23:53:20.189 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+28-Apr-2022 23:53:20.189 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+28-Apr-2022 23:53:20.190 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+28-Apr-2022 23:53:20.191 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dignore.endorsed.dirs=
+28-Apr-2022 23:53:20.191 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20
+28-Apr-2022 23:53:20.191 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20
+28-Apr-2022 23:53:20.191 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/temp
+28-Apr-2022 23:53:20.193 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/Users/ferdy/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.]
+28-Apr-2022 23:53:20.777 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+28-Apr-2022 23:53:20.825 INFO [main] org.apache.catalina.startup.Catalina.load Server initialization in [962] milliseconds
+28-Apr-2022 23:53:20.882 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+28-Apr-2022 23:53:20.882 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet engine: [Apache Tomcat/10.0.20]
+28-Apr-2022 23:53:20.891 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/docs]
+28-Apr-2022 23:53:21.250 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/docs] has finished in [358] ms
+28-Apr-2022 23:53:21.250 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/manager]
+28-Apr-2022 23:53:21.367 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/manager] has finished in [116] ms
+28-Apr-2022 23:53:21.368 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/examples]
+28-Apr-2022 23:53:21.803 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/examples] has finished in [434] ms
+28-Apr-2022 23:53:21.803 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/ROOT]
+28-Apr-2022 23:53:21.946 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+28-Apr-2022 23:53:21.950 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/ROOT] has finished in [147] ms
+28-Apr-2022 23:53:21.950 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/host-manager]
+28-Apr-2022 23:53:21.989 INFO [main] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/Users/ferdy/Documents/hkust/spring2022/searchengine/project/comp4321-project-group-14/apache-tomcat-10.0.20/webapps/host-manager] has finished in [39] ms
+28-Apr-2022 23:53:21.991 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+28-Apr-2022 23:53:22.008 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [1182] milliseconds
