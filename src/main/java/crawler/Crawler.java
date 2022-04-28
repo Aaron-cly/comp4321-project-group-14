@@ -35,12 +35,12 @@ public class Crawler {
         return getPagesFromURL(url, Integer.MAX_VALUE);
     }
 
-    private static final List<String> extensionList = List.of(".pdf", "png", ".jpeg", ".jpg", ".mp4", ".mp3", ".doc", ".zip", ".rar", ".ppt", ".pptx", ".docx", ".bib", ".Z", ".ps", ".tgz", ".wmv");
+    private static final List<String> extensionList = List.of(".pdf", "png", ".jpeg", ".jpg", ".mp4", ".mp3", ".doc", ".zip", ".rar", ".ppt", ".pptx", ".docx", ".bib", ".Z", ".ps", ".tgz", ".wmv", ".ai", ".ps.gz", ".mov", ".mpeg", ".mpg", ".avi", ".rm", ".key", ".it");
 
     private boolean validLink(String link) {
 
         return !link.equals("/") && !link.startsWith("../") && !link.contains("ftp") && !link.contains("@") && !link.equals("index.html")
-                && !link.equals(".") && !link.contains("?") && !link.contains("#") && !link.contains("http")
+                && !link.equals(".") && !link.contains("?") && !link.contains("#") && !link.contains("www") && !link.contains("http")
                 && !link.startsWith("javascript")
                 && extensionList.stream().noneMatch(ext -> link.toLowerCase().endsWith(ext.toLowerCase()));
     }
@@ -72,11 +72,11 @@ public class Crawler {
 
                         return baseUrl + link.substring(2);
                     } else {
-                        if (currentUrl.endsWith(".html")) {
+                        if (currentUrl.endsWith(".html") || currentUrl.endsWith(".htm")) {
                             int mountPoint = currentUrl.lastIndexOf('/');
                             String baseUrl = currentUrl.substring(0, mountPoint + 1);
                             return baseUrl + link;
-                        } else if (currentUrl.endsWith(".html/")) {
+                        } else if (currentUrl.endsWith(".html/") || currentUrl.endsWith(".htm/")) {
                             int mountPoint = currentUrl.substring(0, currentUrl.length() - 1).lastIndexOf('/');
                             String baseUrl = currentUrl.substring(0, mountPoint + 1);
                             return baseUrl + link;
@@ -139,7 +139,7 @@ public class Crawler {
         String lastModifiedDate = getLastModifiedDate(res, doc);
 
         // insert new page if url should not be ignore
-        if(!indexer.shouldIgnoreUrl(url, lastModifiedDate)) {
+        if (!indexer.shouldIgnoreUrl(url, lastModifiedDate)) {
             indexer.insert_new_page(doc, url, lastModifiedDate, pgSize, pagesOnURL);
         }
     }
@@ -154,6 +154,5 @@ public class Crawler {
                 lastModifiedSpans.get(0).ownText().length() - 10
         );
     }
-
 }
 
