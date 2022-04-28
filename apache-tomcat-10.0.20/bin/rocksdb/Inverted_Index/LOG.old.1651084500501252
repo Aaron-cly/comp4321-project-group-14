@@ -1,0 +1,242 @@
+2022/04/28-02:16:53.887044 acb8 RocksDB version: 6.28.2
+2022/04/28-02:16:53.887116 acb8 Git sha df4d3cf6fd52907f9a9a9bb62f124891787610eb
+2022/04/28-02:16:53.887135 acb8 Compile date 2022-02-05 10:23:06
+2022/04/28-02:16:53.887148 acb8 DB SUMMARY
+2022/04/28-02:16:53.887159 acb8 DB Session ID:  PS26CXC9PTRZTE9Z7A7U
+2022/04/28-02:16:53.887882 acb8 CURRENT file:  CURRENT
+2022/04/28-02:16:53.887900 acb8 IDENTITY file:  IDENTITY
+2022/04/28-02:16:53.887989 acb8 MANIFEST file:  MANIFEST-000030 size: 129 Bytes
+2022/04/28-02:16:53.888006 acb8 SST files in ./rocksdb/Inverted_Index dir, Total Num: 1, files: 000009.sst 
+2022/04/28-02:16:53.888018 acb8 Write Ahead Log file in ./rocksdb/Inverted_Index: 000031.log size: 0 ; 
+2022/04/28-02:16:53.888030 acb8                         Options.error_if_exists: 0
+2022/04/28-02:16:53.888265 acb8                       Options.create_if_missing: 1
+2022/04/28-02:16:53.888276 acb8                         Options.paranoid_checks: 1
+2022/04/28-02:16:53.888282 acb8             Options.flush_verify_memtable_count: 1
+2022/04/28-02:16:53.888287 acb8                               Options.track_and_verify_wals_in_manifest: 0
+2022/04/28-02:16:53.888292 acb8                                     Options.env: 00000136E82A98B0
+2022/04/28-02:16:53.888297 acb8                                      Options.fs: WinFS
+2022/04/28-02:16:53.888302 acb8                                Options.info_log: 00000136E9486960
+2022/04/28-02:16:53.888307 acb8                Options.max_file_opening_threads: 16
+2022/04/28-02:16:53.888312 acb8                              Options.statistics: 0000000000000000
+2022/04/28-02:16:53.888317 acb8                               Options.use_fsync: 0
+2022/04/28-02:16:53.888322 acb8                       Options.max_log_file_size: 0
+2022/04/28-02:16:53.888327 acb8                  Options.max_manifest_file_size: 1073741824
+2022/04/28-02:16:53.888331 acb8                   Options.log_file_time_to_roll: 0
+2022/04/28-02:16:53.888336 acb8                       Options.keep_log_file_num: 1000
+2022/04/28-02:16:53.888341 acb8                    Options.recycle_log_file_num: 0
+2022/04/28-02:16:53.888346 acb8                         Options.allow_fallocate: 1
+2022/04/28-02:16:53.888350 acb8                        Options.allow_mmap_reads: 0
+2022/04/28-02:16:53.888355 acb8                       Options.allow_mmap_writes: 0
+2022/04/28-02:16:53.888359 acb8                        Options.use_direct_reads: 0
+2022/04/28-02:16:53.888364 acb8                        Options.use_direct_io_for_flush_and_compaction: 0
+2022/04/28-02:16:53.888369 acb8          Options.create_missing_column_families: 0
+2022/04/28-02:16:53.888374 acb8                              Options.db_log_dir: 
+2022/04/28-02:16:53.888378 acb8                                 Options.wal_dir: 
+2022/04/28-02:16:53.888383 acb8                Options.table_cache_numshardbits: 6
+2022/04/28-02:16:53.888388 acb8                         Options.WAL_ttl_seconds: 0
+2022/04/28-02:16:53.888393 acb8                       Options.WAL_size_limit_MB: 0
+2022/04/28-02:16:53.888397 acb8                        Options.max_write_batch_group_size_bytes: 1048576
+2022/04/28-02:16:53.888402 acb8             Options.manifest_preallocation_size: 4194304
+2022/04/28-02:16:53.888407 acb8                     Options.is_fd_close_on_exec: 1
+2022/04/28-02:16:53.888412 acb8                   Options.advise_random_on_open: 1
+2022/04/28-02:16:53.888416 acb8                   Options.experimental_mempurge_threshold: 0.000000
+2022/04/28-02:16:53.888423 acb8                    Options.db_write_buffer_size: 0
+2022/04/28-02:16:53.888427 acb8                    Options.write_buffer_manager: 00000136E9E2E340
+2022/04/28-02:16:53.888432 acb8         Options.access_hint_on_compaction_start: 1
+2022/04/28-02:16:53.888437 acb8  Options.new_table_reader_for_compaction_inputs: 0
+2022/04/28-02:16:53.888441 acb8           Options.random_access_max_buffer_size: 1048576
+2022/04/28-02:16:53.888446 acb8                      Options.use_adaptive_mutex: 0
+2022/04/28-02:16:53.888451 acb8                            Options.rate_limiter: 0000000000000000
+2022/04/28-02:16:53.888483 acb8     Options.sst_file_manager.rate_bytes_per_sec: 0
+2022/04/28-02:16:53.888491 acb8                       Options.wal_recovery_mode: 2
+2022/04/28-02:16:53.888495 acb8                  Options.enable_thread_tracking: 0
+2022/04/28-02:16:53.888500 acb8                  Options.enable_pipelined_write: 0
+2022/04/28-02:16:53.888505 acb8                  Options.unordered_write: 0
+2022/04/28-02:16:53.888509 acb8         Options.allow_concurrent_memtable_write: 1
+2022/04/28-02:16:53.888514 acb8      Options.enable_write_thread_adaptive_yield: 1
+2022/04/28-02:16:53.888519 acb8             Options.write_thread_max_yield_usec: 100
+2022/04/28-02:16:53.888523 acb8            Options.write_thread_slow_yield_usec: 3
+2022/04/28-02:16:53.888528 acb8                               Options.row_cache: None
+2022/04/28-02:16:53.888533 acb8                              Options.wal_filter: None
+2022/04/28-02:16:53.888538 acb8             Options.avoid_flush_during_recovery: 0
+2022/04/28-02:16:53.888542 acb8             Options.allow_ingest_behind: 0
+2022/04/28-02:16:53.888547 acb8             Options.preserve_deletes: 0
+2022/04/28-02:16:53.888551 acb8             Options.two_write_queues: 0
+2022/04/28-02:16:53.888556 acb8             Options.manual_wal_flush: 0
+2022/04/28-02:16:53.888561 acb8             Options.atomic_flush: 0
+2022/04/28-02:16:53.888565 acb8             Options.avoid_unnecessary_blocking_io: 0
+2022/04/28-02:16:53.888570 acb8                 Options.persist_stats_to_disk: 0
+2022/04/28-02:16:53.888575 acb8                 Options.write_dbid_to_manifest: 0
+2022/04/28-02:16:53.888579 acb8                 Options.log_readahead_size: 0
+2022/04/28-02:16:53.888584 acb8                 Options.file_checksum_gen_factory: Unknown
+2022/04/28-02:16:53.888589 acb8                 Options.best_efforts_recovery: 0
+2022/04/28-02:16:53.888593 acb8                Options.max_bgerror_resume_count: 2147483647
+2022/04/28-02:16:53.888598 acb8            Options.bgerror_resume_retry_interval: 1000000
+2022/04/28-02:16:53.888603 acb8             Options.allow_data_in_errors: 0
+2022/04/28-02:16:53.888608 acb8             Options.db_host_id: __hostname__
+2022/04/28-02:16:53.888612 acb8             Options.max_background_jobs: 2
+2022/04/28-02:16:53.888617 acb8             Options.max_background_compactions: -1
+2022/04/28-02:16:53.888622 acb8             Options.max_subcompactions: 1
+2022/04/28-02:16:53.888627 acb8             Options.avoid_flush_during_shutdown: 0
+2022/04/28-02:16:53.888631 acb8           Options.writable_file_max_buffer_size: 1048576
+2022/04/28-02:16:53.888636 acb8             Options.delayed_write_rate : 16777216
+2022/04/28-02:16:53.888641 acb8             Options.max_total_wal_size: 0
+2022/04/28-02:16:53.888645 acb8             Options.delete_obsolete_files_period_micros: 21600000000
+2022/04/28-02:16:53.888650 acb8                   Options.stats_dump_period_sec: 600
+2022/04/28-02:16:53.888655 acb8                 Options.stats_persist_period_sec: 600
+2022/04/28-02:16:53.888660 acb8                 Options.stats_history_buffer_size: 1048576
+2022/04/28-02:16:53.888664 acb8                          Options.max_open_files: -1
+2022/04/28-02:16:53.888669 acb8                          Options.bytes_per_sync: 0
+2022/04/28-02:16:53.888674 acb8                      Options.wal_bytes_per_sync: 0
+2022/04/28-02:16:53.888678 acb8                   Options.strict_bytes_per_sync: 0
+2022/04/28-02:16:53.888683 acb8       Options.compaction_readahead_size: 0
+2022/04/28-02:16:53.888688 acb8                  Options.max_background_flushes: -1
+2022/04/28-02:16:53.888693 acb8 Compression algorithms supported:
+2022/04/28-02:16:53.888698 acb8 	kZSTD supported: 1
+2022/04/28-02:16:53.888703 acb8 	kSnappyCompression supported: 1
+2022/04/28-02:16:53.888708 acb8 	kBZip2Compression supported: 0
+2022/04/28-02:16:53.888713 acb8 	kZlibCompression supported: 1
+2022/04/28-02:16:53.888717 acb8 	kLZ4Compression supported: 1
+2022/04/28-02:16:53.888722 acb8 	kXpressCompression supported: 0
+2022/04/28-02:16:53.888727 acb8 	kLZ4HCCompression supported: 1
+2022/04/28-02:16:53.888754 acb8 	kZSTDNotFinalCompression supported: 1
+2022/04/28-02:16:53.888765 acb8 Fast CRC32 supported: Supported on x86
+2022/04/28-02:16:53.890507 acb8 [db\version_set.cc:4847] Recovering from manifest file: ./rocksdb/Inverted_Index/MANIFEST-000030
+2022/04/28-02:16:53.891006 acb8 [db\column_family.cc:607] --------------- Options for column family [default]:
+2022/04/28-02:16:53.891019 acb8               Options.comparator: leveldb.BytewiseComparator
+2022/04/28-02:16:53.891025 acb8           Options.merge_operator: None
+2022/04/28-02:16:53.891030 acb8        Options.compaction_filter: None
+2022/04/28-02:16:53.891034 acb8        Options.compaction_filter_factory: None
+2022/04/28-02:16:53.891039 acb8  Options.sst_partitioner_factory: None
+2022/04/28-02:16:53.891043 acb8         Options.memtable_factory: SkipListFactory
+2022/04/28-02:16:53.891048 acb8            Options.table_factory: BlockBasedTable
+2022/04/28-02:16:53.891077 acb8            table_factory options:   flush_block_policy_factory: FlushBlockBySizePolicyFactory (00000136E7A7E620)
+  cache_index_and_filter_blocks: 0
+  cache_index_and_filter_blocks_with_high_priority: 1
+  pin_l0_filter_and_index_blocks_in_cache: 0
+  pin_top_level_index_and_filter: 1
+  index_type: 0
+  data_block_index_type: 0
+  index_shortening: 1
+  data_block_hash_table_util_ratio: 0.750000
+  hash_index_allow_collision: 1
+  checksum: 1
+  no_block_cache: 0
+  block_cache: 00000136E7CA8030
+  block_cache_name: LRUCache
+  block_cache_options:
+    capacity : 8388608
+    num_shard_bits : 4
+    strict_capacity_limit : 0
+    memory_allocator : None
+    high_pri_pool_ratio: 0.000
+  block_cache_compressed: 0000000000000000
+  persistent_cache: 0000000000000000
+  block_size: 4096
+  block_size_deviation: 10
+  block_restart_interval: 16
+  index_block_restart_interval: 1
+  metadata_block_size: 4096
+  partition_filters: 0
+  use_delta_encoding: 1
+  filter_policy: nullptr
+  whole_key_filtering: 1
+  verify_compression: 0
+  read_amp_bytes_per_bit: 0
+  format_version: 5
+  enable_index_compression: 1
+  block_align: 0
+  max_auto_readahead_size: 262144
+  prepopulate_block_cache: 0
+2022/04/28-02:16:53.891084 acb8        Options.write_buffer_size: 67108864
+2022/04/28-02:16:53.891089 acb8  Options.max_write_buffer_number: 2
+2022/04/28-02:16:53.891093 acb8          Options.compression: Snappy
+2022/04/28-02:16:53.891098 acb8                  Options.bottommost_compression: Disabled
+2022/04/28-02:16:53.891103 acb8       Options.prefix_extractor: nullptr
+2022/04/28-02:16:53.891107 acb8   Options.memtable_insert_with_hint_prefix_extractor: nullptr
+2022/04/28-02:16:53.891112 acb8             Options.num_levels: 7
+2022/04/28-02:16:53.891116 acb8        Options.min_write_buffer_number_to_merge: 1
+2022/04/28-02:16:53.891121 acb8     Options.max_write_buffer_number_to_maintain: 0
+2022/04/28-02:16:53.891126 acb8     Options.max_write_buffer_size_to_maintain: 0
+2022/04/28-02:16:53.891131 acb8            Options.bottommost_compression_opts.window_bits: -14
+2022/04/28-02:16:53.891135 acb8                  Options.bottommost_compression_opts.level: 32767
+2022/04/28-02:16:53.891140 acb8               Options.bottommost_compression_opts.strategy: 0
+2022/04/28-02:16:53.891145 acb8         Options.bottommost_compression_opts.max_dict_bytes: 0
+2022/04/28-02:16:53.891149 acb8         Options.bottommost_compression_opts.zstd_max_train_bytes: 0
+2022/04/28-02:16:53.891154 acb8         Options.bottommost_compression_opts.parallel_threads: 1
+2022/04/28-02:16:53.891158 acb8                  Options.bottommost_compression_opts.enabled: false
+2022/04/28-02:16:53.891163 acb8         Options.bottommost_compression_opts.max_dict_buffer_bytes: 0
+2022/04/28-02:16:53.891168 acb8            Options.compression_opts.window_bits: -14
+2022/04/28-02:16:53.891172 acb8                  Options.compression_opts.level: 32767
+2022/04/28-02:16:53.891177 acb8               Options.compression_opts.strategy: 0
+2022/04/28-02:16:53.891181 acb8         Options.compression_opts.max_dict_bytes: 0
+2022/04/28-02:16:53.891186 acb8         Options.compression_opts.zstd_max_train_bytes: 0
+2022/04/28-02:16:53.891192 acb8         Options.compression_opts.parallel_threads: 1
+2022/04/28-02:16:53.891198 acb8                  Options.compression_opts.enabled: false
+2022/04/28-02:16:53.891203 acb8         Options.compression_opts.max_dict_buffer_bytes: 0
+2022/04/28-02:16:53.891208 acb8      Options.level0_file_num_compaction_trigger: 4
+2022/04/28-02:16:53.891212 acb8          Options.level0_slowdown_writes_trigger: 20
+2022/04/28-02:16:53.891217 acb8              Options.level0_stop_writes_trigger: 36
+2022/04/28-02:16:53.891221 acb8                   Options.target_file_size_base: 67108864
+2022/04/28-02:16:53.891226 acb8             Options.target_file_size_multiplier: 1
+2022/04/28-02:16:53.891236 acb8                Options.max_bytes_for_level_base: 268435456
+2022/04/28-02:16:53.891244 acb8 Options.level_compaction_dynamic_level_bytes: 0
+2022/04/28-02:16:53.891249 acb8          Options.max_bytes_for_level_multiplier: 10.000000
+2022/04/28-02:16:53.891255 acb8 Options.max_bytes_for_level_multiplier_addtl[0]: 1
+2022/04/28-02:16:53.891259 acb8 Options.max_bytes_for_level_multiplier_addtl[1]: 1
+2022/04/28-02:16:53.891264 acb8 Options.max_bytes_for_level_multiplier_addtl[2]: 1
+2022/04/28-02:16:53.891269 acb8 Options.max_bytes_for_level_multiplier_addtl[3]: 1
+2022/04/28-02:16:53.891273 acb8 Options.max_bytes_for_level_multiplier_addtl[4]: 1
+2022/04/28-02:16:53.891278 acb8 Options.max_bytes_for_level_multiplier_addtl[5]: 1
+2022/04/28-02:16:53.891282 acb8 Options.max_bytes_for_level_multiplier_addtl[6]: 1
+2022/04/28-02:16:53.891287 acb8       Options.max_sequential_skip_in_iterations: 8
+2022/04/28-02:16:53.891291 acb8                    Options.max_compaction_bytes: 1677721600
+2022/04/28-02:16:53.891296 acb8                        Options.arena_block_size: 1048576
+2022/04/28-02:16:53.891301 acb8   Options.soft_pending_compaction_bytes_limit: 68719476736
+2022/04/28-02:16:53.891305 acb8   Options.hard_pending_compaction_bytes_limit: 274877906944
+2022/04/28-02:16:53.891310 acb8       Options.rate_limit_delay_max_milliseconds: 100
+2022/04/28-02:16:53.891314 acb8                Options.disable_auto_compactions: 0
+2022/04/28-02:16:53.891320 acb8                        Options.compaction_style: kCompactionStyleLevel
+2022/04/28-02:16:53.891325 acb8                          Options.compaction_pri: kMinOverlappingRatio
+2022/04/28-02:16:53.891330 acb8 Options.compaction_options_universal.size_ratio: 1
+2022/04/28-02:16:53.891334 acb8 Options.compaction_options_universal.min_merge_width: 2
+2022/04/28-02:16:53.891339 acb8 Options.compaction_options_universal.max_merge_width: 4294967295
+2022/04/28-02:16:53.891343 acb8 Options.compaction_options_universal.max_size_amplification_percent: 200
+2022/04/28-02:16:53.891348 acb8 Options.compaction_options_universal.compression_size_percent: -1
+2022/04/28-02:16:53.891353 acb8 Options.compaction_options_universal.stop_style: kCompactionStopStyleTotalSize
+2022/04/28-02:16:53.891358 acb8 Options.compaction_options_fifo.max_table_files_size: 1073741824
+2022/04/28-02:16:53.891362 acb8 Options.compaction_options_fifo.allow_compaction: 0
+2022/04/28-02:16:53.891369 acb8                   Options.table_properties_collectors: 
+2022/04/28-02:16:53.891374 acb8                   Options.inplace_update_support: 0
+2022/04/28-02:16:53.891378 acb8                 Options.inplace_update_num_locks: 10000
+2022/04/28-02:16:53.891383 acb8               Options.memtable_prefix_bloom_size_ratio: 0.000000
+2022/04/28-02:16:53.891388 acb8               Options.memtable_whole_key_filtering: 0
+2022/04/28-02:16:53.891392 acb8   Options.memtable_huge_page_size: 0
+2022/04/28-02:16:53.891397 acb8                           Options.bloom_locality: 0
+2022/04/28-02:16:53.891401 acb8                    Options.max_successive_merges: 0
+2022/04/28-02:16:53.891406 acb8                Options.optimize_filters_for_hits: 0
+2022/04/28-02:16:53.891410 acb8                Options.paranoid_file_checks: 0
+2022/04/28-02:16:53.891415 acb8                Options.force_consistency_checks: 1
+2022/04/28-02:16:53.891452 acb8                Options.report_bg_io_stats: 0
+2022/04/28-02:16:53.891459 acb8                               Options.ttl: 2592000
+2022/04/28-02:16:53.891464 acb8          Options.periodic_compaction_seconds: 0
+2022/04/28-02:16:53.891469 acb8                       Options.enable_blob_files: false
+2022/04/28-02:16:53.891473 acb8                           Options.min_blob_size: 0
+2022/04/28-02:16:53.891478 acb8                          Options.blob_file_size: 268435456
+2022/04/28-02:16:53.891483 acb8                   Options.blob_compression_type: NoCompression
+2022/04/28-02:16:53.891487 acb8          Options.enable_blob_garbage_collection: false
+2022/04/28-02:16:53.891492 acb8      Options.blob_garbage_collection_age_cutoff: 0.250000
+2022/04/28-02:16:53.891497 acb8 Options.blob_garbage_collection_force_threshold: 1.000000
+2022/04/28-02:16:53.891504 acb8          Options.blob_compaction_readahead_size: 0
+2022/04/28-02:16:53.893750 acb8 [db\version_set.cc:4895] Recovered from manifest file:./rocksdb/Inverted_Index/MANIFEST-000030 succeeded,manifest_file_number is 30, next_file_number is 32, last_sequence is 3025, log_number is 27,prev_log_number is 0,max_column_family is 0,min_log_number_to_keep is 0
+2022/04/28-02:16:53.893764 acb8 [db\version_set.cc:4904] Column family [default] (ID 0), log number is 27
+2022/04/28-02:16:53.895113 acb8 [db\version_set.cc:4385] Creating manifest 34
+2022/04/28-02:16:53.912073 acb8 EVENT_LOG_v1 {"time_micros": 1651083413912060, "job": 1, "event": "recovery_started", "wal_files": [31]}
+2022/04/28-02:16:53.912101 acb8 [db\db_impl\db_impl_open.cc:885] Recovering log #31 mode 2
+2022/04/28-02:16:53.912513 acb8 [db\version_set.cc:4385] Creating manifest 35
+2022/04/28-02:16:53.935989 acb8 EVENT_LOG_v1 {"time_micros": 1651083413935977, "job": 1, "event": "recovery_finished"}
+2022/04/28-02:16:53.946409 acb8 [file\delete_scheduler.cc:77] Deleted file ./rocksdb/Inverted_Index/000031.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2022/04/28-02:16:53.946443 acb8 [db\db_impl\db_impl_open.cc:1793] SstFileManager instance 00000136E802AB30
+2022/04/28-02:16:53.947090 acb8 DB pointer 00000136E85E9ED0
+2022/04/28-02:16:54.191136 acb8 [db\db_impl\db_impl.cc:473] Shutdown: canceling all background work
+2022/04/28-02:16:54.197558 acb8 [db\db_impl\db_impl.cc:685] Shutdown complete

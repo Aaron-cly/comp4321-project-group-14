@@ -1,0 +1,106 @@
+2022/04/28-02:05:28.585674 c44 RocksDB version: 6.28.2
+2022/04/28-02:05:28.585825 c44 Git sha df4d3cf6fd52907f9a9a9bb62f124891787610eb
+2022/04/28-02:05:28.585863 c44 Compile date 2022-02-05 10:23:06
+2022/04/28-02:05:28.585887 c44 DB SUMMARY
+2022/04/28-02:05:28.585908 c44 DB Session ID:  Y1QKFKSXBL8FDVRNJGDJ
+2022/04/28-02:05:28.587257 c44 CURRENT file:  CURRENT
+2022/04/28-02:05:28.587292 c44 IDENTITY file:  IDENTITY
+2022/04/28-02:05:28.587461 c44 MANIFEST file:  MANIFEST-000010 size: 112 Bytes
+2022/04/28-02:05:28.587493 c44 SST files in ./rocksdb/WordToWordId dir, Total Num: 1, files: 000009.sst 
+2022/04/28-02:05:28.587516 c44 Write Ahead Log file in ./rocksdb/WordToWordId: 000011.log size: 0 ; 
+2022/04/28-02:05:28.587538 c44                         Options.error_if_exists: 0
+2022/04/28-02:05:28.590115 c44                       Options.create_if_missing: 1
+2022/04/28-02:05:28.590147 c44                         Options.paranoid_checks: 1
+2022/04/28-02:05:28.590156 c44             Options.flush_verify_memtable_count: 1
+2022/04/28-02:05:28.590164 c44                               Options.track_and_verify_wals_in_manifest: 0
+2022/04/28-02:05:28.590171 c44                                     Options.env: 00000166C7D33420
+2022/04/28-02:05:28.590180 c44                                      Options.fs: WinFS
+2022/04/28-02:05:28.590188 c44                                Options.info_log: 00000166C733BF20
+2022/04/28-02:05:28.590197 c44                Options.max_file_opening_threads: 16
+2022/04/28-02:05:28.590205 c44                              Options.statistics: 0000000000000000
+2022/04/28-02:05:28.590212 c44                               Options.use_fsync: 0
+2022/04/28-02:05:28.590220 c44                       Options.max_log_file_size: 0
+2022/04/28-02:05:28.590228 c44                  Options.max_manifest_file_size: 1073741824
+2022/04/28-02:05:28.590235 c44                   Options.log_file_time_to_roll: 0
+2022/04/28-02:05:28.590243 c44                       Options.keep_log_file_num: 1000
+2022/04/28-02:05:28.590250 c44                    Options.recycle_log_file_num: 0
+2022/04/28-02:05:28.590258 c44                         Options.allow_fallocate: 1
+2022/04/28-02:05:28.590265 c44                        Options.allow_mmap_reads: 0
+2022/04/28-02:05:28.590273 c44                       Options.allow_mmap_writes: 0
+2022/04/28-02:05:28.590280 c44                        Options.use_direct_reads: 0
+2022/04/28-02:05:28.590288 c44                        Options.use_direct_io_for_flush_and_compaction: 0
+2022/04/28-02:05:28.590295 c44          Options.create_missing_column_families: 0
+2022/04/28-02:05:28.590303 c44                              Options.db_log_dir: 
+2022/04/28-02:05:28.590310 c44                                 Options.wal_dir: 
+2022/04/28-02:05:28.590318 c44                Options.table_cache_numshardbits: 6
+2022/04/28-02:05:28.590325 c44                         Options.WAL_ttl_seconds: 0
+2022/04/28-02:05:28.590332 c44                       Options.WAL_size_limit_MB: 0
+2022/04/28-02:05:28.590340 c44                        Options.max_write_batch_group_size_bytes: 1048576
+2022/04/28-02:05:28.590347 c44             Options.manifest_preallocation_size: 4194304
+2022/04/28-02:05:28.590355 c44                     Options.is_fd_close_on_exec: 1
+2022/04/28-02:05:28.590362 c44                   Options.advise_random_on_open: 1
+2022/04/28-02:05:28.590370 c44                   Options.experimental_mempurge_threshold: 0.000000
+2022/04/28-02:05:28.590380 c44                    Options.db_write_buffer_size: 0
+2022/04/28-02:05:28.590387 c44                    Options.write_buffer_manager: 00000166C72DA4B0
+2022/04/28-02:05:28.590395 c44         Options.access_hint_on_compaction_start: 1
+2022/04/28-02:05:28.590402 c44  Options.new_table_reader_for_compaction_inputs: 0
+2022/04/28-02:05:28.590409 c44           Options.random_access_max_buffer_size: 1048576
+2022/04/28-02:05:28.590417 c44                      Options.use_adaptive_mutex: 0
+2022/04/28-02:05:28.590424 c44                            Options.rate_limiter: 0000000000000000
+2022/04/28-02:05:28.590433 c44     Options.sst_file_manager.rate_bytes_per_sec: 0
+2022/04/28-02:05:28.590495 c44                       Options.wal_recovery_mode: 2
+2022/04/28-02:05:28.590509 c44                  Options.enable_thread_tracking: 0
+2022/04/28-02:05:28.590517 c44                  Options.enable_pipelined_write: 0
+2022/04/28-02:05:28.590525 c44                  Options.unordered_write: 0
+2022/04/28-02:05:28.590532 c44         Options.allow_concurrent_memtable_write: 1
+2022/04/28-02:05:28.590539 c44      Options.enable_write_thread_adaptive_yield: 1
+2022/04/28-02:05:28.590547 c44             Options.write_thread_max_yield_usec: 100
+2022/04/28-02:05:28.590554 c44            Options.write_thread_slow_yield_usec: 3
+2022/04/28-02:05:28.590562 c44                               Options.row_cache: None
+2022/04/28-02:05:28.590569 c44                              Options.wal_filter: None
+2022/04/28-02:05:28.590577 c44             Options.avoid_flush_during_recovery: 0
+2022/04/28-02:05:28.590584 c44             Options.allow_ingest_behind: 0
+2022/04/28-02:05:28.590592 c44             Options.preserve_deletes: 0
+2022/04/28-02:05:28.590599 c44             Options.two_write_queues: 0
+2022/04/28-02:05:28.590606 c44             Options.manual_wal_flush: 0
+2022/04/28-02:05:28.590614 c44             Options.atomic_flush: 0
+2022/04/28-02:05:28.590621 c44             Options.avoid_unnecessary_blocking_io: 0
+2022/04/28-02:05:28.590628 c44                 Options.persist_stats_to_disk: 0
+2022/04/28-02:05:28.590636 c44                 Options.write_dbid_to_manifest: 0
+2022/04/28-02:05:28.590643 c44                 Options.log_readahead_size: 0
+2022/04/28-02:05:28.590650 c44                 Options.file_checksum_gen_factory: Unknown
+2022/04/28-02:05:28.590658 c44                 Options.best_efforts_recovery: 0
+2022/04/28-02:05:28.590665 c44                Options.max_bgerror_resume_count: 2147483647
+2022/04/28-02:05:28.590673 c44            Options.bgerror_resume_retry_interval: 1000000
+2022/04/28-02:05:28.590681 c44             Options.allow_data_in_errors: 0
+2022/04/28-02:05:28.590688 c44             Options.db_host_id: __hostname__
+2022/04/28-02:05:28.590696 c44             Options.max_background_jobs: 2
+2022/04/28-02:05:28.590703 c44             Options.max_background_compactions: -1
+2022/04/28-02:05:28.590711 c44             Options.max_subcompactions: 1
+2022/04/28-02:05:28.590718 c44             Options.avoid_flush_during_shutdown: 0
+2022/04/28-02:05:28.590726 c44           Options.writable_file_max_buffer_size: 1048576
+2022/04/28-02:05:28.590734 c44             Options.delayed_write_rate : 16777216
+2022/04/28-02:05:28.590741 c44             Options.max_total_wal_size: 0
+2022/04/28-02:05:28.590748 c44             Options.delete_obsolete_files_period_micros: 21600000000
+2022/04/28-02:05:28.590756 c44                   Options.stats_dump_period_sec: 600
+2022/04/28-02:05:28.590764 c44                 Options.stats_persist_period_sec: 600
+2022/04/28-02:05:28.590771 c44                 Options.stats_history_buffer_size: 1048576
+2022/04/28-02:05:28.590779 c44                          Options.max_open_files: -1
+2022/04/28-02:05:28.590786 c44                          Options.bytes_per_sync: 0
+2022/04/28-02:05:28.590793 c44                      Options.wal_bytes_per_sync: 0
+2022/04/28-02:05:28.590800 c44                   Options.strict_bytes_per_sync: 0
+2022/04/28-02:05:28.590807 c44       Options.compaction_readahead_size: 0
+2022/04/28-02:05:28.590815 c44                  Options.max_background_flushes: -1
+2022/04/28-02:05:28.590822 c44 Compression algorithms supported:
+2022/04/28-02:05:28.590831 c44 	kZSTD supported: 1
+2022/04/28-02:05:28.590838 c44 	kSnappyCompression supported: 1
+2022/04/28-02:05:28.590846 c44 	kBZip2Compression supported: 0
+2022/04/28-02:05:28.590853 c44 	kZlibCompression supported: 1
+2022/04/28-02:05:28.590861 c44 	kLZ4Compression supported: 1
+2022/04/28-02:05:28.590868 c44 	kXpressCompression supported: 0
+2022/04/28-02:05:28.590876 c44 	kLZ4HCCompression supported: 1
+2022/04/28-02:05:28.590883 c44 	kZSTDNotFinalCompression supported: 1
+2022/04/28-02:05:28.590941 c44 Fast CRC32 supported: Supported on x86
+2022/04/28-02:05:28.592221 c44 [WARN] [db\db_impl\db_impl_open.cc:1879] Persisting Option File error: OK
+2022/04/28-02:05:28.592242 c44 [db\db_impl\db_impl.cc:473] Shutdown: canceling all background work
+2022/04/28-02:05:28.592282 c44 [db\db_impl\db_impl.cc:685] Shutdown complete

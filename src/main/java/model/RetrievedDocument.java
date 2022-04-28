@@ -32,4 +32,16 @@ public class RetrievedDocument extends PageInfo {
                 "\t=======================================================\n" ;
     }
 
+    public String htmlString() {
+        return String.format("%.2f", score) + "&emsp;" + pageTitle + "<br />"+
+                "&emsp;&emsp;" + url + "<br />" +
+                "&emsp;&emsp;" + lastModifiedDate + ", " + pageSize + "<br />" +
+                "&emsp;&emsp;" + keyword_freq + "<br />" +
+                "&emsp;&emsp;Parent Links" + "<br />" +
+                "&emsp;&emsp;" + parentLinks.toString() + "<br />" +
+                "&emsp;&emsp;Child Links" + "<br /" +
+                "&emsp;&emsp;" + childLinks.toString() + "<br />" +
+                "&emsp;=======================================================<br />" ;
+    }
+
 }
