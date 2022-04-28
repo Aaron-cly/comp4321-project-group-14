@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class Indexer {
 
     public static Porter porter = new Porter();
+    public HashSet<String> indexedPageIds = new HashSet<>();
     private static ArrayList<String> stopWords;
 
      {
@@ -33,18 +34,12 @@ public class Indexer {
     // should only ignore if url to be indexed is not in index, orelse if the last modified date is later
     // than the one recorded in db
     public boolean shouldIgnoreUrl(String url, String latestDate){
-         // should not ignore if page is not yet in db
-        Map.Entry<String, Boolean> page = Repository.Page.getPage(url);
-        if(page == null)
+         // should not ignore if page is not yet in db/indexed
+        String pgId = Repository.Page.getPageId(url);
+        if(!indexedPageIds.contains(pgId))
             return false;
 
-        // should not ignore if page has not been indexed.
-        String pageId = page.getKey();
-        boolean indexed = page.getValue();
-        if(!indexed)
-            return false;
-
-         String existingModifiedDate = Repository.PageInfo.getPageInfo(pageId).lastModifiedDate;
+         String existingModifiedDate = Repository.PageInfo.getPageInfo(pgId).lastModifiedDate;
          // should not ignore if any one of the dates are null
          if(existingModifiedDate == null || latestDate == null)
              return false;
@@ -76,7 +71,7 @@ public class Indexer {
         // convert child urls to its page ids
         childLinks = childLinks.stream().map(l -> {
             try {
-                return Repository.Page.insertPage(l, false);
+                return Repository.Page.insertPage(l);
             } catch (RocksDBException e) {
                 e.printStackTrace();
             }
@@ -90,7 +85,7 @@ public class Indexer {
         );
 
         // insert into corresponding databases/tables
-        insert_page(url);
+        indexedPageIds.add(insert_page(url));
         update_ForwardIndex(url, map_word_posList);
         add_pageInfo(url, pageInfo);
 
@@ -112,7 +107,7 @@ public class Indexer {
         // index the current page
         String pageId = null;
         try {
-            pageId = Repository.Page.insertPage(url, true);
+            pageId = Repository.Page.insertPage(url);
         } catch (RocksDBException e) {
             e.printStackTrace();
         }
@@ -207,11 +202,10 @@ public class Indexer {
         Repository.InvertedIndex_Title.create_InvertedIndexFile(inverted);
     }
 
-    public static void construct_parents_from_child_links(){
-        List<String> crawledIds = Repository.Page.getCrawledPageIds();
+    public void construct_parents_from_child_links(){
         var map = Repository.PageInfo.getMap_pageId_pageInfo();
 
-        for(String id: crawledIds){
+        for(String id: indexedPageIds){
             List<String> parents = new ArrayList<String>();
             for(Map.Entry<String, PageInfo> e: map.entrySet()){
                 if(e.getValue().childLinks.contains(id))

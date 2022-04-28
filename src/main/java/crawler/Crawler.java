@@ -27,7 +27,7 @@ public class Crawler {
     }
 
     private Connection.Response getResponse(String url) throws IOException {
-        Connection conn = Jsoup.connect(url).timeout(5 * 1000);
+        Connection conn = Jsoup.connect(url).timeout(1000);
         return conn.execute();
     }
 
@@ -35,7 +35,7 @@ public class Crawler {
         return getPagesFromURL(url, Integer.MAX_VALUE);
     }
 
-    private static final List<String> extensionList = List.of(".pdf", "png", ".jpeg", ".jpg", ".mp4", ".mp3", ".doc", ".zip", ".rar", ".ppt", ".pptx", ".docx", ".bib", ".Z", ".ps", ".tgz");
+    private static final List<String> extensionList = List.of(".pdf", "png", ".jpeg", ".jpg", ".mp4", ".mp3", ".doc", ".zip", ".rar", ".ppt", ".pptx", ".docx", ".bib", ".Z", ".ps", ".tgz", ".wmv");
 
     private boolean validLink(String link) {
 
@@ -114,12 +114,12 @@ public class Crawler {
 
             crawlPage(currentURL, pagesOnURL);
             currentIndex++;
-//            System.out.println(currentIndex + ": " + currentURL);
+            System.out.println(currentIndex + ": " + currentURL);
             if (currentIndex % 500 == 0) {
                 System.out.printf("Crawled and indexed %d pages\n", currentIndex);
             }
         }
-        Indexer.construct_parents_from_child_links();
+        indexer.construct_parents_from_child_links();
     }
 
     private void crawlPage(String url, HashSet<String> pagesOnURL) throws IOException {
