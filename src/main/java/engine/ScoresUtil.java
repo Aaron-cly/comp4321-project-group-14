@@ -177,7 +177,7 @@ public class ScoresUtil {
             for (String pageId : pages_contain_allWords) {
                 List<Set<Integer>> positionList = new ArrayList<>();
                 for (String word : wordArr) {
-                    var posList = invertedIndex.get(word).get(pageId);
+                    var posList = invertedIndex.get(word).getOrDefault(pageId, new ArrayList<>());
                     positionList.add(new HashSet<>(posList));
                 }
                 HashSet<Integer> posIntersection = getIntersection(positionList);
