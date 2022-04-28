@@ -56,7 +56,9 @@ public class Repository {
 
     public static void closeAllConnections() {
         WordToWordId.close();
+        WordIdToWord.close();
         PageToPageId.close();
+        PageIdToPage.close();
         forwardDB.close();
         invertedDB.close();
         pageInfoDB.close();
