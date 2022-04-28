@@ -1,6 +1,6 @@
 package indexer;
 
-import engine.Porter;
+import model.Porter;
 import model.PageInfo;
 import org.jsoup.nodes.Document;
 import org.rocksdb.RocksDBException;
@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 
 public class Indexer {
 
-    public static Porter porter = new Porter();
+    public Porter porter = new Porter();
     public HashSet<String> indexedPageIds = new HashSet<>();
     private static ArrayList<String> stopWords;
 
-     {
+    static {
         // retrieve stopwords from text file
         try {
             var list = Files.readAllLines(Paths.get("./stopwords.txt"));
@@ -33,23 +33,24 @@ public class Indexer {
     // determines whether url should be ignored by the crawler
     // should only ignore if url to be indexed is not in index, orelse if the last modified date is later
     // than the one recorded in db
-    public boolean shouldIgnoreUrl(String url, String latestDate){
-         // should not ignore if page is not yet in db/indexed
+    public boolean shouldIgnoreUrl(String url, String latestDate) {
+        // should not ignore if page is not yet in db/indexed
         String pgId = Repository.Page.getPageId(url);
-        if(!indexedPageIds.contains(pgId))
+        if (pgId == null || !indexedPageIds.contains(pgId)) {
             return false;
+        }
 
-         String existingModifiedDate = Repository.PageInfo.getPageInfo(pgId).lastModifiedDate;
-         // should not ignore if any one of the dates are null
-         if(existingModifiedDate == null || latestDate == null)
-             return false;
+        String existingModifiedDate = Repository.PageInfo.getPageInfo(pgId).lastModifiedDate;
+        // should not ignore if any one of the dates are null
+        if (existingModifiedDate == null || latestDate == null)
+            return false;
 
         // compare latest last-modified-date and existing last-modified-date
         try {
             Date newDate = new SimpleDateFormat("yyyy-MM-dd").parse(latestDate);
             Date currentDate = new SimpleDateFormat("yyyy-MM-dd").parse(existingModifiedDate);
             // should not ignore if last modification date is later than the one recorded in db
-            if(newDate.after(currentDate))
+            if (newDate.after(currentDate))
                 return false;
         } catch (ParseException e) {
             e.printStackTrace();
@@ -61,7 +62,7 @@ public class Indexer {
 
     // inserts new page and its title into dbs
     public void insert_new_page(Document doc, String url, String lastModifiedDate,
-                                  int pgSize, HashSet<String> childLinks){
+                                int pgSize, HashSet<String> childLinks) {
         // index the current page
         // extract and stem words
         var stemList = stemWords(extractWords(doc));
@@ -114,7 +115,7 @@ public class Indexer {
         return pageId;
     }
 
-    private List<String> stemWords(List<String> words){
+    private List<String> stemWords(List<String> words) {
         return words.stream()
                 .map(w -> porter.stripAffixes(w)).collect(Collectors.toList());
     }
@@ -202,13 +203,13 @@ public class Indexer {
         Repository.InvertedIndex_Title.create_InvertedIndexFile(inverted);
     }
 
-    public void construct_parents_from_child_links(){
+    public void construct_parents_from_child_links() {
         var map = Repository.PageInfo.getMap_pageId_pageInfo();
 
-        for(String id: indexedPageIds){
+        for (String id : indexedPageIds) {
             List<String> parents = new ArrayList<String>();
-            for(Map.Entry<String, PageInfo> e: map.entrySet()){
-                if(e.getValue().childLinks.contains(id))
+            for (Map.Entry<String, PageInfo> e : map.entrySet()) {
+                if (e.getValue().childLinks.contains(id))
                     parents.add(e.getKey());
             }
             var currentPageInfo = Repository.PageInfo.getPageInfo(id);
