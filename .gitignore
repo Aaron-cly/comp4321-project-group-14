@@ -31,7 +31,6 @@ gradle-app.setting
 
 ## Package-specific files:
 # RocksDB
-rocksdb/*
 InvertedIndexDb/*
 MetaInfoDb/*
 Page_Info/*
@@ -57,3 +56,6 @@ LOG
 # program output
 spider_result.txt
 inverted_file.txt
+
+# class files
+apache-tomcat-10.0.20/webapps/ROOT/WEB-INF/classes/*

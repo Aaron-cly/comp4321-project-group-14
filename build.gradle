@@ -6,6 +6,14 @@ plugins {
 group 'org.example'
 version '1.0-SNAPSHOT'
 
+
+sourceSets {
+    main {
+        // Compiled Java classes should use this directory
+        java.outputDir = file('apache-tomcat-10.0.20/webapps/ROOT/WEB-INF/classes')
+    }
+}
+
 repositories {
     mavenCentral()
 }

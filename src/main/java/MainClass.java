@@ -11,9 +11,12 @@ import java.time.Instant;
 
 public class MainClass {
     static String URL = "http://www.cse.ust.hk";
+    static int targetNumPages = 30;
 //    static String URL = "http://www.cse.ust.hk/acm/photo/20040417HKUSTProgrammingContest/120_2020.wmv";
 
     public static void main(String[] args) throws RocksDBException, IOException {
+        targetNumPages = args.length > 0 ? Integer.parseInt(args[0]) : 30;
+
         runCrawler();
 //        runQuery("FAQ \"Postgraduate Students\"");
 //        runQuery("Postgraduate");
@@ -37,8 +40,10 @@ public class MainClass {
             Crawler crawler = new Crawler(URL);
             System.out.println("Running Crawler...");
             start = Instant.now();
-            crawler.crawlFromRoot(30);
-//            crawler.crawlFromRoot();
+            if(targetNumPages == 0)
+                crawler.crawlFromRoot();
+            else
+                crawler.crawlFromRoot(targetNumPages);
             finish = Instant.now();
             timeElapsed = Duration.between(start, finish).toSeconds();
             System.out.println("Time elapsed crawling pages: " + timeElapsed + " seconds\n");
