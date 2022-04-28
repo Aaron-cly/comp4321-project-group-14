@@ -27,6 +27,7 @@ public class MainClass {
 
 
         runCrawler();
+//        runQuery("Jovan");
 //        runQuery("FAQ \"Postgraduate Students\"");
 //        runQuery("Postgraduate");
     }

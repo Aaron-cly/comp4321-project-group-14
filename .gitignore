@@ -31,12 +31,7 @@ gradle-app.setting
 
 ## Package-specific files:
 # RocksDB
-InvertedIndexDb/*
-MetaInfoDb/*
-Page_Info/*
-Forward_Frequency/*
-Page/*
-Word/*
+apache-tomcat-10.0.20/bin/rocksdb/*
 LOCK
 LOG
 
