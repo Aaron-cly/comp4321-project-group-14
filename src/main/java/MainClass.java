@@ -12,10 +12,19 @@ import java.time.Instant;
 public class MainClass {
     static String URL = "http://www.cse.ust.hk";
     static int targetNumPages = 30;
+    static boolean freshStart = false;
 //    static String URL = "http://www.cse.ust.hk/acm/photo/20040417HKUSTProgrammingContest/120_2020.wmv";
 
     public static void main(String[] args) throws RocksDBException, IOException {
-        targetNumPages = args.length > 0 ? Integer.parseInt(args[0]) : 30;
+        if (args.length != 2 || (!args[0].equals("FRESH_CRAWL") && !args[1].equals("CONTINUE_CRAWL"))) {
+            System.out.println("Invalid Arguments." +
+                    " Please input run --args=\"[FRESH_CRAWL|CONTINUE_CRAWL] [num_pages_to_crawl]\"");
+            return;
+        }
+//        System.out.println(args[0] + args[1]);
+        freshStart = args[0].equals("FRESH_CRAWL");
+        targetNumPages = Integer.parseInt(args[1]);
+
 
         runCrawler();
 //        runQuery("FAQ \"Postgraduate Students\"");
@@ -23,8 +32,6 @@ public class MainClass {
     }
 
     public static void runCrawler() throws IOException {
-        boolean freshStart = true;
-        boolean crawlRequired = true;
 
         Instant start;
         Instant finish;
@@ -34,31 +41,28 @@ public class MainClass {
             Repository.destroyAll();
         }
         Repository.openConnections();
+        Crawler crawler = new Crawler(URL);
+        System.out.println("Running Crawler...");
+        start = Instant.now();
+        if (targetNumPages == 0)
+            crawler.crawlFromRoot();
+        else
+            crawler.crawlFromRoot(targetNumPages);
+        finish = Instant.now();
+        timeElapsed = Duration.between(start, finish).toSeconds();
+        System.out.println("Time elapsed crawling pages: " + timeElapsed + " seconds\n");
 
+        System.out.println("Writing spider result...");
+        ResultWriter.write_spider_result();
+        System.out.println("Indexed pages written to spider_result.txt\n");
 
-        if (crawlRequired) {
-            Crawler crawler = new Crawler(URL);
-            System.out.println("Running Crawler...");
-            start = Instant.now();
-            if(targetNumPages == 0)
-                crawler.crawlFromRoot();
-            else
-                crawler.crawlFromRoot(targetNumPages);
-            finish = Instant.now();
-            timeElapsed = Duration.between(start, finish).toSeconds();
-            System.out.println("Time elapsed crawling pages: " + timeElapsed + " seconds\n");
-
-            System.out.println("Writing spider result...");
-            ResultWriter.write_spider_result();
-            System.out.println("Indexed pages written to spider_result.txt\n");
-
-            System.out.println("Constructing Inverted Index for Content&Title...");
-            start = Instant.now();
-            Indexer.construct_invertedIndex();
-            Indexer.construct_invertedIndex_Title();
-            finish = Instant.now();
-            timeElapsed = Duration.between(start, finish).toSeconds();
-            System.out.println("Time elapsed constructing Inverted Index: " + timeElapsed + " seconds\n");
+        System.out.println("Constructing Inverted Index for Content&Title...");
+        start = Instant.now();
+        Indexer.construct_invertedIndex();
+        Indexer.construct_invertedIndex_Title();
+        finish = Instant.now();
+        timeElapsed = Duration.between(start, finish).toSeconds();
+        System.out.println("Time elapsed constructing Inverted Index: " + timeElapsed + " seconds\n");
 
 //            System.out.println("Writing Inverted Index...");
 //            ResultWriter.write_inverted_file();
@@ -66,8 +70,6 @@ public class MainClass {
 //            ResultWriter.write_forwardTitle_File();
 //            System.out.println("Inverted index file written to inverted_file.txt");
 
-
-        }
 
         Repository.closeAllConnections();
     }
