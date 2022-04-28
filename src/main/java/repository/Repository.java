@@ -304,7 +304,7 @@ public class Repository {
 
             try {
                 databyte = invertedDB.get(wordId.getBytes());
-            } catch (RocksDBException e) {
+            } catch (RocksDBException | NullPointerException e) {
             }
             if (databyte == null) return new HashMap<>();
 
