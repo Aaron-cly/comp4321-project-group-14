@@ -31,7 +31,6 @@ gradle-app.setting
 
 ## Package-specific files:
 # RocksDB
-rocksdb/*
 InvertedIndexDb/*
 MetaInfoDb/*
 Page_Info/*
