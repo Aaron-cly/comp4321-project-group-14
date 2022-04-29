@@ -4,6 +4,7 @@ import model.Porter;
 import model.PageInfo;
 import org.jsoup.nodes.Document;
 import org.rocksdb.RocksDBException;
+import repository.Database;
 import repository.Repository;
 
 import java.nio.file.Files;
@@ -22,7 +23,9 @@ public class Indexer {
     static {
         // retrieve stopwords from text file
         try {
-            var list = Files.readAllLines(Paths.get("./stopwords.txt"));
+            var pwd = System.getProperty("user.dir");
+            var absoluteProjectRootDir = pwd.substring(0, pwd.indexOf(Database.projectFolder)) + Database.projectFolder;
+            var list = Files.readAllLines(Paths.get(absoluteProjectRootDir + Database.rootTomcatDirectory + "/stopwords.txt"));
             stopWords = new ArrayList<>(list);
         } catch (Exception e) {
             System.out.println("Something went wrong while reading the file");

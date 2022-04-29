@@ -64,7 +64,6 @@
 
          <%
 String query = request.getParameter("search_query");
-
 // do stuff
 
 if (query != null){

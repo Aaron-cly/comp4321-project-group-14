@@ -31,7 +31,7 @@ gradle-app.setting
 
 ## Package-specific files:
 # RocksDB
-apache-tomcat-10.0.20/bin/rocksdb/*
+apache-tomcat-10.0.20/webapps/ROOT/rocksdb/*
 LOCK
 LOG
 

@@ -6,15 +6,16 @@ import org.rocksdb.RocksDBException;
 
 public class Database {
     // will only be appended to DB_dir if the classes are not running in JSP context
-    public static String prefix = "./apache-tomcat-10.0.20/bin";
-    public static String DB_dir = "./rocksdb/";
+    public static String projectFolder = "comp4321-project-group-14";
+    public static String rootTomcatDirectory = "/apache-tomcat-10.0.20/webapps/ROOT/";
+    public static String DB_dir;
     private RocksDB DB;     // singleton
     private String fileName;
 
     static{
-        var path = System.getProperty("user.dir");
-        if(!path.contains("apache"))
-            DB_dir = prefix + DB_dir.substring(1);
+        var pwd = System.getProperty("user.dir");
+        var absoluteProjectRootDir = pwd.substring(0, pwd.indexOf(projectFolder)) + projectFolder;
+        DB_dir = absoluteProjectRootDir + rootTomcatDirectory + "rocksdb/";
     }
 
     public Database(String fileName) {
