@@ -5,7 +5,6 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import repository.Repository;
 
 import java.io.IOException;
 import java.net.URL;
@@ -139,6 +138,7 @@ public class Crawler {
                 System.out.printf("Crawled and indexed %d pages\n", currentIndex);
             }
         }
+        System.out.println(currentIndex);
         indexer.construct_parents_from_child_links();
     }
 
@@ -158,7 +158,7 @@ public class Crawler {
         var pgSize = connection.getContentLength();
         String lastModifiedDate = getLastModifiedDate(res, doc);
 
-        // insert new page if url should not be ignore
+        // insert new page if url should not be ignored
         if (!indexer.shouldIgnoreUrl(url, lastModifiedDate)) {
             indexer.insert_new_page(doc, url, lastModifiedDate, pgSize, pagesOnURL);
         }

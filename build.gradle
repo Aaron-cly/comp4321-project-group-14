@@ -6,6 +6,9 @@ plugins {
 group 'org.example'
 version '1.0-SNAPSHOT'
 
+repositories {
+    mavenCentral()
+}
 
 sourceSets {
     main {
@@ -14,8 +17,15 @@ sourceSets {
     }
 }
 
-repositories {
-    mavenCentral()
+// create rocksdb directory before build
+tasks.register('ensureDirectory') {
+    doLast {
+        mkdir "apache-tomcat-10.0.20/bin/rocksdb"
+    }
+}
+
+compileJava{
+    dependsOn ensureDirectory
 }
 
 dependencies {

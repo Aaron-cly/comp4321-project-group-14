@@ -77,7 +77,7 @@ if (query != null){
 	
 			out.println("<div id='searchInfo'><span>" + output + "</span></div>");
 	
-    for(int i = 0; i < results.size(); i++){
+    for(int i = 0; i < results.size() && i < 50; i++){
         out.println(results.get(i).htmlString());
     }
 
