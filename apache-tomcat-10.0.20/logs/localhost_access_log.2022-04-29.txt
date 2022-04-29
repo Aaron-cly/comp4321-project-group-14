@@ -476,3 +476,8 @@
 0:0:0:0:0:0:0:1 - - [29/Apr/2022:11:43:23 +0800] "GET /images/dp.jpg HTTP/1.1" 200 1330
 0:0:0:0:0:0:0:1 - - [29/Apr/2022:11:43:23 +0800] "GET /favicon.ico HTTP/1.1" 200 21630
 0:0:0:0:0:0:0:1 - - [29/Apr/2022:11:43:24 +0800] "GET /SearchPage.jsp?search_query=dit+yan+yeung HTTP/1.1" 200 18023
+0:0:0:0:0:0:0:1 - - [29/Apr/2022:11:51:25 +0800] "GET /SearchPage.jsp?search_query=dit+yan+yeung HTTP/1.1" 200 18013
+0:0:0:0:0:0:0:1 - - [29/Apr/2022:11:51:26 +0800] "GET /SearchPage.jsp?search_query=dit+yan+yeung HTTP/1.1" 200 18013
+0:0:0:0:0:0:0:1 - - [29/Apr/2022:11:51:29 +0800] "GET / HTTP/1.1" 200 1925
+0:0:0:0:0:0:0:1 - - [29/Apr/2022:11:51:35 +0800] "GET /SearchPage.jsp?search_query=lee+dik+lun HTTP/1.1" 200 16346
+0:0:0:0:0:0:0:1 - - [29/Apr/2022:11:51:41 +0800] "GET / HTTP/1.1" 200 1925
