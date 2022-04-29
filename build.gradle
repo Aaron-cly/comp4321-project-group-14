@@ -21,6 +21,7 @@ sourceSets {
 tasks.register('ensureDirectory') {
     doLast {
         mkdir "apache-tomcat-10.0.20/bin/rocksdb"
+        mkdir "apache-tomcat-10.0.20/logs"
     }
 }
 
