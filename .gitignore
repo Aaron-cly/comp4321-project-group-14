@@ -53,6 +53,7 @@ spider_result.txt
 inverted_file.txt
 
 # class files
+apache-tomcat-10.0.20/webapps/ROOT/WEB-INF/classes/MainClass.class
 apache-tomcat-10.0.20/webapps/ROOT/WEB-INF/classes/*
 apache-tomcat-10.0.20/work/Catalina/ROOT/org/apache/jsp/*
 apache-tomcat-10.0.20/logs/*

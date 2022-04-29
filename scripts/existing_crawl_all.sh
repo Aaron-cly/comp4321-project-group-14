@@ -1,3 +1,7 @@
+cd ..
+
 gradle -x test
 
-gradle run="EXISTING_CRAWL"
+gradle run --args="EXISTING_CRAWL"
+
+cd scripts
