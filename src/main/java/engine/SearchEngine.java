@@ -1,19 +1,35 @@
 package engine;
 
-import indexer.Indexer;
 import model.PageInfo;
 import model.Porter;
 import model.RetrievedDocument;
 import org.rocksdb.RocksDBException;
+import repository.Database;
 import repository.Repository;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SearchEngine {
     private static String TERM_INDICATOR = "\"";
     private static int OUTPUT_NUM = 50;
-    private static ArrayList<String> stopWords = Indexer.stopWords;
+    private static ArrayList<String> stopWords;
+
+
+    static {
+        // retrieve stopwords from text file
+        try {
+            var pwd = System.getProperty("user.dir");
+            var absoluteProjectRootDir = pwd.substring(0, pwd.indexOf(Database.projectFolder)) + Database.projectFolder;
+            var list = Files.readAllLines(Paths.get(absoluteProjectRootDir + Database.rootTomcatDirectory + "/stopwords.txt"));
+            stopWords = new ArrayList<>(list);
+        } catch (Exception e) {
+            System.out.println("Something went wrong while reading the file");
+            e.printStackTrace();
+        }
+    }
 
     // in here, a term means a word or a phrase
     public static List<RetrievedDocument> processQuery(String query) throws RocksDBException {
