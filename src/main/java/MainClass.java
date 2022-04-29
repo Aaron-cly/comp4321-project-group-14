@@ -15,16 +15,16 @@ public class MainClass {
     static boolean freshStart = false;
 
     public static void main(String[] args) throws RocksDBException, IOException {
-        if ((args.length != 1 && args.length != 2) || (!args[0].equals("FRESH_CRAWL") && !args[0].equals("CONTINUE_CRAWL"))) {
+        if ((args.length != 1 && args.length != 2) || (!args[0].equals("FRESH_CRAWL") && !args[0].equals("EXISTING_CRAWL"))) {
             System.out.println("Invalid Arguments." +
-                    " Please input run --args=\"[FRESH_CRAWL|CONTINUE_CRAWL] [num_pages_to_crawl]\" , omit num_pages_to_crawl to crawl all pages");
+                    " Please input run --args=\"[FRESH_CRAWL|EXISTING_CRAWL] [num_pages_to_crawl]\" , omit num_pages_to_crawl to crawl all pages");
             return;
         }
 
         freshStart = args[0].equals("FRESH_CRAWL");
 
         if (args.length == 1) {
-            targetNumPages = 0;
+            targetNumPages = Integer.MAX_VALUE;
         } else {
             targetNumPages = Integer.parseInt(args[1]);
         }
@@ -32,6 +32,7 @@ public class MainClass {
         runCrawler();
 //        runQuery("FAQ \"Postgraduate Students\"");
 //        runQuery("Postgraduate");
+//        runQuery("\"Cyber Security\"");
     }
 
     public static void runCrawler() throws IOException {
@@ -46,13 +47,11 @@ public class MainClass {
         Crawler crawler = new Crawler(URL);
         System.out.println("Running Crawler...");
         start = Instant.now();
-        if (targetNumPages == 0)
-            crawler.crawlFromRoot();
-        else
-            crawler.crawlFromRoot(targetNumPages);
+        crawler.crawlFromRoot(Integer.MAX_VALUE);
         finish = Instant.now();
         timeElapsed = Duration.between(start, finish).toSeconds();
         System.out.println("Time elapsed crawling pages: " + timeElapsed + " seconds\n");
+
 
         System.out.println("Writing spider result...");
         ResultWriter.write_spider_result();

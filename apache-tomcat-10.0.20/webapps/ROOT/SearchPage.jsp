@@ -30,7 +30,7 @@
                         <%
                         String yes = request.getParameter("search_query");
 
-                        out.println("<input type='text' name='search_query' id='searchQuery' value=' " + yes + "'>");
+                        out.println("<input type='text' name='search_query' id='searchQuery' value='" + yes + "'>");
                         %>
                         <button type='submit' id='submit'></button>
 					</form>
