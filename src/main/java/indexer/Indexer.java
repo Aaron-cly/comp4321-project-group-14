@@ -18,7 +18,7 @@ public class Indexer {
 
     public Porter porter = new Porter();
     public HashSet<String> indexedPageIds = new HashSet<>();
-    private static ArrayList<String> stopWords;
+    public static ArrayList<String> stopWords;
 
     static {
         // retrieve stopwords from text file
