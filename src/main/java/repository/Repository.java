@@ -8,6 +8,7 @@ import org.rocksdb.RocksIterator;
 
 import java.util.*;
 
+/** Repository Class for read-write operations to the database */
 public class Repository {
     protected static Database WordToWordId = new Database("WordToWordID");
     protected static Database WordIdToWord = new Database("WordIdToWord");
@@ -26,6 +27,7 @@ public class Repository {
         dbList = List.of(WordToWordId, WordIdToWord, PageToPageId, PageIdToPage, Forward, Inverted, PageInfo, FowardTitle, InvertedTitle);
     }
 
+    /** Destroys/drops all the databases */
     public static void destroyAll() {
         Options options = new Options();
         try {
@@ -36,6 +38,7 @@ public class Repository {
         }
     }
 
+    /** Opens all connections of all the databases */
     public static void openConnections() {
         Options options = new Options();
         options.setCreateIfMissing(true);
@@ -48,13 +51,21 @@ public class Repository {
         }
     }
 
+    /** Closes all connections of all the databases */
     public static void closeAllConnections() {
         for (var DB : dbList) {
             DB.closeConnection();
         }
     }
 
+    /** Word Repository for the word databases, i.e. WordToWordId and WordIdToWord */
     public static class Word {
+        /** Get the words from its wordId.
+         *
+         * @param wordId  The target wordId of the word to be retrieved
+         * @return  The word of the target wordId
+         * @throws RocksDBException
+         */
         public static String getWord(String wordId) throws RocksDBException {
             byte[] value = null;
             try {
@@ -66,6 +77,12 @@ public class Repository {
             return value == null ? null : new String(value);
         }
 
+        /** inserts a word to the word databases.
+         *
+         * @param word The word to be inserted
+         * @return  The wordId of the inserted word
+         * @throws RocksDBException
+         */
         public static String insertWord(String word) throws RocksDBException {
             // TODO
             String existingId = getWordId(word);
@@ -82,6 +99,11 @@ public class Repository {
             return wordId;
         }
 
+        /** Gets the wordId of the word
+         *
+         * @param word  The target word, from which id is to be retrieved
+         * @return  The wordId of the target word
+         */
         public static String getWordId(String word) {
             byte[] value = null;
             try {
@@ -95,7 +117,12 @@ public class Repository {
 
     }
 
+    /** Page Repository for the word databases, i.e. PageToPageId and PageIdToPage */
     public static class Page {
+        /**
+         *
+         * @return The total number of pages from the database
+         */
         public static int getTotalNumPage() {
             int count = 0;
             RocksIterator iter = PageToPageId.getDB().newIterator();
@@ -105,6 +132,12 @@ public class Repository {
             return count;
         }
 
+        /** Gets the page url from the pageId
+         *
+         * @param pageId  The pageId, from which url is to be retrieved
+         * @return  The url of the pageId
+         * @throws RocksDBException
+         */
         public static String getPageUrl(String pageId) throws RocksDBException {
             //return url of the given pageId
             byte[] dataBytes = null;
@@ -120,6 +153,11 @@ public class Repository {
             }
         }
 
+        /**
+         * Gets the pageId from its url
+         * @param url  The url, from which the pageId is to be retrieved
+         * @return  The pageId from its url
+         */
         public static String getPageId(String url) {
             //return pageId of the given url
             byte[] dataBytes = null;
@@ -135,6 +173,12 @@ public class Repository {
             }
         }
 
+        /** Inserts a page to the databases.
+         *
+         * @param url The url of the page
+         * @return  The pageId
+         * @throws RocksDBException
+         */
         public static String insertPage(String url) throws RocksDBException {
             String existingId = getPageId(url);
 
@@ -152,6 +196,10 @@ public class Repository {
             return pageId;
         }
 
+        /** Gets the mapping of all urls to its pageIds from the database
+         *
+         * @return  The mapping of urls to its pageIds
+         */
         public static HashMap<String, String> getMap_url_pageId() {
             var map = new HashMap<String, String>();
 
@@ -163,6 +211,9 @@ public class Repository {
         }
     }
 
+    /**
+     * Forward Index repository for the forward index database.
+     */
     public static class ForwardIndex {
         // check if a page is in Forward frequency as a key
         private static boolean pageIn_ForwardIndex(String pageId) {
@@ -176,6 +227,12 @@ public class Repository {
             return isIn;
         }
 
+        /** Update the word positions of the page from its url
+         *
+         * @param url  The url of the page
+         * @param wordPositions  The new word positions of the page
+         * @throws RocksDBException
+         */
         public static void updateUrl_wordPositions(String url, HashMap<String, List<Integer>> wordPositions) throws RocksDBException {
             String pageId = null;
             try {
@@ -189,13 +246,23 @@ public class Repository {
             updatePage_wordPositions(pageId, wordPositions);
         }
 
-        // input wordPositions: wordId -> List(positions)
+        /** Updates the word positions of a page from its id
+         *
+         * @param pageId  The pageId of the page
+         * @param wordPositions  The new word Positions
+         * @throws RocksDBException
+         */
         public static void updatePage_wordPositions(String pageId, HashMap<String, List<Integer>> wordPositions) throws RocksDBException {
             byte[] dataBytes = SerializeUtil.serialize(wordPositions);
             Forward.getDB().put(pageId.getBytes(), dataBytes);
         }
 
-        // get the HashMap of word positions for a given page
+        /**
+         * Returns a page's wordIds to its word positions, from the page Id, from the database
+         * @param pageId  The pageId to the page
+         * @return  The mapping of the wordIds to the word positions, from the pageId
+         * @throws RocksDBException
+         */
         public static HashMap<String, List<Integer>> getMap_WordId_Positions(String pageId) throws RocksDBException {
             if (!pageIn_ForwardIndex(pageId)) {
                 return new HashMap<>();
@@ -210,6 +277,10 @@ public class Repository {
             return map_wordId_positions;
         }
 
+        /**
+         * Gets all the mapping of wordIds to wordPositions for all pages from the database
+         * @return the mapping of wordIds to wordPositions for all pages
+         */
         public static HashMap<String, HashMap<String, List<Integer>>> getAll_ForwardIndex() {
             var forward = new HashMap<String, HashMap<String, List<Integer>>>();
             RocksIterator iter = Forward.getDB().newIterator();
@@ -233,7 +304,11 @@ public class Repository {
     public static class InvertedIndex {
         private static String dbPath = "./rocksdb/Inverted_Index";
 
-        // check if a word is in Inverted Frequency as a key
+        /** Checks if a word is already in the database
+         *
+         * @param wordId  The wordId of the word
+         * @return  A boolean value indicating whether the word is already in the database
+         */
         public static boolean wordIn_InvertedFrequency(String wordId) {
             boolean isIn;
             try {
@@ -245,7 +320,10 @@ public class Repository {
             return isIn;
         }
 
-        // wordId :String -> HashMap(pageId -> List(position :Integer))
+        /** Creates an InvertedIndex from a hashmap representation of the inverted index and saves it into the database
+         *
+         * @param inverted The hashmap representation of the inverted index
+         */
         public static void create_InvertedIndexFile(HashMap<String, HashMap<String, List<Integer>>> inverted) {
             for (Map.Entry<String, HashMap<String, List<Integer>>> entry : inverted.entrySet()) {
                 var wordId = entry.getKey();
@@ -261,6 +339,10 @@ public class Repository {
             }
         }
 
+        /** Return the hashmap representation of the invertedIndex from the database
+         *
+         * @return hashmap representation of the inevertedIndex
+         */
         public static HashMap<String, HashMap<String, List<Integer>>> getAll_InvertedIndex() {
             var inverted = new HashMap<String, HashMap<String, List<Integer>>>();
             RocksIterator iter = Inverted.getDB().newIterator();
@@ -273,6 +355,11 @@ public class Repository {
             return inverted;
         }
 
+        /** Gets the mapping from pageId to its word position for a given word
+         *
+         * @param wordId  The wordId of the word
+         * @return  mapping from pageId to wordPosition of the given word parameter
+         */
         public static HashMap<String, List<Integer>> getMap_pageId_wordPosList(String wordId) {
             byte[] databyte = null;
 
@@ -287,8 +374,13 @@ public class Repository {
 
     }
 
+    /** ForwardIndex Repository for title */
     public static class ForwardIndex_Title {
-        // check if a page is in Forward index as a key
+        /** Checks if a page is already in the database
+         *
+         * @param pageId  The pageId of the page
+         * @return  A boolean value indicating whether the page is already in the database
+         */
         private static boolean pageIn_ForwardIndex(String pageId) {
             boolean isIn;
             try {
@@ -300,6 +392,12 @@ public class Repository {
             return isIn;
         }
 
+        /** Updates the wordPositions of the title of a page from its url
+         *
+         * @param url  The url of the page
+         * @param wordPositions  The new wordPositions
+         * @throws RocksDBException
+         */
         public static void updateUrl_wordPositions(String url, HashMap<String, List<Integer>> wordPositions) throws RocksDBException {
             String pageId = null;
             try {
@@ -312,13 +410,22 @@ public class Repository {
             updatePage_wordPositions(pageId, wordPositions);
         }
 
-        // input wordPositions: wordId -> List(positions)
+        /** Updates the word positions of a page
+         *
+         * @param pageId  The pageId of a page
+         * @param wordPositions  The new word positions
+         * @throws RocksDBException
+         */
         public static void updatePage_wordPositions(String pageId, HashMap<String, List<Integer>> wordPositions) throws RocksDBException {
             byte[] dataBytes = SerializeUtil.serialize(wordPositions);
             FowardTitle.getDB().put(pageId.getBytes(), dataBytes);
         }
 
-        // get the HashMap of word positions for a given page
+        /** Gets the mapping from wordId to its position for a given page
+         *
+         * @param pageId  The pageId of the page
+         * @return  mapping from wordId to its position of the given page parameter
+         */
         public static HashMap<String, List<Integer>> getMap_WordId_Positions(String pageId) throws RocksDBException {
             if (!pageIn_ForwardIndex(pageId)) {
                 return new HashMap<>();
@@ -333,6 +440,10 @@ public class Repository {
             return map_wordId_positions;
         }
 
+        /** Gets all the mapping of the forwardIndex title from the database
+         *
+         * @return mapping from the pageId to the words the page contains
+         */
         public static HashMap<String, HashMap<String, List<Integer>>> getAll_ForwardIndex() {
             var forward = new HashMap<String, HashMap<String, List<Integer>>>();
             RocksIterator iter = FowardTitle.getDB().newIterator();
@@ -353,10 +464,15 @@ public class Repository {
         }
     }
 
+    /** InvetedIndex Repository for title */
     public static class InvertedIndex_Title {
         private static String dbPath = "./rocksdb/Inverted_Index_Title";
 
-        // check if a word is in Inverted Frequency as a key
+        /**
+         * Checks if a word is in the inverted Index title
+         * @param wordId  The wordId of the word
+         * @return  A boolean value indicating whether the word is in the invertedIndex
+         */
         public static boolean wordIn_InvertedFrequency(String wordId) {
             boolean isIn;
             try {
@@ -369,6 +485,12 @@ public class Repository {
         }
 
         // wordId :String -> HashMap(pageId -> List(position :Integer))
+
+        /** Creates an invertedIndex title from a hashmap representation of the invertedIndex title, and saves
+         * it into the database
+         *
+         * @param inverted  Hashmap represenation of the inverted Index title
+         */
         public static void create_InvertedIndexFile(HashMap<String, HashMap<String, List<Integer>>> inverted) {
             for (Map.Entry<String, HashMap<String, List<Integer>>> entry : inverted.entrySet()) {
                 var wordId = entry.getKey();
@@ -384,6 +506,10 @@ public class Repository {
             }
         }
 
+        /** Gets the inverted index from the database and returns it in a hashmap representation
+         *
+         * @return  Hashmap represenation of the inverted index
+         */
         public static HashMap<String, HashMap<String, List<Integer>>> getAll_InvertedIndex() {
             var inverted = new HashMap<String, HashMap<String, List<Integer>>>();
             RocksIterator iter = InvertedTitle.getDB().newIterator();
@@ -396,6 +522,11 @@ public class Repository {
             return inverted;
         }
 
+        /** Gets the mapping of pageId to wordPosition of a given word
+         *
+         * @param wordId  The wordId of the word
+         * @return  The mapping of pageId to the wordPositions for the given wordId parameter
+         */
         public static HashMap<String, List<Integer>> getMap_pageId_wordPosList(String wordId) {
             byte[] databyte = null;
 
@@ -410,9 +541,15 @@ public class Repository {
 
     }
 
+    /** PageInfo Repository */
     public static class PageInfo {
         private static String dbPath = "./rocksdb/Page_Info";
 
+        /** Adds a new {@link model.PageInfo} for a page
+         *
+         * @param pageId  The pageId of the page
+         * @param data  The data to be inserted into the database
+         */
         public static void addPageInfo(String pageId, model.PageInfo data) {
             try {
                 PageInfo.getDB().put(pageId.getBytes(), SerializeUtil.serialize(data));
@@ -422,6 +559,11 @@ public class Repository {
             }
         }
 
+        /** Gets the {@link model.PageInfo} of a page
+         *
+         * @param pageId  The pageId of the page
+         * @return
+         */
         public static model.PageInfo getPageInfo(String pageId) {
             model.PageInfo pageInfo = null;
             try {
@@ -435,6 +577,10 @@ public class Repository {
             return pageInfo;
         }
 
+        /** Gets the map of pageId to its pageInfo for all pages
+         *
+         * @return  mapping of pageId to pageInfo of all pages
+         */
         public static HashMap<String, model.PageInfo> getMap_pageId_pageInfo() {
             var map = new HashMap<String, model.PageInfo>();
 

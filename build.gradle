@@ -25,9 +25,26 @@ tasks.register('ensureDirectory') {
     }
 }
 
+configurations {
+    jaxDoclet
+}
+
+dependencies {
+    //jaxDoclet "some.interesting:Dependency:1.0"
+}
+
+task generateDocs(type: Javadoc) {
+    source = sourceSets.main.allJava
+    destinationDir = reporting.file("docs")
+    options.docletpath = configurations.jaxDoclet.files.asType(List)
+    options.doclet = "com.lunatech.doclets.jax.jaxrs.JAXRSDoclet"
+    options.addStringOption("jaxrscontext", "http://localhost:8080/myapp")
+}
+
 compileJava{
     dependsOn ensureDirectory
 }
+
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'

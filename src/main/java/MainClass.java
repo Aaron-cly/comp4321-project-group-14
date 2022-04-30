@@ -35,6 +35,7 @@ public class MainClass {
 //        runQuery("\"Cyber Security\"");
     }
 
+    /** Runs Crawler and indexes the crawled pages and saves the results into spider_result.txt*/
     public static void runCrawler() throws IOException {
         Instant start;
         Instant finish;
@@ -74,6 +75,7 @@ public class MainClass {
         Repository.closeAllConnections();
     }
 
+    /** Runs a query and saves the results into query_results.txt */
     public static void runQuery(String query) throws RocksDBException {
         Repository.openConnections();
 

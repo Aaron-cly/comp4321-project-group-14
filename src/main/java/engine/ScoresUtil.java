@@ -20,11 +20,26 @@ public class ScoresUtil {
         return intersection;
     }
 
+    /** Get the words in a phrase
+     *
+     * @param phrase  Phrase, from which words are to be extracted
+     * @return  The words in the given phrase parameter
+     */
     public static String[] getWords_in_phrase(String phrase) {
         return phrase.split(" ");
     }
 
+    /** Class for computing idf, df, tf, similarity scores and cosSim, etc from the content of pages */
     public static class Content {
+        /** Computes the similarity scores from the term frequencies of the content of pages that contains the query terms
+         *  and returns a map of pages to its scores
+         *  It does this by computing the df and idf and calculates the score based on CosSim similarity
+         *
+         * @param queryTerms  The terms queried
+         * @param termFreq  The frequency terms of the content
+         * @return  The map of pages to its scores, based on
+         * @throws RocksDBException
+         */
         protected static HashMap<String, Double> compute_scoresOnContent(String[] queryTerms, HashMap<String, HashMap<String, Integer>> termFreq) throws RocksDBException {
             double[] query_vector = new double[queryTerms.length];
             Arrays.fill(query_vector, 1.0);     // assume all terms have equal weight
@@ -48,6 +63,12 @@ public class ScoresUtil {
             return scores;
         }
 
+        /**
+         * Computes the CosSim scores of pages with the query terms
+         * @param page_vectors  Map from candidate pages to its weight vectors
+         * @param query_vector  The weights of the query terms
+         * @return  The CosSim
+         */
         protected static HashMap<String, Double> compute_CosSimScores(HashMap<String, double[]> page_vectors, double[] query_vector) {
             HashMap<String, Double> pages_score = new HashMap<>();
             double query_length = compute_vectorLength(query_vector);
@@ -74,6 +95,11 @@ public class ScoresUtil {
             return pages_score;
         }
 
+        /** Calculates the vector length from a vector
+         *
+         * @param vector  The vector, from which length is calculated
+         * @return  The vector length
+         */
         protected static double compute_vectorLength(double[] vector) {
             double length = 0;
             for (var weight : vector) {
@@ -82,6 +108,16 @@ public class ScoresUtil {
             return Math.sqrt(length);
         }
 
+        /** Computes the weight vectors of the candidate page set. It does this by looking over all pages in the candidate page set
+         * and computes the tfmax and calculates the weight of the page from the tfmax the tf of the term and its idf.
+         *
+         * @param terms  The query terms
+         * @param termFreq  The term frequencies
+         * @param candidatePageSet  The candidate pages
+         * @param IDF  IDF of the term parameter
+         * @return  The weight vectors of the candidate page set
+         * @throws RocksDBException
+         */
         protected static HashMap<String, double[]> compute_docVectors(String[] terms, HashMap<String, HashMap<String, Integer>> termFreq, HashSet<String> candidatePageSet, double[] IDF) throws RocksDBException {
             HashMap<String, double[]> page_vectors = new HashMap<>();
             for (String page : candidatePageSet) {
@@ -104,6 +140,11 @@ public class ScoresUtil {
             return page_vectors;
         }
 
+        /** Computes Idf vector from a DF vector
+         *
+         * @param DF  The DF vector, from which IDF is to be derived
+         * @return  The IDF vector of the given DF vector parameter
+         */
         protected static double[] computeIDF(int[] DF) {
             int totalNum_pages = Repository.Page.getTotalNumPage();
 
@@ -115,6 +156,12 @@ public class ScoresUtil {
             return IDF;
         }
 
+        /** Computes the DF of the terms from the term frequencies
+         *
+         * @param terms  The terms, from which DF is to be calculated
+         * @param termFreq  The term frequencies of the terms
+         * @return  The DF of the terms
+         */
         protected static int[] computeDF(String[] terms, HashMap<String, HashMap<String, Integer>> termFreq) {
             int[] DF = new int[terms.length];
             for (int i = 0; i < terms.length; i++) {
@@ -123,7 +170,12 @@ public class ScoresUtil {
             return DF;
         }
 
-        // returns map(pageId -> tf of a single word)
+        /** Computes the term frequencies of a given word. It does this by getting the mapping of the pages to its wordPos list of the word and
+         *  calculates the term frequencies
+         *
+         * @param word  The word, for which term frequencies are derived
+         * @return
+         */
         public static HashMap<String, Integer> computeTermFreq_word(String word) {
             String wordId = Repository.Word.getWordId(word);
 
@@ -140,6 +192,13 @@ public class ScoresUtil {
         }
 
         // returns phrase frequency of each page that contains it
+        /** Computes the phrase frequencies of a given word. It first gets the words in the phrase and then gets the mapping of the pages
+         *  to its wordPos list of the word and
+         *  calculates the frequencies
+         *
+         * @param phrase  The phrase, for which frequencies are derived
+         * @return
+         */
         public static HashMap<String, Integer> computeTermFreq_phrase(String phrase) {
             var wordArr = getWords_in_phrase(phrase);
 
@@ -190,8 +249,15 @@ public class ScoresUtil {
         }
     }
 
+    /** Title class for computing scores and phrases */
     public static class Title {
 
+        /** Computes Scores of the query terms with respect to the titles of pages
+         *
+         * @param queryTerms  The query terms
+         * @return  Map from pageIds to their scores
+         * @throws RocksDBException
+         */
         protected static HashMap<String, Double> compute_scoresOnTitle(String[] queryTerms) throws RocksDBException {
             HashMap<String, Double> scores = new HashMap<>();  // score of a page title is the number matches of query terms in the title
 
@@ -210,12 +276,22 @@ public class ScoresUtil {
             return scores;
         }
 
+        /** Gets all pageIds, whose pages contain the given word
+         *
+         * @param word  The target word
+         * @return  The pageIds of all pages that contain the given word parameter
+         */
         protected static HashSet<String> get_pagesWithWordInTitle(String word) {
             var wordId = Repository.Word.getWordId(word);
             var map_pageId_posList = Repository.InvertedIndex_Title.getMap_pageId_wordPosList(wordId);
             return (new HashSet<String>(map_pageId_posList.keySet()));
         }
 
+        /** Gets all pageIds, whose pages contain the given phrase
+         *
+         * @param phrase  The target phrase
+         * @return  The pageIds of all pages that contain the given phrase parameter
+         */
         protected static HashSet<String> get_pagesWithPhraseInTitle(String phrase) throws RocksDBException {
             // a different approach from page content because title is very concise
             var wordArr = getWords_in_phrase(phrase);

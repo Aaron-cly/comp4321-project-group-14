@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/** This class is responsible for crawling the pages from the domain cse.ust.hk */
 public class Crawler {
     static final int VALUE_CRAWL_ALL = Integer.MAX_VALUE;
     String rootURL = "http://www.cse.ust.hk";
@@ -18,14 +19,25 @@ public class Crawler {
     ArrayList<String> urlList = new ArrayList<>();
     Indexer indexer = new Indexer();
 
+    /** Sole Constructor.
+     *
+     * @param rootURL  The url from which crawling starts
+     */
     public Crawler(String rootURL) {
         this.rootURL = rootURL;
     }
 
+    /** @return {@code this.urlList}*/
     public ArrayList<String> getUrlList() {
         return this.urlList;
     }
 
+    /** Helper Function for getting the response from Jsoup
+     *
+     * @param url Target Url to get response from
+     * @return A Connection.Response object
+     * @throws IOException
+     */
     private Connection.Response getResponse(String url) throws IOException {
         Connection conn = Jsoup.connect(url).timeout(1000);
         return conn.execute();
@@ -33,6 +45,11 @@ public class Crawler {
 
     private static final List<String> extensionList = List.of(".pdf", ".gif", ".png", ".jpeg", ".jpg", ".mp4", ".mp3", ".doc", ".zip", ".rar", ".ppt", ".pptx", ".docx", ".bib", ".Z", ".ps", ".tgz", ".wmv", ".ai", ".ps.gz", ".mov", ".mpeg", ".mpg", ".avi", ".rm", ".key", ".it");
 
+    /** Helper Method to check if link is valid
+     *
+     * @param link  the url/link to be checked
+     * @return  a boolean value indicating whether the link is valid
+     */
     private boolean validLink(String link) {
 
         return !link.equals("/") && !link.contains("ftp") && !link.contains("@") && !link.contains("Password_Only")
@@ -42,7 +59,12 @@ public class Crawler {
                 && extensionList.stream().noneMatch(ext -> link.toLowerCase().endsWith(ext.toLowerCase()));
     }
 
-    // obtain all pages embedded in html of a URL
+    /** Gets all the child links from a page. Child links are filtered through {@link #validLink(String)}, and checked
+     *  for html files. For some links, they are appended to the root cse.ust.hk domain
+     *
+     * @param url  Target Url to get child links from
+     * @return  A set containing all the child links from the url
+     */
     private HashSet<String> getPagesFromURL(String url) {
         Document doc = null;
         Connection.Response res = null;
@@ -110,11 +132,21 @@ public class Crawler {
         return urlSet;
     }
 
+    /** Calls {@link #crawlFromRoot(int)} with VALUE_CRAWL_ALL, to indicate that the cralwer should
+     * crawl all the pages
+     * @throws IOException
+     */
     public void crawlFromRoot() throws IOException {
         crawlFromRoot(VALUE_CRAWL_ALL);
     }
 
-    // crawl URLs from the root url
+    /**
+     * Crawls and indexes pages from the root of the rootUrl specified in the constructor. Follows a BFS
+     * approach, whereby it starts with root node/links, gathers all its child nodes/links and goes through
+     * the child nodes subsequently.
+     * @param numPages  The number of pages to be crawled.
+     * @throws IOException
+     */
     public void crawlFromRoot(int numPages) throws IOException {
         boolean isCrawlAll = numPages == VALUE_CRAWL_ALL;
         this.urlList.add(this.rootURL);
@@ -142,6 +174,13 @@ public class Crawler {
         indexer.construct_parents_from_child_links();
     }
 
+    /** Crawls and indexed a page. Will invoke {@link indexer.Indexer#shouldIgnoreUrl(java.lang.String, java.lang.String)}
+     *  to check if urls should be ignored. If they should not be ignored, then it calls {@link Indexer#insert_new_page(Document, String, String, int, HashSet)}
+     *  to index the page.
+     * @param url  the page url to be indexed
+     * @param pagesOnURL  The child links of the page
+     * @throws IOException
+     */
     private void crawlPage(String url, HashSet<String> pagesOnURL) throws IOException {
         Document doc = null;
         Connection.Response res = null;
@@ -152,6 +191,8 @@ public class Crawler {
         }
         if (doc == null) return;
 
+        res.url().toString();
+
         // open connection for page size
         var connection = new URL(url).openConnection();
         connection.setConnectTimeout(5 * 1000);
@@ -159,11 +200,19 @@ public class Crawler {
         String lastModifiedDate = getLastModifiedDate(res, doc);
 
         // insert new page if url should not be ignored
-        if (!indexer.shouldIgnoreUrl(url, lastModifiedDate)) {
-            indexer.insert_new_page(doc, url, lastModifiedDate, pgSize, pagesOnURL);
+        if (!indexer.shouldIgnoreUrl(res.url().toString(), lastModifiedDate)) {
+            indexer.insert_new_page(doc, res.url().toString(), lastModifiedDate, pgSize, pagesOnURL);
         }
     }
 
+    /** Gets the lastModifiedDate of a Page. It checks whether the page has a last modified date explicitly
+     * written somewhere in the content of the page, and then further checks if there is any information
+     * regarding the last modified date in the header response. If the last modified date is still not found,
+     * then it returns "N/A"
+     * @param res  The connection response of connecting to the page
+     * @param doc  The document of the page
+     * @return  The last modified date if found, and "N/A" if not found.
+     */
     private String getLastModifiedDate(Connection.Response res, Document doc) {
         var lastModifiedSpans = doc.select("span:contains(Last updated)");
         if (lastModifiedSpans.size() == 0) {

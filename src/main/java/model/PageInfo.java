@@ -3,6 +3,7 @@ package model;
 import java.io.Serializable;
 import java.util.HashSet;
 
+/** The metadata information of a page */
 public class PageInfo implements Serializable {
     public String pageTitle;
     public String url;
@@ -12,7 +13,15 @@ public class PageInfo implements Serializable {
     public String pageSize;
     public int max_termFreq;
 
-
+    /** Sole Constructor
+     *
+     * @param pageTitle  The title of the page
+     * @param url  The url of the page
+     * @param lastModifiedData  The last modified date of the page
+     * @param childLinks  The child links of the page
+     * @param pageSize  The size of the page
+     * @param max_termFreq  The tfmax of the page
+     */
     public PageInfo(String pageTitle, String url, String lastModifiedData, HashSet<String> childLinks,
                     String pageSize, int max_termFreq) {
         this.pageTitle = pageTitle;

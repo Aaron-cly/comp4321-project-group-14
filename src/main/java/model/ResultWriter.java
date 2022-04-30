@@ -10,8 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/** Class for writing the results of queries  */
 public class ResultWriter {
 
+    /** Writes the result of the crawled and indexed pages into spider_result.txt */
     public static void write_spider_result() {
         try (var writer = new BufferedWriter(new FileWriter("spider_result.txt"))) {
             writer.write("");
@@ -59,6 +61,7 @@ public class ResultWriter {
         }
     }
 
+    /** Writes the inverted Index to inverted_file.txt */
     public static void write_inverted_file() {
         try (var writer = new BufferedWriter(new FileWriter("inverted_file.txt"))) {
             var inverted = Repository.InvertedIndex.getAll_InvertedIndex();
@@ -77,6 +80,7 @@ public class ResultWriter {
         }
     }
 
+    /** Writes the forward index title to forwardTitle.txt */
     public static void write_forwardTitle_File() {
         try (var writer = new BufferedWriter(new FileWriter("forwardTitle.txt"))) {
             var forwardIndexFile = Repository.ForwardIndex_Title.getAll_ForwardIndex();
@@ -100,6 +104,7 @@ public class ResultWriter {
         }
     }
 
+    /** Writes the invertedIndex title to invertedTitle_file.txt */
     public static void write_invertedTitle_file() {
         try (var writer = new BufferedWriter(new FileWriter("invertedTitle_file.txt"))) {
             var inverted = Repository.InvertedIndex_Title.getAll_InvertedIndex();
@@ -122,7 +127,10 @@ public class ResultWriter {
         }
     }
 
-
+    /** Writes the result of the query to query_result.txt
+     *
+     * @param resultList  The list of pages/results to be written to query_result.txt
+     */
     public static void write_queryResult(List<RetrievedDocument> resultList) {
         try (var writer = new BufferedWriter(new FileWriter("query_result.txt"))) {
 //            for (int i = 0; i < resultList.size(); i++) {
