@@ -10,7 +10,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class MainClass {
-    static String URL = "http://www.cse.ust.hk";
+    static String URL = "https://cse.hkust.edu.hk";
     static int targetNumPages = 30;
     static boolean freshStart = false;
 

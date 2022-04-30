@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /** This class is responsible for crawling the pages from the domain cse.ust.hk */
 public class Crawler {
     static final int VALUE_CRAWL_ALL = Integer.MAX_VALUE;
-    String rootURL = "http://www.cse.ust.hk";
+    String rootURL = "https://cse.hkust.edu.hk";
     HashSet<String> urlSet = new HashSet<>();   // avoid crawling the same page twice
     ArrayList<String> urlList = new ArrayList<>();
     Indexer indexer = new Indexer();
