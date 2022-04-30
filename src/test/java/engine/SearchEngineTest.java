@@ -21,8 +21,8 @@ public class SearchEngineTest {
 
         assertArrayEquals(expected_termList, SearchEngine.parseQuery(query));
 
-        query = "HK university no 1";
-        String[] expected_termList2 = {"hk", "univers", "no", "1"};
+        query = "HK university TEST";
+        String[] expected_termList2 = {"hk", "univers", "test"};
 
         assertArrayEquals(expected_termList2, SearchEngine.parseQuery(query));
     }
@@ -308,12 +308,18 @@ public class SearchEngineTest {
         var termFreq = get_termFreq(query);
 
         try (
-                MockedStatic<Repository.PageInfo> PAGEINFO = Mockito.mockStatic(Repository.PageInfo.class)
+                MockedStatic<Repository.PageInfo> PAGEINFO = Mockito.mockStatic(Repository.PageInfo.class) ;
+                MockedStatic<Repository.ForwardIndex> FORWARD = Mockito.mockStatic(Repository.ForwardIndex.class)
         ) {
             PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d1_hash)).thenReturn(new PageInfo("", d1, "", new HashSet<>(), "", 4));
             PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d2_hash)).thenReturn(new PageInfo("", d2, "", new HashSet<>(), "", 3));
             PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d3_hash)).thenReturn(new PageInfo("", d3, "", new HashSet<>(), "", 5));
             PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d4_hash)).thenReturn(new PageInfo("", d4, "", new HashSet<>(), "", 3));
+
+            FORWARD.when(() -> Repository.ForwardIndex.getMap_WordId_Positions(d1_hash)).thenReturn(new HashMap<>());
+            FORWARD.when(() -> Repository.ForwardIndex.getMap_WordId_Positions(d2_hash)).thenReturn(new HashMap<>());
+            FORWARD.when(() -> Repository.ForwardIndex.getMap_WordId_Positions(d3_hash)).thenReturn(new HashMap<>());
+            FORWARD.when(() -> Repository.ForwardIndex.getMap_WordId_Positions(d4_hash)).thenReturn(new HashMap<>());
 
             var outputList = SearchEngine.constructOutput(scores, new HashMap<>(), termFreq);   // ignore titles
             var expectedOrder = List.of(d1, d3, d4, d2);
@@ -331,6 +337,7 @@ public class SearchEngineTest {
     void test_processQuery() {
 
         try (MockedStatic<Repository.Word> WORD = Mockito.mockStatic(Repository.Word.class);
+             MockedStatic<Repository.ForwardIndex> FORWARD = Mockito.mockStatic(Repository.ForwardIndex.class);
              MockedStatic<Repository.InvertedIndex> INVERTED = Mockito.mockStatic(Repository.InvertedIndex.class);
              MockedStatic<Repository.PageInfo> PAGEINFO = Mockito.mockStatic(Repository.PageInfo.class);
              MockedStatic<Repository.Page> PAGE = Mockito.mockStatic(Repository.Page.class)
@@ -347,6 +354,11 @@ public class SearchEngineTest {
             PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d3_hash)).thenReturn(new PageInfo("", d3, "", new HashSet<>(), "", 5));
             PAGEINFO.when(() -> Repository.PageInfo.getPageInfo(d4_hash)).thenReturn(new PageInfo("", d4, "", new HashSet<>(), "", 3));
             PAGE.when(Repository.Page::getTotalNumPage).thenReturn(TOTAL_NUM_DOCS);
+            FORWARD.when(() -> Repository.ForwardIndex.getMap_WordId_Positions(d1_hash)).thenReturn(new HashMap<>());
+            FORWARD.when(() -> Repository.ForwardIndex.getMap_WordId_Positions(d2_hash)).thenReturn(new HashMap<>());
+            FORWARD.when(() -> Repository.ForwardIndex.getMap_WordId_Positions(d3_hash)).thenReturn(new HashMap<>());
+            FORWARD.when(() -> Repository.ForwardIndex.getMap_WordId_Positions(d4_hash)).thenReturn(new HashMap<>());
+
 
             String query = "word1 word2 word3";
             var outputList = SearchEngine.processQuery(query);
