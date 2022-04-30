@@ -19,7 +19,7 @@
 	<body>
 		<div id="header">
 			<div id="logoWrapper">
-				<div id="logo" onclick="window.location='/'">
+				<div id="cse_logo" onclick="window.location='/'">
 				</div>
 			</div>
 		

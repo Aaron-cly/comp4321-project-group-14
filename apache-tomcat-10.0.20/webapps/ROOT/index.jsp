@@ -41,7 +41,7 @@
   <section class="search-wrapper">
     <img
       class="logo"
-      src="images/logo.png"
+      src="images/cse_logo.png"
       alt="logo">
     <form method="get" action="SearchPage.jsp">
       <img
