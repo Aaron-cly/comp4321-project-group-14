@@ -2,7 +2,7 @@
 
 ./gradlew build -x test
 
-./stop_tomcat_server.sh
+./scripts/stop_tomcat_server.sh
 
 if [ $1 == "FRESH_CRAWL" ]; then
   if [ "$#" -ne 2 ]; then
@@ -20,4 +20,4 @@ if [ $1 != "FRESH_CRAWL" ]; then
   fi
 fi
 
-./run_tomcat_server.sh
+./scripts/run_tomcat_server.sh
