@@ -105,7 +105,6 @@ public class Crawler {
 
                         return baseUrl + link.substring(2);
                     } else if (link.startsWith("../")) {
-                        // System.out.print(currentUrl + ":" + link + "    :");
                         String baseUrl = null;
                         int mountPoint = currentUrl.lastIndexOf('/');
                         baseUrl = currentUrl.substring(0, mountPoint);
@@ -121,7 +120,6 @@ public class Crawler {
                         }
                         char lastChar = baseUrl.charAt(baseUrl.length() - 1);
                         String child = baseUrl + (lastChar == '/' ? "" : '/') + link;
-                        // System.out.println(child);
                         return child;
                     } else {
                         if (currentUrl.endsWith(".html") || currentUrl.endsWith(".htm")) {
@@ -180,6 +178,7 @@ public class Crawler {
                 System.out.printf("Crawled and indexed %d pages\n", currentIndex);
             }
         }
+        System.out.println(currentIndex + " number of pages crawled");
         indexer.construct_parents_from_child_links();
     }
 
@@ -202,7 +201,7 @@ public class Crawler {
 
         // open connection for page size
         var connection = new URL(url).openConnection();
-//        connection.setConnectTimeout(5 * 1000);
+        connection.setConnectTimeout(5 * 1000);
         var pgSize = connection.getContentLength();
         String lastModifiedDate = getLastModifiedDate(res, doc);
 
