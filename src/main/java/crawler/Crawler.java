@@ -39,7 +39,7 @@ public class Crawler {
      * @throws IOException
      */
     private Connection.Response getResponse(String url) throws IOException {
-        Connection conn = Jsoup.connect(url).timeout(1000);
+        Connection conn = Jsoup.connect(url).timeout(1000).followRedirects(true);
         return conn.execute();
     }
 
@@ -200,8 +200,8 @@ public class Crawler {
         String lastModifiedDate = getLastModifiedDate(res, doc);
 
         // insert new page if url should not be ignored
-        if (!indexer.shouldIgnoreUrl(res.url().toString(), lastModifiedDate)) {
-            indexer.insert_new_page(doc, res.url().toString(), lastModifiedDate, pgSize, pagesOnURL);
+        if (!indexer.shouldIgnoreUrl(url, lastModifiedDate)) {
+            indexer.insert_new_page(doc, url, lastModifiedDate, pgSize, pagesOnURL);
         }
     }
 
