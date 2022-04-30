@@ -341,7 +341,7 @@ public class Repository {
 
         /** Return the hashmap representation of the invertedIndex from the database
          *
-         * @return hashmap representation of the inevertedIndex
+         * @return hashmap representation of the invertedIndex
          */
         public static HashMap<String, HashMap<String, List<Integer>>> getAll_InvertedIndex() {
             var inverted = new HashMap<String, HashMap<String, List<Integer>>>();

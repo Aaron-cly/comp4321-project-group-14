@@ -176,12 +176,10 @@ public class Crawler {
 
             crawlPage(currentURL, pagesOnURL);
             currentIndex++;
-            System.out.println(currentIndex + ": " + currentURL);
             if (currentIndex % 500 == 0) {
                 System.out.printf("Crawled and indexed %d pages\n", currentIndex);
             }
         }
-        System.out.println(currentIndex);
         indexer.construct_parents_from_child_links();
     }
 
@@ -202,11 +200,9 @@ public class Crawler {
         }
         if (doc == null) return;
 
-        res.url().toString();
-
         // open connection for page size
         var connection = new URL(url).openConnection();
-        connection.setConnectTimeout(5 * 1000);
+//        connection.setConnectTimeout(5 * 1000);
         var pgSize = connection.getContentLength();
         String lastModifiedDate = getLastModifiedDate(res, doc);
 

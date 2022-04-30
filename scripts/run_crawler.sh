@@ -2,6 +2,8 @@
 
 ./gradlew build -x test
 
+./stop_tomcat_server.sh
+
 if [ $1 == "FRESH_CRAWL" ]; then
   if [ "$#" -ne 2 ]; then
     ./gradlew run --args="FRESH_CRAWL"
@@ -17,3 +19,5 @@ if [ $1 != "FRESH_CRAWL" ]; then
     ./gradlew run --args="EXISTING_CRAWL $2"
   fi
 fi
+
+./run_tomcat_server.sh

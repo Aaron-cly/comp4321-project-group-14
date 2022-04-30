@@ -83,9 +83,12 @@ public class Indexer {
                                 int pgSize, HashSet<String> childLinks) {
         // index the current page
         // extract and stem words
-        var stemList = stemWords(extractWords(doc));
+        var words = extractWords(doc);
+        var stemList = stemWords(words);
         var map_word_posList = consolidatePositions(stemList);
         var max_termFreq = getMax_termFreq(map_word_posList);
+
+        pgSize = pgSize == -1 ? words.size() : pgSize;
 
         // convert child urls to its page ids
         childLinks = childLinks.stream().map(l -> {
