@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/** SearchEngine class to process and parse queries, and retrieve results/pages for the queries */
 public class SearchEngine {
     private static String TERM_INDICATOR = "\"";
     private static int OUTPUT_NUM = 50;
@@ -31,7 +32,13 @@ public class SearchEngine {
         }
     }
 
-    // in here, a term means a word or a phrase
+    /** Processes query and returns the relevant pages, with respect to CosSim scores. Invokes functions from
+     * {@link ScoresUtil} to calculate the scores.
+     *
+     * @param query  The query to be processed
+     * @return  The relevant documents in {@link RetrievedDocument} form
+     * @throws RocksDBException
+     */
     public static List<RetrievedDocument> processQuery(String query) throws RocksDBException {
         String[] queryTerms = parseQuery(query);
         HashMap<String, HashMap<String, Integer>> termFreq = new HashMap<>(); // tf_ij, map term -> (map pageId -> freq)
@@ -52,6 +59,16 @@ public class SearchEngine {
         return constructOutput(scores_on_content, scores_on_title, termFreq);
     }
 
+    /** Constructs the output of the results, based on scores of content and titles
+     * Sorts documents/results, based on title scores and content scores, with the former having higher priority
+     * Retrieves the urls from the ids and returns a list of {@link RetrievedDocument} as the results
+     *
+     * @param scoresOnContent  The scores based on content of the pages
+     * @param scoresOnTitle  The scores based on title of the pages
+     * @param inverted  The inverted index
+     * @return  The sorted results in the form of {@link RetrievedDocument}
+     * @throws RocksDBException
+     */
     protected static List<RetrievedDocument> constructOutput(HashMap<String, Double> scoresOnContent, HashMap<String, Double> scoresOnTitle, HashMap<String, HashMap<String, Integer>> inverted) throws RocksDBException {
         // sort by title DESC then content DESC
         HashSet<String> pageSet = new HashSet<>();
@@ -129,6 +146,12 @@ public class SearchEngine {
     }
 
     // returns stemmed terms, e.g. "hong kong" university  -> ["hong kong", "univers"]
+
+    /** Parses the query and stems the words/phrases using porter's algorithm
+     *
+     * @param query  Query to be parse
+     * @return  The individual terms and phrases of the queries in an array
+     */
     public static String[] parseQuery(String query) {
         query = query.toLowerCase();
         List<String> phraseList = new ArrayList<>();

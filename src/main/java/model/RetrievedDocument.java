@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
+/** Subclass of PageInfo, which contains the scores, frequencies of the queried terms and top keywords in the page */
 public class RetrievedDocument extends PageInfo {
     public double score;
     public HashMap<String, Integer> query_keyword_freq;
@@ -14,6 +15,13 @@ public class RetrievedDocument extends PageInfo {
         super(pageTitle, url, lastModifiedData, childLinks, pageSize, max_termFreq);
     }
 
+    /** Public Constructor for the retrievedDocument. Will call {@link RetrievedDocument#RetrievedDocument(String, String, String, HashSet, String, int)}
+     *
+     * @param pageInfo  The pageInfo of the document
+     * @param score  The score of the document with respect to the queried terms
+     * @param query_keyword_freq  The frequencies of the queried words
+     * @param top_document_keywords  The keywords of the documents with highest weight
+     */
     public RetrievedDocument(PageInfo pageInfo, double score, HashMap<String, Integer> query_keyword_freq,
             LinkedHashMap<String, Integer> top_document_keywords) {
         this(pageInfo.pageTitle, pageInfo.url, pageInfo.lastModifiedDate, pageInfo.childLinks, pageInfo.pageSize,
@@ -24,6 +32,10 @@ public class RetrievedDocument extends PageInfo {
         this.top_document_keywords = top_document_keywords;
     }
 
+    /** Overriden toString() method for representation of the {@link RetrievedDocument}, to be used for ouput in query_result.txt
+     *
+     * @return  String representation of the {@link RetrievedDocument}
+     */
     @Override
     public String toString() {
         return String.format("%.2f", score) + "\t" + pageTitle + '\n' +
@@ -38,6 +50,10 @@ public class RetrievedDocument extends PageInfo {
                 "\t=======================================================\n";
     }
 
+    /**
+     * Method for returning the string representation formatted in html for jsp
+     * @return  The htmlString representation of the {@link RetrievedDocument}
+     */
     public String htmlString() {
         return "<div class='resultWrapper'>"
                 + "<div class='heading'>" + String.format("%.2f", score) + "<a href='#''>" + pageTitle + "  </a></div>"
@@ -49,7 +65,7 @@ public class RetrievedDocument extends PageInfo {
                 "Document most frequent words:\t" + top_document_keywords + "<br />" +
                 "Parent Links" + "<br />" +
                 parentLinks.toString() + "<br />" +
-                "Child Links" + "<br /" +
+                "Child Links" + "<br />" +
                 childLinks.toString() + "<br />" +
                 "</div></br>";
     }

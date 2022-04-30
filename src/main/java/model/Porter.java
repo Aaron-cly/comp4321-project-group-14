@@ -18,6 +18,7 @@ class NewString {
     }
 }
 
+/** Given Porter implementation from the course website */
 public class Porter {
 
     private String Clean( String str ) {
