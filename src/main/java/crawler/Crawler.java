@@ -43,7 +43,7 @@ public class Crawler {
         return conn.execute();
     }
 
-    private static final List<String> extensionList = List.of(".pdf", ".gif", ".png", ".jpeg", ".jpg", ".mp4", ".mp3", ".doc", ".zip", ".rar", ".ppt", ".pptx", ".docx", ".bib", ".Z", ".ps", ".tgz", ".wmv", ".ai", ".ps.gz", ".mov", ".mpeg", ".mpg", ".avi", ".rm", ".key", ".it");
+    private static List<String> banList = List.of("ftp", "@", "Password_Only", "?", "#", "www", "http", "index.html");
 
     /** Helper Method to check if link is valid
      *
@@ -51,12 +51,23 @@ public class Crawler {
      * @return  a boolean value indicating whether the link is valid
      */
     private boolean validLink(String link) {
+        boolean valid = banList.stream().noneMatch(link::contains)
+                            && !link.startsWith("javascript")
+                            && !link.equals("/");
+        if (!valid) return false;
 
-        return !link.equals("/") && !link.contains("ftp") && !link.contains("@") && !link.contains("Password_Only")
-                && !link.contains("?") && !link.contains("#") && !link.contains("www") && !link.contains("http")
-                && !link.startsWith("javascript")
-                && !link.contains("index.html") // have visited and not meaningful
-                && extensionList.stream().noneMatch(ext -> link.toLowerCase().endsWith(ext.toLowerCase()));
+        // get the file of the link and check extension
+        int index = link.lastIndexOf('/');
+        if (index == link.length()-1) {
+            return true;
+        } else {
+            String file = link.substring(index + 1);
+            if (file.contains(".")) {
+                return file.endsWith(".html") || file.endsWith(".htm") || file.endsWith(".txt");
+            } else {
+                return true;
+            }
+        }
     }
 
     /** Gets all the child links from a page. Child links are filtered through {@link #validLink(String)}, and checked
@@ -165,7 +176,7 @@ public class Crawler {
 
             crawlPage(currentURL, pagesOnURL);
             currentIndex++;
-//            System.out.println(currentIndex + ": " + currentURL);
+            System.out.println(currentIndex + ": " + currentURL);
             if (currentIndex % 500 == 0) {
                 System.out.printf("Crawled and indexed %d pages\n", currentIndex);
             }
