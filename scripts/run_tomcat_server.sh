@@ -1,1 +1,1 @@
-../apache-tomcat-10.0.20/bin/startup.sh
+./apache-tomcat-10.0.20/bin/startup.sh
