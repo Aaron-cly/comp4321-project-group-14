@@ -30,9 +30,6 @@ public class MainClass {
         }
 
         runCrawler();
-//        runQuery("FAQ \"Postgraduate Students\"");
-//        runQuery("Postgraduate");
-//        runQuery("\"Cyber Security\"");
     }
 
     /** Runs Crawler and indexes the crawled pages and saves the results into spider_result.txt*/
@@ -65,12 +62,6 @@ public class MainClass {
         finish = Instant.now();
         timeElapsed = Duration.between(start, finish).toSeconds();
         System.out.println("Time elapsed constructing Inverted Index: " + timeElapsed + " seconds\n");
-
-//            System.out.println("Writing Inverted Index...");
-//            ResultWriter.write_inverted_file();
-//            ResultWriter.write_invertedTitle_file();
-//            ResultWriter.write_forwardTitle_File();
-//            System.out.println("Inverted index file written to inverted_file.txt");
 
         Repository.closeAllConnections();
     }
