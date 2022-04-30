@@ -83,7 +83,6 @@ downs
 during
 e
 each
-early
 either
 end
 ended
@@ -101,8 +100,6 @@ everywhere
 f
 face
 faces
-fact
-facts
 far
 felt
 few
