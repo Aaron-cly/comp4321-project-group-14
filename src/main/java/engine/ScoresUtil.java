@@ -224,7 +224,7 @@ public class ScoresUtil {
             for (int i = 1; i < wordArr.length; i++) {
                 var map_page_posList = invertedIndex.get(wordArr[i]);
                 for (String pageId : pages_contain_allWords) {
-                    var posList = map_page_posList.get(pageId);
+                    var posList = map_page_posList.getOrDefault(pageId, new ArrayList<>());
                     final int diff = i;
                     var displaced = posList.stream().map(pos -> pos - diff).collect(Collectors.toList());
                     map_page_posList.put(pageId, displaced);
