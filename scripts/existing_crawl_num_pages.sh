@@ -3,6 +3,6 @@ cd ..
 gradle -x test
 
 # set the number after EXISTING_CRAWL to the number of pages to be crawled
-gradle run --args="EXISTING_CRAWL 30"
+gradle run --args="EXISTING_CRAWL $1"
 
 cd scripts
