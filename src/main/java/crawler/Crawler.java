@@ -201,7 +201,7 @@ public class Crawler {
 
         // open connection for page size
         var connection = new URL(url).openConnection();
-        connection.setConnectTimeout(5 * 1000);
+        connection.setConnectTimeout(1000);
         var pgSize = connection.getContentLength();
         String lastModifiedDate = getLastModifiedDate(res, doc);
 
