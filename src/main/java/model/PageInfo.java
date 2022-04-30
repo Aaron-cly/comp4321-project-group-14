@@ -32,14 +32,6 @@ public class PageInfo implements Serializable {
         this.max_termFreq = max_termFreq;
     }
 
-//    public static byte[] convertToByteArray(PageInfo data) {
-//        return SerializeUtil.serialize(data);
-//    }
-//
-//    public static PageInfo deserialize(byte[] data) {
-//        return SerializeUtil.deserialize(data);
-//    }
-//
     @Override
     public String toString() {
         return "PageInfo {" +
